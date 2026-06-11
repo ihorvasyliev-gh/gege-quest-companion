@@ -3112,7 +3112,8 @@
             if (curClass && TALENTS.classes[curClass]) {
                 titleEl.innerText = `${getClassNameReadable(curClass)} Talents Reference`;
                 
-                let html = '<div style="display: flex; flex-direction: column; gap: 2.5px; overflow: hidden; padding-top: 2px;">';
+                let html = '<div style="display: flex; flex-direction: column; gap: 2.5px; overflow: hidden; padding-top: 2px; height: 100%;">';
+                html += '<div style="display: flex; flex-direction: column; gap: 2.5px;">';
                 TALENTS.classes[curClass].forEach(talent => {
                     html += `
                         <div class="ref-talent-item">
@@ -3122,6 +3123,20 @@
                         </div>
                     `;
                 });
+                html += '</div>';
+                
+                html += `
+                    <div class="divider" style="margin: 8px 0 4px 0;">
+                        <div class="divider-line" style="opacity: 0.3;"></div>
+                        <span style="font-family: 'Cinzel', serif; font-size: 7.5px; color: #724216; padding: 0 6px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.6;">Notes & Special Rules</span>
+                        <div class="divider-line" style="opacity: 0.3;"></div>
+                    </div>
+                    <div class="lines" style="margin-top: 2px; flex-grow: 1;">
+                `;
+                for (let i = 8; i <= 14; i++) {
+                    html += `<div><input type="text" id="ref-class-line-${i}" placeholder=""></div>`;
+                }
+                html += '</div>';
                 html += '</div>';
                 contentEl.innerHTML = html;
             } else {

@@ -667,14 +667,31 @@ export function CharacterSheet() {
                   </h3>
                   <div id="ref-class-talents-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                     {charState.class && TALENTS.classes[charState.class] ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px' }}>
-                        {TALENTS.classes[charState.class].map((talent) => (
-                          <div key={talent.id} className="ref-talent-item">
-                            <span className="ref-talent-name">{talent.name}</span>
-                            <span className="ref-talent-cost">{talent.cost} AP</span>
-                            {talent.desc}
-                          </div>
-                        ))}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px', height: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px' }}>
+                          {TALENTS.classes[charState.class].map((talent) => (
+                            <div key={talent.id} className="ref-talent-item">
+                              <span className="ref-talent-name">{talent.name}</span>
+                              <span className="ref-talent-cost">{talent.cost} AP</span>
+                              {talent.desc}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="divider" style={{ margin: '8px 0 4px 0' }}>
+                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
+                          <span style={{ fontFamily: 'Cinzel, serif', fontSize: '7.5px', color: '#724216', padding: '0 6px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.6 }}>Notes & Special Rules</span>
+                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
+                        </div>
+                        <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
+                          {Array.from({ length: 7 }, (_, i) => {
+                            const lineIndex = 8 + i;
+                            return (
+                              <div key={lineIndex}>
+                                <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     ) : (
                       <div className="lines" style={{ marginTop: '2px' }}>

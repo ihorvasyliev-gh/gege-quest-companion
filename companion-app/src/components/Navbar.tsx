@@ -57,7 +57,9 @@ export function Navbar() {
   };
 
   const handleReset = () => {
-    resetSheet();
+    if (window.confirm("Are you sure you want to reset your character sheet? All statistics, items, defeated foes, and talents will be deleted forever!")) {
+      resetSheet();
+    }
   };
 
   const handlePrint = () => {

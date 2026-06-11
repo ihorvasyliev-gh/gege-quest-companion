@@ -1064,6 +1064,12 @@ h1.main-title {
     overflow-y: auto;
     max-height: 400px;
     padding-right: 5px;
+    scrollbar-gutter: stable;
+    width: 100%;
+}
+#codex-talent-list {
+    scrollbar-gutter: stable;
+    width: 100%;
 }
 .talent-card {
     background-color: rgba(253, 248, 235, 0.65);
@@ -1286,6 +1292,9 @@ h1.main-title {
 
     /* Make rules Tome container and page full-width on mobile */
     .tome-container {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
         width: calc(100% - 16px) !important;
         max-width: 600px;
         margin: 5px auto !important;

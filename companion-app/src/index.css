@@ -282,6 +282,21 @@ body {
     display: block;
 }
 
+/* --- Physical Height Utilities (for A5 Page constraint) --- */
+.h-38mm { height: 38mm; }
+.h-43mm { height: 43mm; }
+.h-52mm { height: 52mm; }
+.h-68mm { height: 68mm; }
+.h-75mm { height: 75mm; }
+.h-100mm { height: 100mm; }
+.h-110mm { height: 110mm; }
+.h-112mm { height: 112mm; }
+
+/* Keep elements side-by-side even on mobile (e.g. stats) */
+.row-no-stack {
+    flex-direction: row !important;
+}
+
 /* --- A5 Page Scale Wrappers (For Mobile Display) --- */
 .page-wrapper {
     width: 100%;
@@ -1204,7 +1219,70 @@ h1.main-title {
     color: #2a1805;
 }
 
-/* --- Mobile Custom Overrides --- */
+/* --- Responsive Screen Adaptations (Tablet & Mobile) --- */
+@media screen and (max-width: 768px) {
+    .page-wrapper {
+        max-width: 600px;
+        width: 100%;
+        padding: 0 8px;
+        margin: 5px auto;
+        height: auto !important;
+    }
+    .page {
+        width: 100% !important;
+        max-width: 600px;
+        height: auto !important;
+        min-height: auto !important;
+        padding: 24px 20px 30px 20px !important;
+        margin: 0 auto 15px auto !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
+        border-radius: 6px;
+    }
+    .row {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .row.row-no-stack {
+        flex-direction: row !important;
+        gap: 6px !important;
+    }
+    .reference-grid {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    
+    /* Override fixed physical heights to expand automatically */
+    .h-38mm, .h-43mm, .h-52mm, .h-68mm, .h-75mm, .h-100mm, .h-110mm, .h-112mm {
+        height: auto !important;
+    }
+    
+    /* Fix potential overflow/scrolling issues */
+    .parchment-box {
+        overflow: visible !important;
+    }
+    .lines {
+        min-height: auto !important;
+    }
+    
+    /* Make inputs slightly easier to tap and read */
+    .field label {
+        font-size: 11px !important;
+    }
+    .stone-title {
+        font-size: 10px !important;
+    }
+    .stone-value-box input {
+        font-size: 16px !important;
+    }
+    .health-cell input {
+        font-size: 13px !important;
+    }
+    .lines div input {
+        font-size: 13px !important;
+    }
+}
+
+/* --- Mobile Specific Fine Tuning --- */
 @media (max-width: 600px) {
     .print-banner {
         border-radius: 0;
@@ -1221,13 +1299,14 @@ h1.main-title {
         padding: 4px 3px;
     }
     .calc-btn {
-        width: 18px;
-        height: 18px;
-        font-size: 10px;
+        width: 26px !important;
+        height: 26px !important;
+        font-size: 14px !important;
     }
     .calc-input {
-        width: 25px;
-        font-size: 11px;
+        width: 36px !important;
+        font-size: 13px !important;
+        padding: 3px !important;
     }
     .talent-card {
         flex-direction: column;
@@ -1262,6 +1341,7 @@ h1.main-title {
         max-width: none !important;
         height: auto !important;
         display: block !important;
+        padding: 0 !important;
     }
     .page { 
         margin: 0 !important; 
@@ -1270,15 +1350,37 @@ h1.main-title {
         display: flex !important;
         width: 148mm !important;
         height: 210mm !important;
+        padding: 8mm 9mm !important;
         border: 2px solid #4a2e13 !important;
         outline: 1px solid rgba(74,46,19,0.35) !important;
         outline-offset: -6px !important;
         transform: none !important; /* Reset scale */
     }
+    .row {
+        flex-direction: row !important;
+        gap: 10px !important;
+    }
+    .row.row-no-stack {
+        flex-direction: row !important;
+    }
+    .reference-grid {
+        flex-direction: row !important;
+        gap: 8px !important;
+    }
+    .h-38mm { height: 38mm !important; }
+    .h-43mm { height: 43mm !important; }
+    .h-52mm { height: 52mm !important; }
+    .h-68mm { height: 68mm !important; }
+    .h-75mm { height: 75mm !important; }
+    .h-100mm { height: 100mm !important; }
+    .h-110mm { height: 110mm !important; }
+    .h-112mm { height: 112mm !important; }
+
     input::placeholder {
         color: transparent !important;
     }
 }
+
 
 /* --- Page 4 Reference sheet style --- */
 .reference-grid {

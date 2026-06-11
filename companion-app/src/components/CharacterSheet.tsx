@@ -190,7 +190,7 @@ export function CharacterSheet() {
 
             {/* Gold Ledger & XP block */}
             <div className="row" style={{ marginBottom: '8px' }}>
-              <div className="parchment-box flex-1" style={{ height: '38mm' }}>
+              <div className="parchment-box flex-1 h-38mm">
                 <svg className="box-illustration" viewBox="0 0 100 100">
                   <path d="M25,55 L75,55 L75,85 L25,85 Z" fill="#4a2e13" opacity="0.15"/>
                   <path d="M22,55 L78,55 L78,48 C78,40 65,38 50,38 C35,38 22,40 22,48 Z" fill="#4a2e13" opacity="0.12"/>
@@ -224,7 +224,7 @@ export function CharacterSheet() {
               </div>
 
               {/* XP Box */}
-              <div className="parchment-box flex-1 xp-box" style={{ height: '38mm' }}>
+              <div className="parchment-box flex-1 xp-box h-38mm">
                 <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.1, fill: 'none', stroke: '#855d14', strokeWidth: 1.5, height: '85%', width: 'auto', position: 'absolute', bottom: '4px', right: '4px', pointerEvents: 'none' }}>
                   <circle cx="50" cy="50" r="35" strokeDasharray="3 3" strokeWidth="1"/>
                   <circle cx="50" cy="50" r="28" strokeWidth="0.6"/>
@@ -256,7 +256,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Alchemy Container */}
-            <div className="parchment-box" style={{ height: '43mm', marginBottom: '6px' }}>
+            <div className="parchment-box h-43mm" style={{ marginBottom: '6px' }}>
               <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.08, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.8 }}>
                 <path d="M30,50 C30,42 40,38 50,38 C60,38 70,42 70,50 L70,70 C70,78 60,82 50,82 C40,82 30,78 30,70 Z" strokeLinecap="round"/>
                 <path d="M35,80 L32,90 M65,80 L68,90 M50,82 L50,90" strokeWidth="2" strokeLinecap="round"/>
@@ -298,7 +298,7 @@ export function CharacterSheet() {
           </svg>
 
           {/* Pets & Companions Block */}
-          <div className="parchment-box" style={{ height: '38mm' }}>
+          <div className="parchment-box h-38mm">
             <h3>
               <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12">
                 <path d="M12,2 L8,6 L4,5 L6,10 L4,14 L8,13 L10,18 L12,22 L14,18 L16,13 L20,14 L18,10 L20,5 L16,6 L12,2 Z" fill="none" stroke="#5c3e21" strokeWidth="1.2" strokeLinejoin="round"/>
@@ -324,7 +324,7 @@ export function CharacterSheet() {
                 <div className="field flex-2"><label style={{ fontSize: '8px' }}>Companion:</label><input type="text" id="pet-name" {...bindInput('pet-name')} /></div>
                 <div className="field flex-1"><label style={{ fontSize: '8px' }}>Type:</label><input type="text" id="pet-type" {...bindInput('pet-type')} /></div>
               </div>
-              <div className="row" style={{ marginBottom: '3px', gap: '6px' }}>
+              <div className="row row-no-stack" style={{ marginBottom: '3px', gap: '6px' }}>
                 <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Atk:</label><input type="text" id="pet-atk" {...bindInput('pet-atk')} /></div>
                 <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Def:</label><input type="text" id="pet-def" {...bindInput('pet-def')} /></div>
                 <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Body:</label><input type="text" id="pet-body" {...bindInput('pet-body')} /></div>
@@ -364,7 +364,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Combat Gear Layout */}
-            <div className="row" style={{ height: '38mm' }}>
+            <div className="row h-38mm">
               <div className="parchment-box flex-1 lined-zone" style={{ zIndex: 2 }}>
                 <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.085, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.8 }}>
                   <path d="M25,85 L25,20" strokeWidth="2" strokeLinecap="round"/>
@@ -440,7 +440,7 @@ export function CharacterSheet() {
                 <h3>The Ledger of Defeated Foes</h3>
               </div>
               
-              <div className="parchment-box" style={{ height: '112mm', overflow: 'hidden', zIndex: 2 }}>
+              <div className="parchment-box h-112mm" style={{ overflow: 'hidden', zIndex: 2 }}>
                 <table className="monster-table">
                   <thead>
                     <tr>
@@ -570,7 +570,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Unlocked Talents Box */}
-            <div className="parchment-box" style={{ height: '68mm', display: 'flex', flexDirection: 'column' }}>
+            <div className="parchment-box h-68mm" style={{ display: 'flex', flexDirection: 'column' }}>
               <h3>Unlocked Talents & Special Abilities</h3>
               <div className="unlocked-talents-list" id="unlocked-talents-list" style={{ display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden', flexGrow: 1 }}>
                 {Object.keys(charState.purchasedTalents).filter(tid => charState.purchasedTalents[tid] > 0).length > 0 ? (
@@ -610,7 +610,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Spellbook / Notes Lined Section */}
-            <div className="parchment-box" style={{ height: '52mm' }}>
+            <div className="parchment-box h-52mm">
               <h3>Spellbook & Magic Scrolls</h3>
               <div className="lines" style={{ marginTop: '2px' }}>
                 {Array.from({ length: 10 }, (_, i) => (
@@ -661,7 +661,7 @@ export function CharacterSheet() {
               <div className="reference-column">
                 
                 {/* Class Talents Reference Box */}
-                <div className="parchment-box reference-box" style={{ height: '110mm', overflow: 'hidden' }}>
+                <div className="parchment-box reference-box h-110mm" style={{ overflow: 'hidden' }}>
                   <h3 id="ref-class-title">
                     {charState.class ? `${getClassNameReadable(charState.class)} Talents Reference` : 'Class Talents Reference'}
                   </h3>
@@ -687,7 +687,7 @@ export function CharacterSheet() {
                 </div>
 
                 {/* Shared Talents Reference Box */}
-                <div className="parchment-box reference-box" style={{ height: '65mm', overflow: 'hidden' }}>
+                <div className="parchment-box reference-box h-65mm" style={{ overflow: 'hidden' }}>
                   <h3>Shared Talents Reference</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <div className="ref-talent-item"><span className="ref-talent-name">Toughness</span><span className="ref-talent-cost">1 AP</span>+1 Body Point (Max 3 purchases)</div>
@@ -704,7 +704,7 @@ export function CharacterSheet() {
               <div className="reference-column">
                 
                 {/* Leveling thresholds Box */}
-                <div className="parchment-box reference-box" style={{ height: '75mm', overflow: 'hidden' }}>
+                <div className="parchment-box reference-box h-75mm" style={{ overflow: 'hidden' }}>
                   <h3 style={{ marginBottom: '6px' }}>XP Level progression</h3>
                   <table className="ref-table" style={{ textAlign: 'center', fontSize: '12px', marginBottom: '6px', width: '100%' }}>
                     <thead>
@@ -732,7 +732,7 @@ export function CharacterSheet() {
                 </div>
 
                 {/* Monster Tiers & XP Box */}
-                <div className="parchment-box reference-box" style={{ height: '100mm', overflow: 'hidden' }}>
+                <div className="parchment-box reference-box h-100mm" style={{ overflow: 'hidden' }}>
                   <h3 style={{ marginBottom: '6px' }}>Monster Tiers & XP values</h3>
                   <table className="ref-table" style={{ fontSize: '11.5px', marginBottom: '12px', width: '100%' }}>
                     <thead>

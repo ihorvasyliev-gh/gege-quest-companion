@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useCharacterStore } from './store/useCharacterStore';
 import { Navbar } from './components/Navbar';
 import { CharacterSheet } from './components/CharacterSheet';
@@ -7,50 +6,6 @@ import { ToastContainer } from './components/Toast';
 
 export default function App() {
   const activeTab = useCharacterStore((state) => state.activeTab);
-
-  // Responsive page scaling observer
-  useEffect(() => {
-    const resizePages = () => {
-      if (window.innerWidth >= 600) {
-        document.querySelectorAll<HTMLElement>('.page').forEach((page) => {
-          page.style.transform = '';
-          page.style.transformOrigin = '';
-          const wrapper = page.parentElement;
-          if (wrapper && wrapper.classList.contains('page-wrapper')) {
-            wrapper.style.height = '';
-          }
-        });
-        return;
-      }
-
-      document.querySelectorAll<HTMLElement>('.page').forEach((page) => {
-        const wrapper = page.parentElement;
-        if (!wrapper || !wrapper.classList.contains('page-wrapper')) return;
-
-        const wrapperWidth = wrapper.clientWidth || window.innerWidth - 20;
-        const pageOriginalWidth = 560; // 148mm scale width representation
-        let scale = wrapperWidth / pageOriginalWidth;
-        if (scale > 1) scale = 1;
-
-        page.style.transform = `scale(${scale})`;
-        page.style.transformOrigin = 'top center';
-
-        const pageOriginalHeight = 794; // 210mm A5 height representation
-        wrapper.style.height = (pageOriginalHeight * scale) + 'px';
-      });
-    };
-
-    // Run resizing on events
-    window.addEventListener('resize', resizePages);
-    
-    // Initial run with short timeout to ensure components are fully rendered in the DOM
-    const timerId = setTimeout(resizePages, 50);
-
-    return () => {
-      window.removeEventListener('resize', resizePages);
-      clearTimeout(timerId);
-    };
-  }, [activeTab]);
 
   return (
     <>
@@ -73,3 +28,4 @@ export default function App() {
     </>
   );
 }
+

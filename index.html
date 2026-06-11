@@ -1288,6 +1288,13 @@
             input::placeholder {
                 color: transparent !important;
             }
+            .xp-zero-print .field label {
+                visibility: hidden !important;
+            }
+            .xp-zero-print .field input {
+                color: transparent !important;
+                -webkit-text-fill-color: transparent !important;
+            }
         }
 
         /* --- Page 4 Reference sheet style --- */
@@ -2941,6 +2948,16 @@
             document.getElementById('ap-spent').innerText = charState.apSpent;
             document.getElementById('ap-available').innerText = charState.apAvailable;
             
+            // Toggle class for print if XP is zero
+            let xpBox = document.querySelector('.xp-box');
+            if (xpBox) {
+                if (xp === 0) {
+                    xpBox.classList.add('xp-zero-print');
+                } else {
+                    xpBox.classList.remove('xp-zero-print');
+                }
+            }
+
             // Render UI lists
             renderTalentCodex();
             renderPrintableTalentsPage();

@@ -89,6 +89,8 @@ export function CharacterSheet() {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => updateInput(id, e.target.value),
   });
 
+  const isXpZero = (parseInt(inputs['char-xp'] || '0') || 0) === 0;
+
   return (
     <div id="sheet-tab" className="tab-content active">
       
@@ -224,7 +226,7 @@ export function CharacterSheet() {
               </div>
 
               {/* XP Box */}
-              <div className="parchment-box flex-1 xp-box h-38mm">
+              <div className={`parchment-box flex-1 xp-box h-38mm ${isXpZero ? 'xp-zero-print' : ''}`}>
                 <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.1, fill: 'none', stroke: '#855d14', strokeWidth: 1.5, height: '85%', width: 'auto', position: 'absolute', bottom: '4px', right: '4px', pointerEvents: 'none' }}>
                   <circle cx="50" cy="50" r="35" strokeDasharray="3 3" strokeWidth="1"/>
                   <circle cx="50" cy="50" r="28" strokeWidth="0.6"/>

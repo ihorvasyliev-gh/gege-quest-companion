@@ -1280,6 +1280,20 @@ h1.main-title {
     .lines div input {
         font-size: 13px !important;
     }
+
+    /* Make rules Tome container and page full-width on mobile */
+    .tome-container {
+        width: 100% !important;
+        max-width: 600px;
+        margin: 5px auto !important;
+        padding: 6px !important;
+        border-width: 4px !important;
+    }
+    .tome-page {
+        margin: 4px 2px !important;
+        padding: 16px 12px !important;
+        min-height: auto !important;
+    }
 }
 
 /* --- Mobile Specific Fine Tuning --- */

@@ -1,5 +1,83 @@
 import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable } from '../store/useCharacterStore';
 
+// Pages corner Celtic knots
+const Corners = () => (
+  <>
+    <div className="corner corner-tl">
+      <svg viewBox="0 0 50 50">
+        <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
+        <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
+        <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
+        <path d="M3,12 C3,9 5,7 7,7 M12,3 C9,3 7,5 7,7" fill="none" stroke="#4a2e13" strokeWidth="0.8" opacity="0.5"/>
+        <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
+        <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
+        <path d="M10,2.5 L10,5 M14,2.5 L14,4 M2.5,10 L5,10 M2.5,14 L4,14" stroke="#4a2e13" strokeWidth="0.5" opacity="0.4"/>
+        <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
+      </svg>
+    </div>
+    <div className="corner corner-tr">
+      <svg viewBox="0 0 50 50">
+        <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
+        <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
+        <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
+        <path d="M3,12 C3,9 5,7 7,7 M12,3 C9,3 7,5 7,7" fill="none" stroke="#4a2e13" strokeWidth="0.8" opacity="0.5"/>
+        <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
+        <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
+        <path d="M10,2.5 L10,5 M14,2.5 L14,4 M2.5,10 L5,10 M2.5,14 L4,14" stroke="#4a2e13" strokeWidth="0.5" opacity="0.4"/>
+        <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
+      </svg>
+    </div>
+    <div className="corner corner-bl">
+      <svg viewBox="0 0 50 50">
+        <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
+        <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
+        <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
+        <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
+        <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
+        <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
+      </svg>
+    </div>
+    <div className="corner corner-br">
+      <svg viewBox="0 0 50 50">
+        <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
+        <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
+        <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
+        <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
+        <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
+        <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
+      </svg>
+    </div>
+  </>
+);
+
+// Pages border vines
+const Borders = () => (
+  <>
+    <div className="page-border border-top">
+      <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 400 10">
+        <path d="M0,5 C20,2 30,8 50,5 C70,2 80,8 100,5 C120,2 130,8 150,5 C170,2 180,8 200,5 C220,2 230,8 250,5 C270,2 280,8 300,5 C320,2 330,8 350,5 C370,2 380,8 400,5" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
+        <path d="M0,5 C10,0 20,10 30,5 C40,0 50,10 60,5 C70,0 80,10 90,5 C100,0 110,10 120,5 C130,0 140,10 150,5 C160,0 170,10 180,5 C190,0 200,10 210,5 C220,0 230,10 240,5 C250,0 260,10 270,5 C280,0 290,10 300,5 C310,0 320,10 330,5 C340,0 350,10 360,5 C370,0 380,10 390,5 C395,2.5 400,5 400,5" stroke="#4a2e13" strokeWidth="0.5" opacity="0.35"/>
+      </svg>
+    </div>
+    <div className="page-border border-bottom">
+      <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 400 10">
+        <path d="M0,5 C20,2 30,8 50,5 C70,2 80,8 100,5 C120,2 130,8 150,5 C170,2 180,8 200,5 C220,2 230,8 250,5 C270,2 280,8 300,5 C320,2 330,8 350,5 C370,2 380,8 400,5" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
+        <path d="M0,5 C10,0 20,10 30,5 C40,0 50,10 60,5 C70,0 80,10 90,5 C100,0 110,10 120,5 C130,0 140,10 150,5 C160,0 170,10 180,5 C190,0 200,10 210,5 C220,0 230,10 240,5 C250,0 260,10 270,5 C280,0 290,10 300,5 C310,0 320,10 330,5 C340,0 350,10 360,5 C370,0 380,10 390,5 C395,2.5 400,5 400,5" stroke="#4a2e13" strokeWidth="0.5" opacity="0.35"/>
+      </svg>
+    </div>
+    <div className="page-border border-left">
+      <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 10 500">
+        <path d="M5,0 C2,20 8,30 5,50 C2,70 8,80 5,100 C2,120 8,130 5,150 C2,170 8,180 5,200 C2,220 8,230 5,250 C2,270 8,280 5,300 C2,320 8,330 5,350 C2,370 8,380 5,400 C2,420 8,430 5,450 C2,470 8,480 5,500" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
+      </svg>
+    </div>
+    <div className="page-border border-right">
+      <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 10 500">
+        <path d="M5,0 C2,20 8,30 5,50 C2,70 8,80 5,100 C2,120 8,130 5,150 C2,170 8,180 5,200 C2,220 8,230 5,250 C2,270 8,280 5,300 C2,320 8,330 5,350 C2,370 8,380 5,400 C2,420 8,430 5,450 C2,470 8,480 5,500" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
+      </svg>
+    </div>
+  </>
+);
+
 export function CharacterSheet() {
   const inputs = useCharacterStore((state) => state.inputs);
   const updateInput = useCharacterStore((state) => state.updateInput);
@@ -10,84 +88,6 @@ export function CharacterSheet() {
     value: inputs[id] || '',
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => updateInput(id, e.target.value),
   });
-
-  // Pages corner Celtic knots
-  const Corners = () => (
-    <>
-      <div className="corner corner-tl">
-        <svg viewBox="0 0 50 50">
-          <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
-          <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
-          <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
-          <path d="M3,12 C3,9 5,7 7,7 M12,3 C9,3 7,5 7,7" fill="none" stroke="#4a2e13" strokeWidth="0.8" opacity="0.5"/>
-          <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
-          <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
-          <path d="M10,2.5 L10,5 M14,2.5 L14,4 M2.5,10 L5,10 M2.5,14 L4,14" stroke="#4a2e13" strokeWidth="0.5" opacity="0.4"/>
-          <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
-        </svg>
-      </div>
-      <div className="corner corner-tr">
-        <svg viewBox="0 0 50 50">
-          <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
-          <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
-          <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
-          <path d="M3,12 C3,9 5,7 7,7 M12,3 C9,3 7,5 7,7" fill="none" stroke="#4a2e13" strokeWidth="0.8" opacity="0.5"/>
-          <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
-          <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
-          <path d="M10,2.5 L10,5 M14,2.5 L14,4 M2.5,10 L5,10 M2.5,14 L4,14" stroke="#4a2e13" strokeWidth="0.5" opacity="0.4"/>
-          <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
-        </svg>
-      </div>
-      <div className="corner corner-bl">
-        <svg viewBox="0 0 50 50">
-          <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
-          <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
-          <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
-          <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
-          <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
-          <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
-        </svg>
-      </div>
-      <div className="corner corner-br">
-        <svg viewBox="0 0 50 50">
-          <path d="M5,2 C5,2 2,2 2,5 L2,20 C2,22 4,22 4,20 L4,8 C4,6 6,4 8,4 L20,4 C22,4 22,2 20,2 Z" fill="#4a2e13"/>
-          <path d="M8,6 C8,6 6,6 6,8 L6,18 C6,19 7,19 7,18 L7,10 C7,8 9,7 10,7 L18,7 C19,7 19,6 18,6 Z" fill="#4a2e13" opacity="0.7"/>
-          <path d="M2,5 Q2,2 5,2" fill="none" stroke="#4a2e13" strokeWidth="1.5"/>
-          <circle cx="5" cy="5" r="1.8" fill="#4a2e13"/>
-          <circle cx="5" cy="5" r="0.8" fill="#f3e5c8"/>
-          <path d="M9,9 C11,7 13,9 11,11 C9,13 7,11 9,9 Z" fill="#4a2e13" opacity="0.35"/>
-        </svg>
-      </div>
-    </>
-  );
-
-  // Pages border vines
-  const Borders = () => (
-    <>
-      <div className="page-border border-top">
-        <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 400 10">
-          <path d="M0,5 C20,2 30,8 50,5 C70,2 80,8 100,5 C120,2 130,8 150,5 C170,2 180,8 200,5 C220,2 230,8 250,5 C270,2 280,8 300,5 C320,2 330,8 350,5 C370,2 380,8 400,5" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
-          <path d="M0,5 C10,0 20,10 30,5 C40,0 50,10 60,5 C70,0 80,10 90,5 C100,0 110,10 120,5 C130,0 140,10 150,5 C160,0 170,10 180,5 C190,0 200,10 210,5 C220,0 230,10 240,5 C250,0 260,10 270,5 C280,0 290,10 300,5 C310,0 320,10 330,5 C340,0 350,10 360,5 C370,0 380,10 390,5 C395,2.5 400,5 400,5" stroke="#4a2e13" strokeWidth="0.5" opacity="0.35"/>
-        </svg>
-      </div>
-      <div className="page-border border-bottom">
-        <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 400 10">
-          <path d="M0,5 C20,2 30,8 50,5 C70,2 80,8 100,5 C120,2 130,8 150,5 C170,2 180,8 200,5 C220,2 230,8 250,5 C270,2 280,8 300,5 C320,2 330,8 350,5 C370,2 380,8 400,5" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
-          <path d="M0,5 C10,0 20,10 30,5 C40,0 50,10 60,5 C70,0 80,10 90,5 C100,0 110,10 120,5 C130,0 140,10 150,5 C160,0 170,10 180,5 C190,0 200,10 210,5 C220,0 230,10 240,5 C250,0 260,10 270,5 C280,0 290,10 300,5 C310,0 320,10 330,5 C340,0 350,10 360,5 C370,0 380,10 390,5 C395,2.5 400,5 400,5" stroke="#4a2e13" strokeWidth="0.5" opacity="0.35"/>
-        </svg>
-      </div>
-      <div className="page-border border-left">
-        <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 10 500">
-          <path d="M5,0 C2,20 8,30 5,50 C2,70 8,80 5,100 C2,120 8,130 5,150 C2,170 8,180 5,200 C2,220 8,230 5,250 C2,270 8,280 5,300 C2,320 8,330 5,350 C2,370 8,380 5,400 C2,420 8,430 5,450 C2,470 8,480 5,500" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
-        </svg>
-      </div>
-      <div className="page-border border-right">
-        <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 10 500">
-          <path d="M5,0 C2,20 8,30 5,50 C2,70 8,80 5,100 C2,120 8,130 5,150 C2,170 8,180 5,200 C2,220 8,230 5,250 C2,270 8,280 5,300 C2,320 8,330 5,350 C2,370 8,380 5,400 C2,420 8,430 5,450 C2,470 8,480 5,500" stroke="#4a2e13" strokeWidth="1" opacity="0.6"/>
-        </svg>
-      </div>
-    </>
-  );
 
   return (
     <div id="sheet-tab" className="tab-content active">
@@ -594,84 +594,44 @@ export function CharacterSheet() {
           <Corners />
           <Borders />
 
-          {/* Watermark: Crossed Axes */}
-          <svg className="page-watermark" viewBox="0 0 200 200">
-            <path d="M45,45 L155,155 M155,45 L45,155" stroke="#5c3e21" strokeWidth="2.5" fill="none" opacity="0.3"/>
-            <path d="M35,32 L58,48 L52,55 L30,42 Z" fill="#5c3e21" opacity="0.2"/>
-            <path d="M165,32 L142,48 L148,55 L170,42 Z" fill="#5c3e21" opacity="0.2"/>
-            <path d="M100,75 L120,90 L120,115 C120,130 100,140 100,142 C100,140 80,130 80,115 L80,90 Z" fill="#5c3e21" opacity="0.22"/>
-            <path d="M100,82 L115,93 L115,112 C115,124 100,133 100,135 C100,133 85,124 85,112 L85,93 Z" fill="#f3e5c8" stroke="#5c3e21" strokeWidth="0.8" opacity="0.5"/>
-            <circle cx="100" cy="110" r="8" fill="none" stroke="#5c3e21" strokeWidth="1" opacity="0.3"/>
+          {/* Watermark: Open Book with Quill */}
+          <svg className="page-watermark" viewBox="0 0 200 200" style={{ opacity: 0.035 }}>
+            {/* Left page */}
+            <path d="M30,40 L95,35 L95,160 L30,165 Z" fill="#5c3e21" opacity="0.3"/>
+            {/* Right page */}
+            <path d="M170,40 L105,35 L105,160 L170,165 Z" fill="#5c3e21" opacity="0.3"/>
+            {/* Spine */}
+            <path d="M95,35 L100,30 L105,35 M95,160 L100,165 L105,160" fill="none" stroke="#5c3e21" strokeWidth={2}/>
+            <path d="M100,30 L100,165" stroke="#5c3e21" strokeWidth={1.5}/>
+            {/* Page lines (left) */}
+            <path d="M40,55 L88,52 M40,65 L88,62 M40,75 L88,72 M40,85 L88,82 M40,95 L88,92 M40,105 L88,102 M40,115 L88,112 M40,125 L88,122 M40,135 L88,132 M40,145 L88,142" stroke="#5c3e21" strokeWidth={0.4} opacity={0.5}/>
+            {/* Page lines (right) */}
+            <path d="M112,52 L160,55 M112,62 L160,65 M112,72 L160,75 M112,82 L160,85 M112,92 L160,95 M112,102 L160,105 M112,112 L160,115 M112,122 L160,125 M112,132 L160,135 M112,142 L160,145" stroke="#5c3e21" strokeWidth={0.4} opacity={0.5}/>
+            {/* Quill pen */}
+            <path d="M155,20 C150,25 145,35 140,50 C138,55 135,58 130,60" stroke="#5c3e21" strokeWidth={1.5} fill="none"/>
+            <path d="M155,20 L162,15 C165,18 163,22 160,24 Z" fill="#5c3e21" opacity="0.5"/>
+            {/* Ink drops */}
+            <circle cx={128} cy={62} r={2} fill="#5c3e21" opacity="0.4"/>
+            <circle cx={132} cy={65} r={1} fill="#5c3e21" opacity="0.3"/>
           </svg>
 
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div className="header-container">
-              <h1 className="main-title" style={{ fontSize: '18px' }}>RULES & REFERENCE</h1>
-              <div className="subtitle" style={{ fontSize: '8.5px', letterSpacing: '1.5px' }}>Adventure Codex</div>
+            <div className="header-container" style={{ marginBottom: '6px' }}>
+              <h1 className="main-title" style={{ fontSize: '20px' }}>HERO REFERENCE</h1>
+              <div className="subtitle" style={{ fontSize: '9px', letterSpacing: '2px' }}>Codex & Leveling Rules</div>
             </div>
 
             <div className="reference-grid">
               
-              {/* Left Column: Basic Actions */}
+              {/* LEFT COLUMN: TALENTS */}
               <div className="reference-column">
-                <div className="parchment-box reference-box">
-                  <h3>Turn Actions</h3>
-                  <div style={{ fontSize: '10.5px', lineHeight: 1.25 }}>
-                    Every turn you may do <strong>one Move</strong> action and <strong>one Action</strong> (in either order).
-                    <table className="ref-table" style={{ marginTop: '2px' }}>
-                      <tbody>
-                        <tr><td><strong>Move:</strong> Roll 2 red dice for squares of movement.</td></tr>
-                        <tr><td><strong>Attack:</strong> Roll combat dice matching weapon.</td></tr>
-                        <tr><td><strong>Cast:</strong> Cast a spell scroll or spellbook magic.</td></tr>
-                        <tr><td><strong>Search:</strong> Search current room for traps/treasure.</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <div className="parchment-box reference-box">
-                  <h3>Rolling Combat Dice</h3>
-                  <div style={{ fontSize: '10.5px', lineHeight: 1.25 }}>
-                    <table className="ref-table">
-                      <thead>
-                        <tr>
-                          <th>Roll</th>
-                          <th>Hero</th>
-                          <th>Monster</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><strong>💀 Skull:</strong></td>
-                          <td>1 Damage</td>
-                          <td>1 Damage</td>
-                        </tr>
-                        <tr>
-                          <td><strong>🛡️ White Sh.:</strong></td>
-                          <td>Block 1 💀</td>
-                          <td>Miss</td>
-                        </tr>
-                        <tr>
-                          <td><strong>🐕 Black Sh.:</strong></td>
-                          <td>Miss</td>
-                          <td>Block 1 💀</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div style={{ fontStyle: 'italic', fontSize: '9.5px', marginTop: '2px', color: '#724216', textAlign: 'center' }}>
-                      Shields only block matching skulls in combat.
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Dynamic Class reference */}
-              <div className="reference-column">
-                <div className="parchment-box reference-box" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                
+                {/* Class Talents Reference Box */}
+                <div className="parchment-box reference-box" style={{ height: '110mm', overflow: 'hidden' }}>
                   <h3 id="ref-class-title">
                     {charState.class ? `${getClassNameReadable(charState.class)} Talents Reference` : 'Class Talents Reference'}
                   </h3>
-                  <div id="ref-class-talents-content" style={{ flexGrow: 1 }}>
+                  <div id="ref-class-talents-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                     {charState.class && TALENTS.classes[charState.class] ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px' }}>
                         {TALENTS.classes[charState.class].map((talent) => (
@@ -691,15 +651,116 @@ export function CharacterSheet() {
                     )}
                   </div>
                 </div>
+
+                {/* Shared Talents Reference Box */}
+                <div className="parchment-box reference-box" style={{ height: '65mm', overflow: 'hidden' }}>
+                  <h3>Shared Talents Reference</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div className="ref-talent-item"><span className="ref-talent-name">Toughness</span><span className="ref-talent-cost">1 AP</span>+1 Body Point (Max 3 purchases)</div>
+                    <div className="ref-talent-item"><span className="ref-talent-name">Iron Will</span><span className="ref-talent-cost">1 AP</span>+1 Mind Point (Max 2 purchases)</div>
+                    <div className="ref-talent-item"><span className="ref-talent-name">Veteran</span><span className="ref-talent-cost">1 AP</span>Once per quest reroll one die.</div>
+                    <div className="ref-talent-item"><span className="ref-talent-name">Lucky</span><span className="ref-talent-cost">2 AP</span>Once per quest redraw a treasure card.</div>
+                    <div className="ref-talent-item"><span className="ref-talent-name">Battle Hardened</span><span className="ref-talent-cost">2 AP</span>Ignore 1st damage point each quest.</div>
+                  </div>
+                </div>
+
               </div>
 
-            </div>
+              {/* RIGHT COLUMN: LEVELING & XP RULES */}
+              <div className="reference-column">
+                
+                {/* Leveling thresholds Box */}
+                <div className="parchment-box reference-box" style={{ height: '75mm', overflow: 'hidden' }}>
+                  <h3 style={{ marginBottom: '6px' }}>XP Level progression</h3>
+                  <table className="ref-table" style={{ textAlign: 'center', fontSize: '12px', marginBottom: '6px', width: '100%' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'center', width: '50%' }}>Lvl</th>
+                        <th style={{ textAlign: 'center', width: '50%' }}>XP</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><strong>1</strong></td><td>0</td></tr>
+                      <tr><td><strong>2</strong></td><td>20</td></tr>
+                      <tr><td><strong>3</strong></td><td>50</td></tr>
+                      <tr><td><strong>4</strong></td><td>90</td></tr>
+                      <tr><td><strong>5</strong></td><td>140</td></tr>
+                      <tr><td><strong>6</strong></td><td>200</td></tr>
+                      <tr><td><strong>7</strong></td><td>270</td></tr>
+                      <tr><td><strong>8</strong></td><td>350</td></tr>
+                      <tr><td><strong>9</strong></td><td>450</td></tr>
+                      <tr><td><strong>10</strong></td><td>600</td></tr>
+                    </tbody>
+                  </table>
+                  <div style={{ fontSize: '9px', fontStyle: 'italic', color: '#5c3e21', marginTop: '6px', lineHeight: 1.3, textAlign: 'center' }}>
+                    *Each level grants 1 Advancement Point (AP) to buy talents.
+                  </div>
+                </div>
 
-            <div className="parchment-box" style={{ padding: '4px 6px', marginTop: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', fontFamily: 'Cinzel', fontWeight: 'bold', color: '#4a2e13' }}>
-                <span>🎯 Target Traps & Secret Doors first!</span>
-                <span>💀 Body Point 0 = Death!</span>
+                {/* Monster Tiers & XP Box */}
+                <div className="parchment-box reference-box" style={{ height: '100mm', overflow: 'hidden' }}>
+                  <h3 style={{ marginBottom: '6px' }}>Monster Tiers & XP values</h3>
+                  <table className="ref-table" style={{ fontSize: '11.5px', marginBottom: '12px', width: '100%' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'center', width: '22%' }}>Tier</th>
+                        <th style={{ textAlign: 'center', width: '18%' }}>XP</th>
+                        <th style={{ textAlign: 'left', width: '60%' }}>Monsters Example</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style={{ textAlign: 'center' }}><strong>I</strong></td>
+                        <td style={{ textAlign: 'center' }}>1</td>
+                        <td style={{ textAlign: 'left' }}>Goblin, Skeleton, Zombie</td>
+                      </tr>
+                      <tr>
+                        <td style={{ textAlign: 'center' }}><strong>II</strong></td>
+                        <td style={{ textAlign: 'center' }}>2</td>
+                        <td style={{ textAlign: 'left' }}>Orc, Fimir, Ghoul, Mummy</td>
+                      </tr>
+                      <tr>
+                        <td style={{ textAlign: 'center' }}><strong>III</strong></td>
+                        <td style={{ textAlign: 'center' }}>4</td>
+                        <td style={{ textAlign: 'left' }}>Chaos Warrior, Abomination</td>
+                      </tr>
+                      <tr>
+                        <td style={{ textAlign: 'center' }}><strong>IV</strong></td>
+                        <td style={{ textAlign: 'center' }}>8</td>
+                        <td style={{ textAlign: 'left' }}>Ogre, Gargoyle, Minotaur</td>
+                      </tr>
+                      <tr>
+                        <td style={{ textAlign: 'center' }}><strong>V</strong></td>
+                        <td style={{ textAlign: 'center' }}>12</td>
+                        <td style={{ textAlign: 'left' }}>Giant, Dragonling, Demon</td>
+                      </tr>
+                      <tr>
+                        <td style={{ textAlign: 'center' }}><strong>VI</strong></td>
+                        <td style={{ textAlign: 'center' }}>20</td>
+                        <td style={{ textAlign: 'left' }}>Greater Demon, Dragon</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <h3 style={{ marginBottom: '6px' }}>Bonus XP Milestones</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px', padding: '2px 4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>🎯 Bounty Target</span><strong style={{ color: '#8c1e13' }}>+5 XP</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>👤 Named Enemy</span><strong style={{ color: '#8c1e13' }}>+10 XP</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>🏰 Dungeon Boss</span><strong style={{ color: '#8c1e13' }}>+25 XP</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>👑 Campaign Boss</span><strong style={{ color: '#8c1e13' }}>+100 XP</strong>
+                    </div>
+                  </div>
+                </div>
+
               </div>
+
             </div>
           </div>
         </div>

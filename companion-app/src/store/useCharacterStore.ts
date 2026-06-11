@@ -229,7 +229,7 @@ export const useCharacterStore = create<AppState>()(
           }
           
           let nextClass = state.charState.class;
-          let nextPurchased = { ...state.charState.purchasedTalents };
+          const nextPurchased = { ...state.charState.purchasedTalents };
           
           if (matchedKey) {
             nextClass = matchedKey;
@@ -525,10 +525,11 @@ export const useCharacterStore = create<AppState>()(
                 charState: parsed.state || { ...emptyCharState }
               }
             };
-          } catch (e) {
+          } catch {
             return null;
           }
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setItem: (name, value: any) => {
           const data = {
             inputs: value.state.inputs || {},

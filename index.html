@@ -1438,6 +1438,24 @@
             }
         }
 
+        /* --- Desktop Two-Column Layout for Character Sheet --- */
+        @media screen and (min-width: 1180px) {
+            #sheet-tab.active {
+                display: grid !important;
+                grid-template-columns: repeat(2, 560px);
+                gap: 15px 30px;
+                justify-content: center;
+                max-width: 1180px;
+                width: 100%;
+                margin: 0 auto;
+            }
+            #sheet-tab .page-wrapper {
+                margin: 0;
+                max-width: none;
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 <body>

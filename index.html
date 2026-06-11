@@ -651,8 +651,6 @@
         }
         .lines {
             flex: 1;
-            background: linear-gradient(to bottom, transparent 15px, rgba(92,62,33,0.18) 16px);
-            background-size: 100% 16px;
             line-height: 16px;
             font-family: 'MedievalSharp', cursive;
             font-size: 11px;
@@ -2229,6 +2227,8 @@
                                     <div><input type="text" id="ref-shared-line-1" placeholder=""></div>
                                     <div><input type="text" id="ref-shared-line-2" placeholder=""></div>
                                     <div><input type="text" id="ref-shared-line-3" placeholder=""></div>
+                                    <div><input type="text" id="ref-shared-line-4" placeholder=""></div>
+                                    <div><input type="text" id="ref-shared-line-5" placeholder=""></div>
                                 </div>
                             </div>
                             
@@ -3136,7 +3136,7 @@
                 html += '</div>';
                 
                 let talentsCount = TALENTS.classes[curClass].length;
-                let linesCount = talentsCount >= 5 ? 5 : 6;
+                let linesCount = talentsCount >= 5 ? 6 : 7;
                 let startIndex = 15 - linesCount;
                 
                 html += `
@@ -3159,7 +3159,7 @@
                 // Render blank lines for physical print handwriting
                 let html = '<div style="display: flex; flex-direction: column; gap: 2.5px; overflow: hidden; padding-top: 2px; height: 100%;">';
                 html += '<div class="lines" style="margin-top: 2px;">';
-                for(let i=1; i<=6; i++) {
+                for(let i=1; i<=7; i++) {
                     html += `<div><input type="text" id="ref-class-line-${i}" placeholder=""></div>`;
                 }
                 html += '</div>';
@@ -3171,7 +3171,7 @@
                     </div>
                     <div class="lines" style="margin-top: 2px; flex-grow: 1;">
                 `;
-                for(let i=7; i<=12; i++) {
+                for(let i=8; i<=14; i++) {
                     html += `<div><input type="text" id="ref-class-line-${i}" placeholder=""></div>`;
                 }
                 html += '</div>';

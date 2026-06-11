@@ -685,7 +685,7 @@ export function CharacterSheet() {
                         <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
                           {(() => {
                             const talentsCount = TALENTS.classes[charState.class].length;
-                            const linesCount = talentsCount >= 5 ? 5 : 6;
+                            const linesCount = talentsCount >= 5 ? 6 : 7;
                             const startIndex = 15 - linesCount;
                             return Array.from({ length: linesCount }, (_, i) => {
                               const lineIndex = startIndex + i;
@@ -701,7 +701,7 @@ export function CharacterSheet() {
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px', height: '100%' }}>
                         <div className="lines" style={{ marginTop: '2px' }}>
-                          {Array.from({ length: 6 }, (_, i) => (
+                          {Array.from({ length: 7 }, (_, i) => (
                             <div key={i}><input type="text" id={`ref-class-line-${i+1}`} {...bindInput(`ref-class-line-${i+1}`)} /></div>
                           ))}
                         </div>
@@ -711,8 +711,8 @@ export function CharacterSheet() {
                           <div className="divider-line" style={{ opacity: 0.3 }}></div>
                         </div>
                         <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                          {Array.from({ length: 6 }, (_, i) => {
-                            const lineIndex = 7 + i;
+                          {Array.from({ length: 7 }, (_, i) => {
+                            const lineIndex = 8 + i;
                             return (
                               <div key={lineIndex}>
                                 <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
@@ -741,7 +741,7 @@ export function CharacterSheet() {
                     <div className="divider-line" style={{ opacity: 0.3 }}></div>
                   </div>
                   <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                    {Array.from({ length: 3 }, (_, i) => {
+                    {Array.from({ length: 5 }, (_, i) => {
                       const lineIndex = i + 1;
                       return (
                         <div key={lineIndex}>

@@ -296,6 +296,7 @@ body {
 .h-38mm { height: 38mm; }
 .h-43mm { height: 43mm; }
 .h-52mm { height: 52mm; }
+.h-65mm { height: 65mm; }
 .h-68mm { height: 68mm; }
 .h-75mm { height: 75mm; }
 .h-100mm { height: 100mm; }
@@ -664,8 +665,6 @@ h1.main-title {
 }
 .lines {
     flex: 1;
-    background: linear-gradient(to bottom, transparent 15px, rgba(92,62,33,0.18) 16px);
-    background-size: 100% 16px;
     line-height: 16px;
     font-family: 'MedievalSharp', cursive;
     font-size: 11px;
@@ -1264,7 +1263,7 @@ h1.main-title {
     }
     
     /* Override fixed physical heights to expand automatically */
-    .h-38mm, .h-43mm, .h-52mm, .h-68mm, .h-75mm, .h-100mm, .h-110mm, .h-112mm {
+    .h-38mm, .h-43mm, .h-52mm, .h-65mm, .h-68mm, .h-75mm, .h-100mm, .h-110mm, .h-112mm {
         height: auto !important;
     }
     
@@ -1404,6 +1403,7 @@ h1.main-title {
     .h-38mm { height: 38mm !important; }
     .h-43mm { height: 43mm !important; }
     .h-52mm { height: 52mm !important; }
+    .h-65mm { height: 65mm !important; }
     .h-68mm { height: 68mm !important; }
     .h-75mm { height: 75mm !important; }
     .h-100mm { height: 100mm !important; }

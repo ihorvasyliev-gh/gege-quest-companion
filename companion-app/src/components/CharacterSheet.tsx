@@ -683,8 +683,36 @@ export function CharacterSheet() {
                           <div className="divider-line" style={{ opacity: 0.3 }}></div>
                         </div>
                         <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                          {Array.from({ length: 7 }, (_, i) => {
-                            const lineIndex = 8 + i;
+                          {(() => {
+                            const talentsCount = TALENTS.classes[charState.class].length;
+                            const linesCount = talentsCount >= 5 ? 5 : 6;
+                            const startIndex = 15 - linesCount;
+                            return Array.from({ length: linesCount }, (_, i) => {
+                              const lineIndex = startIndex + i;
+                              return (
+                                <div key={lineIndex}>
+                                  <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
+                                </div>
+                              );
+                            });
+                          })()}
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px', height: '100%' }}>
+                        <div className="lines" style={{ marginTop: '2px' }}>
+                          {Array.from({ length: 6 }, (_, i) => (
+                            <div key={i}><input type="text" id={`ref-class-line-${i+1}`} {...bindInput(`ref-class-line-${i+1}`)} /></div>
+                          ))}
+                        </div>
+                        <div className="divider" style={{ margin: '8px 0 4px 0' }}>
+                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
+                          <span style={{ fontFamily: 'Cinzel, serif', fontSize: '7.5px', color: '#724216', padding: '0 6px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.6 }}>Notes & Special Rules</span>
+                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
+                        </div>
+                        <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
+                          {Array.from({ length: 6 }, (_, i) => {
+                            const lineIndex = 7 + i;
                             return (
                               <div key={lineIndex}>
                                 <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
@@ -693,18 +721,12 @@ export function CharacterSheet() {
                           })}
                         </div>
                       </div>
-                    ) : (
-                      <div className="lines" style={{ marginTop: '2px' }}>
-                        {Array.from({ length: 14 }, (_, i) => (
-                          <div key={i}><input type="text" id={`ref-class-line-${i+1}`} {...bindInput(`ref-class-line-${i+1}`)} /></div>
-                        ))}
-                      </div>
                     )}
                   </div>
                 </div>
 
                 {/* Shared Talents Reference Box */}
-                <div className="parchment-box reference-box h-65mm" style={{ overflow: 'hidden' }}>
+                <div className="parchment-box reference-box h-65mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <h3>Shared Talents Reference</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <div className="ref-talent-item"><span className="ref-talent-name">Toughness</span><span className="ref-talent-cost">1 AP</span>+1 Body Point (Max 3 purchases)</div>
@@ -712,6 +734,21 @@ export function CharacterSheet() {
                     <div className="ref-talent-item"><span className="ref-talent-name">Veteran</span><span className="ref-talent-cost">1 AP</span>Once per quest reroll one die.</div>
                     <div className="ref-talent-item"><span className="ref-talent-name">Lucky</span><span className="ref-talent-cost">2 AP</span>Once per quest redraw a treasure card.</div>
                     <div className="ref-talent-item"><span className="ref-talent-name">Battle Hardened</span><span className="ref-talent-cost">2 AP</span>Ignore 1st damage point each quest.</div>
+                  </div>
+                  <div className="divider" style={{ margin: '8px 0 4px 0' }}>
+                    <div className="divider-line" style={{ opacity: 0.3 }}></div>
+                    <span style={{ fontFamily: 'Cinzel, serif', fontSize: '7.5px', color: '#724216', padding: '0 6px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.6 }}>Campaign Notes</span>
+                    <div className="divider-line" style={{ opacity: 0.3 }}></div>
+                  </div>
+                  <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
+                    {Array.from({ length: 3 }, (_, i) => {
+                      const lineIndex = i + 1;
+                      return (
+                        <div key={lineIndex}>
+                          <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 

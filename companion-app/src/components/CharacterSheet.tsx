@@ -422,6 +422,18 @@ export function CharacterSheet() {
               </div>
             </div>
 
+            {/* Crossed swords divider to fill vertical space */}
+            <div className="divider" style={{ margin: '14px 0' }}>
+              <div className="divider-line"></div>
+              <svg viewBox="0 0 100 24" style={{ width: '65px', height: '18px', fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, margin: '0 8px', opacity: 0.8 }}>
+                <path d="M5,12 L38,12 M62,12 L95,12" strokeWidth="1" />
+                <path d="M42,17 L58,7 M58,17 L42,7" strokeLinecap="round" />
+                <path d="M40,19 L43,16 M60,19 L57,16" strokeLinecap="round" />
+                <circle cx="50" cy="12" r="3" fill="#4a2e13" stroke="none" />
+              </svg>
+              <div className="divider-line"></div>
+            </div>
+
             {/* Giant Defeated Foes Ledger */}
             <div>
               <div className="scroll-header">
@@ -546,10 +558,21 @@ export function CharacterSheet() {
               </div>
             </div>
 
+            {/* Magic star divider to fill space */}
+            <div className="divider" style={{ margin: '8px 0' }}>
+              <div className="divider-line"></div>
+              <svg viewBox="0 0 100 24" style={{ width: '65px', height: '18px', fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, margin: '0 8px', opacity: 0.8 }}>
+                <path d="M5,12 L38,12 M62,12 L95,12" strokeWidth="1" />
+                <polygon points="50,4 53,11 60,11 55,15 57,21 50,17 43,21 45,15 40,11 47,11" fill="#4a2e13" stroke="none" />
+                <circle cx="50" cy="12" r="7" stroke="#4a2e13" strokeWidth="0.8" />
+              </svg>
+              <div className="divider-line"></div>
+            </div>
+
             {/* Unlocked Talents Box */}
-            <div className="parchment-box" style={{ height: '68mm' }}>
+            <div className="parchment-box" style={{ height: '68mm', display: 'flex', flexDirection: 'column' }}>
               <h3>Unlocked Talents & Special Abilities</h3>
-              <div className="unlocked-talents-list" id="unlocked-talents-list">
+              <div className="unlocked-talents-list" id="unlocked-talents-list" style={{ display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden', flexGrow: 1 }}>
                 {Object.keys(charState.purchasedTalents).filter(tid => charState.purchasedTalents[tid] > 0).length > 0 ? (
                   Object.keys(charState.purchasedTalents)
                     .filter(tid => charState.purchasedTalents[tid] > 0)
@@ -566,8 +589,8 @@ export function CharacterSheet() {
                       );
                     })
                 ) : (
-                  <div className="lines" style={{ marginTop: '2px' }}>
-                    {Array.from({ length: 9 }, (_, i) => (
+                  <div className="lines" style={{ marginTop: '2px', flexGrow: 1, overflow: 'hidden' }}>
+                    {Array.from({ length: 13 }, (_, i) => (
                       <div key={i}><input type="text" id={`hand-talent-line-${i+1}`} {...bindInput(`hand-talent-line-${i+1}`)} /></div>
                     ))}
                   </div>
@@ -575,11 +598,22 @@ export function CharacterSheet() {
               </div>
             </div>
 
+            {/* Magic star divider to fill space */}
+            <div className="divider" style={{ margin: '8px 0' }}>
+              <div className="divider-line"></div>
+              <svg viewBox="0 0 100 24" style={{ width: '65px', height: '18px', fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, margin: '0 8px', opacity: 0.8 }}>
+                <path d="M5,12 L38,12 M62,12 L95,12" strokeWidth="1" />
+                <polygon points="50,4 53,11 60,11 55,15 57,21 50,17 43,21 45,15 40,11 47,11" fill="#4a2e13" stroke="none" />
+                <circle cx="50" cy="12" r="7" stroke="#4a2e13" strokeWidth="0.8" />
+              </svg>
+              <div className="divider-line"></div>
+            </div>
+
             {/* Spellbook / Notes Lined Section */}
             <div className="parchment-box" style={{ height: '52mm' }}>
               <h3>Spellbook & Magic Scrolls</h3>
               <div className="lines" style={{ marginTop: '2px' }}>
-                {Array.from({ length: 7 }, (_, i) => (
+                {Array.from({ length: 10 }, (_, i) => (
                   <div key={i}><input type="text" id={`spell-line-${i+1}`} {...bindInput(`spell-line-${i+1}`)} /></div>
                 ))}
               </div>
@@ -758,9 +792,15 @@ export function CharacterSheet() {
                     </div>
                   </div>
                 </div>
-
               </div>
 
+            </div>
+
+            <div className="parchment-box" style={{ padding: '4px 6px', marginTop: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', fontFamily: 'Cinzel', fontWeight: 'bold', color: '#4a2e13' }}>
+                <span>🎯 Target Traps & Secret Doors first!</span>
+                <span>💀 Body Point 0 = Death!</span>
+              </div>
             </div>
           </div>
         </div>

@@ -57,15 +57,6 @@ export default function App() {
       {/* Top Sticky Navbar */}
       <Navbar />
 
-      {/* A5 Print Instructions Banner */}
-      <div className="print-banner no-print" style={{ marginTop: '10px' }}>
-        <h4>Physical Campaign Printing Guide</h4>
-        <p>
-          GeGe QUEST Companion sheets are engineered for standard <strong>A5 Paper dimensions (148mm x 210mm)</strong>. <br />
-          For physical binders: Set printing layout to <strong>Portrait</strong>, Scale to <strong>100% (or Default)</strong>, and select <strong>A5 Paper size</strong>.
-        </p>
-      </div>
-
       {/* Direct print error banner */}
       <div id="print-alert" className="print-error-box no-print" style={{ maxWidth: '800px', margin: '10px auto', width: '95%' }}>
         <strong>Attention:</strong> Direct print initiation is blocked by your browser's embedded iframe security policy. <br />

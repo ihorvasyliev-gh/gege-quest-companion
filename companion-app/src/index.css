@@ -19,6 +19,13 @@ body {
     align-items: center;
 }
 
+#root {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 /* --- Sticky Navigation Bar (Responsive) --- */
 .navbar {
     background: linear-gradient(135deg, #2a1805, #120902);
@@ -1061,10 +1068,6 @@ h1.main-title {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    overflow-y: auto;
-    max-height: 400px;
-    padding-right: 5px;
-    scrollbar-gutter: stable;
     width: 100%;
 }
 #codex-talent-list {
@@ -1290,21 +1293,30 @@ h1.main-title {
         font-size: 13px !important;
     }
 
-    /* Make rules Tome container and page full-width on mobile */
+    /* Make rules Tome container and page full-width on mobile, matching sheet pages */
     .tome-container {
         display: flex !important;
         flex-direction: column !important;
         align-items: stretch !important;
-        width: calc(100% - 16px) !important;
-        max-width: 600px;
+        width: 100% !important;
+        max-width: 600px !important;
         margin: 5px auto !important;
-        padding: 6px !important;
-        border-width: 4px !important;
+        padding: 0 8px !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
     .tome-page {
-        margin: 4px 2px !important;
-        padding: 16px 12px !important;
+        width: 100% !important;
+        max-width: 600px !important;
         min-height: auto !important;
+        padding: 24px 20px 30px 20px !important;
+        margin: 0 auto 15px auto !important;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
+        border-radius: 6px !important;
+        border: 2px solid #4a2e13 !important;
+        outline: 1px solid rgba(74,46,19,0.35) !important;
+        outline-offset: -6px !important;
     }
 }
 
@@ -1313,10 +1325,6 @@ h1.main-title {
     .print-banner {
         border-radius: 0;
         margin-bottom: 5px;
-    }
-    .tome-page {
-        padding: 15px 12px;
-        min-height: auto;
     }
     .rulebook-table {
         font-size: 11.5px;

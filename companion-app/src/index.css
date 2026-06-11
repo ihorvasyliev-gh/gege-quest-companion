@@ -1,4 +1,7 @@
 /* --- General Styles & Reset --- */
+html {
+    scrollbar-gutter: stable;
+}
 * {
     box-sizing: border-box;
     -webkit-print-color-adjust: exact !important;
@@ -1283,7 +1286,7 @@ h1.main-title {
 
     /* Make rules Tome container and page full-width on mobile */
     .tome-container {
-        width: 100% !important;
+        width: calc(100% - 16px) !important;
         max-width: 600px;
         margin: 5px auto !important;
         padding: 6px !important;

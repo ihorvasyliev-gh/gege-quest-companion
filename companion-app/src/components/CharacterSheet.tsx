@@ -865,7 +865,7 @@ export function CharacterSheet() {
                     {charState.class ? `${getClassNameReadable(charState.class)} Talents Reference` : 'Class Talents Reference'}
                   </h3>
                   <div id="ref-class-talents-content" style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-                    {Array.from({ length: 8 }).map((_, i) => {
+                    {Array.from({ length: 13 }).map((_, i) => {
                       const classTalents = charState.class ? (TALENTS.classes[charState.class] || []) : [];
                       const talent = classTalents[i];
                       if (talent) {
@@ -894,7 +894,7 @@ export function CharacterSheet() {
                 <div className="parchment-box reference-box h-68mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <h3>Shared Talents Reference</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-                    {Array.from({ length: 8 }).map((_, i) => {
+                    {Array.from({ length: 13 }).map((_, i) => {
                       const talent = TALENTS.shared[i];
                       if (talent) {
                         return (
@@ -922,7 +922,7 @@ export function CharacterSheet() {
                 <div className="parchment-box reference-box h-38mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <h3>Notes & Special Rules</h3>
                   <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                    {Array.from({ length: 7 }, (_, i) => {
+                    {Array.from({ length: 8 }, (_, i) => {
                       const lineIndex = i + 1;
                       return (
                         <div key={`notes-line-${lineIndex}`}>

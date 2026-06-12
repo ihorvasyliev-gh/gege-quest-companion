@@ -701,7 +701,7 @@ export function CharacterSheet() {
               <h3>Permanent Stat Advancements (AP Purchases)</h3>
               <div className="stat-upgrades-grid">
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Toughness (Body, Max +3)</span>
+                  <span className="stat-upgrade-label">Toughness (Body)</span>
                   <div className="stat-upgrade-slots">
                     {Array.from({ length: 3 }, (_, i) => (
                       <div
@@ -713,7 +713,7 @@ export function CharacterSheet() {
                   </div>
                 </div>
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Iron Will (Mind, Max +2)</span>
+                  <span className="stat-upgrade-label">Iron Will (Mind)</span>
                   <div className="stat-upgrade-slots">
                     {Array.from({ length: 2 }, (_, i) => (
                       <div
@@ -725,13 +725,13 @@ export function CharacterSheet() {
                   </div>
                 </div>
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Attack Die (Max +1)</span>
+                  <span className="stat-upgrade-label">Attack Die</span>
                   <div className="stat-upgrade-slots">
                     <div className="stat-upgrade-slot" id="slot-attack-1"></div>
                   </div>
                 </div>
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Defend Die (Max +1)</span>
+                  <span className="stat-upgrade-label">Defend Die</span>
                   <div className="stat-upgrade-slots">
                     <div
                       className={`stat-upgrade-slot ${(charState.purchasedTalents['living_fortress'] || 0) > 0 ? 'checked' : ''}`}

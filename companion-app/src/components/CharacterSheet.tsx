@@ -860,91 +860,73 @@ export function CharacterSheet() {
               <div className="reference-column">
                 
                 {/* Class Talents Reference Box */}
-                <div className="parchment-box reference-box h-110mm" style={{ overflow: 'hidden' }}>
+                <div className="parchment-box reference-box h-68mm" style={{ overflow: 'hidden' }}>
                   <h3 id="ref-class-title">
                     {charState.class ? `${getClassNameReadable(charState.class)} Talents Reference` : 'Class Talents Reference'}
                   </h3>
-                  <div id="ref-class-talents-content" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    {charState.class && TALENTS.classes[charState.class] ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px', height: '100%' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px' }}>
-                          {TALENTS.classes[charState.class].map((talent) => (
-                            <div key={talent.id} className="ref-talent-item">
-                              <span className="ref-talent-name">{talent.name}</span>
-                              <span className="ref-talent-cost">{talent.cost} AP</span>
-                              {talent.desc}
+                  <div id="ref-class-talents-content" style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
+                    {Array.from({ length: 8 }).map((_, i) => {
+                      const classTalents = charState.class ? (TALENTS.classes[charState.class] || []) : [];
+                      const talent = classTalents[i];
+                      if (talent) {
+                        return (
+                          <div key={`class-tal-${talent.id}`} className="ref-talent-item">
+                            <span className="ref-talent-name">{talent.name}</span>
+                            <span className="ref-talent-cost">{talent.cost} AP</span>
+                            {talent.desc}
+                          </div>
+                        );
+                      } else {
+                        const lineIndex = i + 1;
+                        return (
+                          <div key={`class-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
+                            <div>
+                              <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
                             </div>
-                          ))}
-                        </div>
-                        <div className="divider" style={{ margin: '8px 0 4px 0' }}>
-                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
-                          <span style={{ fontFamily: 'Cinzel, serif', fontSize: '7.5px', color: '#724216', padding: '0 6px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.6 }}>Notes & Special Rules</span>
-                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
-                        </div>
-                        <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                          {(() => {
-                            const talentsCount = TALENTS.classes[charState.class].length;
-                            const linesCount = talentsCount >= 5 ? 6 : 7;
-                            const startIndex = 15 - linesCount;
-                            return Array.from({ length: linesCount }, (_, i) => {
-                              const lineIndex = startIndex + i;
-                              return (
-                                <div key={lineIndex}>
-                                  <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
-                                </div>
-                              );
-                            });
-                          })()}
-                        </div>
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5px', overflow: 'hidden', paddingTop: '2px', height: '100%' }}>
-                        <div className="lines" style={{ marginTop: '2px' }}>
-                          {Array.from({ length: 7 }, (_, i) => (
-                            <div key={i}><input type="text" id={`ref-class-line-${i+1}`} {...bindInput(`ref-class-line-${i+1}`)} /></div>
-                          ))}
-                        </div>
-                        <div className="divider" style={{ margin: '8px 0 4px 0' }}>
-                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
-                          <span style={{ fontFamily: 'Cinzel, serif', fontSize: '7.5px', color: '#724216', padding: '0 6px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.6 }}>Notes & Special Rules</span>
-                          <div className="divider-line" style={{ opacity: 0.3 }}></div>
-                        </div>
-                        <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                          {Array.from({ length: 7 }, (_, i) => {
-                            const lineIndex = 8 + i;
-                            return (
-                              <div key={lineIndex}>
-                                <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
 
                 {/* Shared Talents Reference Box */}
-                <div className="parchment-box reference-box h-65mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                <div className="parchment-box reference-box h-68mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <h3>Shared Talents Reference</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <div className="ref-talent-item"><span className="ref-talent-name">Toughness</span><span className="ref-talent-cost">1 AP</span>+1 Body Point (Max 3 purchases)</div>
-                    <div className="ref-talent-item"><span className="ref-talent-name">Iron Will</span><span className="ref-talent-cost">1 AP</span>+1 Mind Point (Max 2 purchases)</div>
-                    <div className="ref-talent-item"><span className="ref-talent-name">Veteran</span><span className="ref-talent-cost">1 AP</span>Once per quest reroll one die.</div>
-                    <div className="ref-talent-item"><span className="ref-talent-name">Lucky</span><span className="ref-talent-cost">2 AP</span>Once per quest redraw a treasure card.</div>
-                    <div className="ref-talent-item"><span className="ref-talent-name">Battle Hardened</span><span className="ref-talent-cost">2 AP</span>Ignore 1st damage point each quest.</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
+                    {Array.from({ length: 8 }).map((_, i) => {
+                      const talent = TALENTS.shared[i];
+                      if (talent) {
+                        return (
+                          <div key={`shared-tal-${talent.id}`} className="ref-talent-item">
+                            <span className="ref-talent-name">{talent.name}</span>
+                            <span className="ref-talent-cost">{talent.cost} AP</span>
+                            {talent.desc}
+                          </div>
+                        );
+                      } else {
+                        const lineIndex = i + 1;
+                        return (
+                          <div key={`shared-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
+                            <div>
+                              <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
-                  <div className="divider" style={{ margin: '8px 0 4px 0' }}>
-                    <div className="divider-line" style={{ opacity: 0.3 }}></div>
-                    <span style={{ fontFamily: 'Cinzel, serif', fontSize: '7.5px', color: '#724216', padding: '0 6px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.6 }}>Campaign Notes</span>
-                    <div className="divider-line" style={{ opacity: 0.3 }}></div>
-                  </div>
+                </div>
+
+                {/* Notes & Special Rules Box */}
+                <div className="parchment-box reference-box h-38mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  <h3>Notes & Special Rules</h3>
                   <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                    {Array.from({ length: 5 }, (_, i) => {
+                    {Array.from({ length: 7 }, (_, i) => {
                       const lineIndex = i + 1;
                       return (
-                        <div key={lineIndex}>
-                          <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                        <div key={`notes-line-${lineIndex}`}>
+                          <input type="text" id={`ref-notes-line-${lineIndex}`} {...bindInput(`ref-notes-line-${lineIndex}`)} />
                         </div>
                       );
                     })}

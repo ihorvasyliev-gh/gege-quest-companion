@@ -690,7 +690,7 @@ export function CharacterSheet() {
             <path d="M100,28 L100,15 M172,72 L182,65 M142,148 L150,158 M58,148 L50,158 M28,72 L18,65" stroke="#5c3e21" strokeWidth="0.8" opacity="0.2"/>
           </svg>
 
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
             <div className="header-container">
               <h1 className="main-title" style={{ fontSize: '20px' }}>SPELLS & TALENTS</h1>
               <div className="subtitle" style={{ fontSize: '9px', letterSpacing: '2px' }}>Advancements & Codex</div>
@@ -743,7 +743,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Magic star divider to fill space */}
-            <div className="divider" style={{ margin: '8px 0' }}>
+            <div className="divider" style={{ margin: '4px 0' }}>
               <div className="divider-line"></div>
               <svg viewBox="0 0 100 24" style={{ width: '65px', height: '18px', fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, margin: '0 8px', opacity: 0.8 }}>
                 <path d="M5,12 L38,12 M62,12 L95,12" strokeWidth="1" />
@@ -754,8 +754,16 @@ export function CharacterSheet() {
             </div>
 
             {/* Unlocked Talents Box */}
-            <div className="parchment-box h-68mm" style={{ display: 'flex', flexDirection: 'column' }}>
-              <h3>Unlocked Talents & Special Abilities</h3>
+            <div className="parchment-box h-75mm" style={{ display: 'flex', flexDirection: 'column' }}>
+              <h3>
+                <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round', marginRight: '4px' }}>
+                  <circle cx="7.5" cy="16.5" r="3.5" />
+                  <path d="M10 14L19 5" />
+                  <path d="M16 8L18 10" />
+                  <path d="M19 5L21 7" />
+                </svg>
+                Unlocked Talents & Special Abilities
+              </h3>
               <div className="unlocked-talents-list" id="unlocked-talents-list" style={{ display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden', flexGrow: 1 }}>
                 {Object.keys(charState.purchasedTalents).filter(tid => charState.purchasedTalents[tid] > 0).length > 0 ? (
                   Object.keys(charState.purchasedTalents)
@@ -774,7 +782,7 @@ export function CharacterSheet() {
                     })
                 ) : (
                   <div className="lines" style={{ marginTop: '2px', flexGrow: 1, overflow: 'hidden' }}>
-                    {Array.from({ length: 13 }, (_, i) => (
+                    {Array.from({ length: 15 }, (_, i) => (
                       <div key={i}><input type="text" id={`hand-talent-line-${i+1}`} {...bindInput(`hand-talent-line-${i+1}`)} /></div>
                     ))}
                   </div>
@@ -783,7 +791,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Magic star divider to fill space */}
-            <div className="divider" style={{ margin: '8px 0' }}>
+            <div className="divider" style={{ margin: '4px 0' }}>
               <div className="divider-line"></div>
               <svg viewBox="0 0 100 24" style={{ width: '65px', height: '18px', fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, margin: '0 8px', opacity: 0.8 }}>
                 <path d="M5,12 L38,12 M62,12 L95,12" strokeWidth="1" />
@@ -794,10 +802,17 @@ export function CharacterSheet() {
             </div>
 
             {/* Spellbook / Notes Lined Section */}
-            <div className="parchment-box h-52mm">
-              <h3>Spellbook & Magic Scrolls</h3>
+            <div className="parchment-box h-65mm">
+              <h3>
+                <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round', marginRight: '4px' }}>
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" fill="#5c3e21" fillOpacity="0.1" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" fill="#5c3e21" fillOpacity="0.1" />
+                  <path d="M12 5v14" />
+                </svg>
+                Spellbook & Magic Scrolls
+              </h3>
               <div className="lines" style={{ marginTop: '2px' }}>
-                {Array.from({ length: 10 }, (_, i) => (
+                {Array.from({ length: 13 }, (_, i) => (
                   <div key={i}><input type="text" id={`spell-line-${i+1}`} {...bindInput(`spell-line-${i+1}`)} /></div>
                 ))}
               </div>

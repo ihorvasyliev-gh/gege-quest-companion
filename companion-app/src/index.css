@@ -1121,17 +1121,16 @@ h1.main-title {
 .stat-upgrades-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
+    gap: 4px 16px;
     margin-bottom: 4px;
 }
 .stat-upgrade-card {
-    border: 1px dashed #bba185;
-    border-radius: 4px;
-    padding: 4px 6px;
+    border-bottom: 1px dotted rgba(92, 62, 33, 0.35);
+    padding: 3px 2px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(255,255,255,0.22);
+    background-color: transparent;
 }
 .stat-upgrade-label {
     font-family: 'Cinzel', serif;

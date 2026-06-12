@@ -418,7 +418,15 @@ export function CharacterSheet() {
                   </div>
                 </div>
               </div>
-              <div className="field" style={{ marginBottom: 0, marginTop: '4px' }}><label style={{ fontSize: '7.5px' }}>Abilities:</label><input type="text" id="pet-abilities" {...bindInput('pet-abilities')} /></div>
+              <div style={{ marginTop: '4px' }}>
+                <div style={{ fontFamily: 'Cinzel, serif', fontSize: '8px', fontWeight: 700, color: '#4a2e13', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Abilities:</div>
+                <div className="lines">
+                  <div><input type="text" id="pet-ability-1" {...bindInput('pet-ability-1')} /></div>
+                  <div><input type="text" id="pet-ability-2" {...bindInput('pet-ability-2')} /></div>
+                  <div><input type="text" id="pet-ability-3" {...bindInput('pet-ability-3')} /></div>
+                  <div><input type="text" id="pet-ability-4" {...bindInput('pet-ability-4')} /></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

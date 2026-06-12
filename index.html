@@ -1280,7 +1280,7 @@
             input::placeholder {
                 color: transparent !important;
             }
-            .xp-zero-print .field input {
+            .xp-zero-print .lines input {
                 color: transparent !important;
                 -webkit-text-fill-color: transparent !important;
             }
@@ -1651,39 +1651,49 @@
                     <div class="row" style="margin-bottom: 8px;">
                         <!-- Gold Coin Box -->
                         <div class="parchment-box flex-1" style="height: 38mm;">
-                            <!-- Treasure Chest with Coins -->
+                            <!-- Gold Coins Illustration -->
                             <svg class="box-illustration" viewBox="0 0 100 100">
-                                <!-- Chest body -->
-                                <path d="M25,55 L75,55 L75,85 L25,85 Z" fill="#4a2e13" opacity="0.15"/>
-                                <!-- Chest lid -->
-                                <path d="M22,55 L78,55 L78,48 C78,40 65,38 50,38 C35,38 22,40 22,48 Z" fill="#4a2e13" opacity="0.12"/>
-                                <!-- Chest band -->
-                                <path d="M45,38 L45,85 M55,38 L55,85" stroke="#4a2e13" stroke-width="1.5" opacity="0.1"/>
-                                <!-- Keyhole -->
-                                <circle cx="50" cy="65" r="3" fill="#4a2e13" opacity="0.15"/>
-                                <path d="M50,68 L50,73" stroke="#4a2e13" stroke-width="2" opacity="0.12"/>
-                                <!-- Scattered coins -->
-                                <ellipse cx="35" cy="32" rx="6" ry="3" fill="#4a2e13" opacity="0.1"/>
-                                <ellipse cx="58" cy="30" rx="5" ry="2.5" fill="#4a2e13" opacity="0.12"/>
-                                <ellipse cx="48" cy="28" rx="5" ry="2.5" fill="#4a2e13" opacity="0.08"/>
-                                <ellipse cx="68" cy="34" rx="4" ry="2" fill="#4a2e13" opacity="0.1"/>
+                                <!-- Stack 1 (left/back) -->
+                                <ellipse cx="38" cy="55" rx="12" ry="5" fill="#4a2e13" opacity="0.08"/>
+                                <ellipse cx="38" cy="61" rx="12" ry="5" fill="#4a2e13" opacity="0.1"/>
+                                <ellipse cx="38" cy="67" rx="12" ry="5" fill="#4a2e13" opacity="0.12"/>
+                                <ellipse cx="38" cy="73" rx="12" ry="5" fill="#4a2e13" opacity="0.14"/>
+                                <ellipse cx="38" cy="79" rx="12" ry="5" fill="#4a2e13" opacity="0.16"/>
+                                
+                                <!-- Stack 2 (right/back) -->
+                                <ellipse cx="62" cy="58" rx="11" ry="4.5" fill="#4a2e13" opacity="0.08"/>
+                                <ellipse cx="62" cy="64" rx="11" ry="4.5" fill="#4a2e13" opacity="0.1"/>
+                                <ellipse cx="62" cy="70" rx="11" ry="4.5" fill="#4a2e13" opacity="0.12"/>
+                                <ellipse cx="62" cy="76" rx="11" ry="4.5" fill="#4a2e13" opacity="0.14"/>
+                                <ellipse cx="62" cy="82" rx="11" ry="4.5" fill="#4a2e13" opacity="0.16"/>
+
+                                <!-- Stack 3 (center/front) -->
+                                <ellipse cx="50" cy="66" rx="13" ry="5.5" fill="#4a2e13" opacity="0.1"/>
+                                <ellipse cx="50" cy="72" rx="13" ry="5.5" fill="#4a2e13" opacity="0.12"/>
+                                <ellipse cx="50" cy="78" rx="13" ry="5.5" fill="#4a2e13" opacity="0.14"/>
+                                <ellipse cx="50" cy="84" rx="13" ry="5.5" fill="#4a2e13" opacity="0.16"/>
+                                <ellipse cx="50" cy="90" rx="13" ry="5.5" fill="#4a2e13" opacity="0.18"/>
+
+                                <!-- Some scattered coins -->
+                                <ellipse cx="25" cy="85" rx="10" ry="4" fill="#4a2e13" opacity="0.12" transform="rotate(-15 25 85)"/>
+                                <ellipse cx="75" cy="83" rx="10" ry="4" fill="#4a2e13" opacity="0.14" transform="rotate(20 75 83)"/>
+                                <ellipse cx="32" cy="88" rx="9" ry="3.5" fill="#4a2e13" opacity="0.1" transform="rotate(5 32 88)"/>
                             </svg>
                             
                             <div class="gold-header">
                                 <h3>
-                                    <!-- Treasure Chest Icon -->
+                                    <!-- Gold Coins Icon -->
                                     <svg class="deco-icon" viewBox="0 0 24 24" width="13" height="13">
-                                        <path d="M4,12 L20,12 L20,20 L4,20 Z M4,12 L20,12 C20,8 16,6 12,6 C8,6 4,8 4,12 Z M10,6 L10,20 M14,6 L14,20" fill="none" stroke="#5c3e21" stroke-width="1.2"/>
-                                        <circle cx="12" cy="15" r="1.2" fill="#5c3e21"/>
+                                        <circle cx="8" cy="12" r="5" fill="#fdf8eb" stroke="#5c3e21" stroke-width="1.3"/>
+                                        <circle cx="8" cy="12" r="2.5" fill="none" stroke="#5c3e21" stroke-width="0.8"/>
+                                        <circle cx="15" cy="12" r="5" fill="#fdf8eb" stroke="#5c3e21" stroke-width="1.3"/>
+                                        <circle cx="15" cy="12" r="2.5" fill="none" stroke="#5c3e21" stroke-width="0.8"/>
                                     </svg>
                                     Gold Coins
                                 </h3>
                             </div>
-                            <div class="field" style="margin-bottom: 2px;">
-                                <label style="font-size: 8px;">Current Gold:</label>
-                                <input type="text" id="char-gold" style="font-weight: bold; color: #724216; font-size: 13px;" placeholder="">
-                            </div>
                             <div class="lines" style="margin-top: 2px;">
+                                <div><input type="text" id="char-gold" placeholder=""></div>
                                 <div><input type="text" id="gold-line-1" placeholder=""></div>
                                 <div><input type="text" id="gold-line-2" placeholder=""></div>
                                 <div><input type="text" id="gold-line-3" placeholder=""></div>
@@ -1723,10 +1733,13 @@
                                 </svg>
                                 XP & Level
                             </h3>
-                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 3px;">
-                                <div class="field"><label style="font-size: 8.5px;">Current XP:</label><input type="text" id="char-xp" placeholder="" onchange="updateCharacterState()"></div>
-                                <div class="field"><label style="font-size: 8.5px;">Next Level:</label><input type="text" id="char-next-level" placeholder=""></div>
-                                <div class="field" style="margin-bottom: 0;"><label style="font-size: 8.5px;">Hero Rank:</label><input type="text" id="char-rank" placeholder=""></div>
+                            <div class="lines" style="margin-top: 2px;">
+                                <div><input type="text" id="char-xp" placeholder="" onchange="updateCharacterState()"></div>
+                                <div><input type="text" id="char-next-level" placeholder=""></div>
+                                <div><input type="text" id="char-rank" placeholder=""></div>
+                                <div><input type="text" id="xp-line-1" placeholder=""></div>
+                                <div><input type="text" id="xp-line-2" placeholder=""></div>
+                                <div><input type="text" id="xp-line-3" placeholder=""></div>
                             </div>
                         </div>
                     </div>

@@ -193,32 +193,49 @@ export function CharacterSheet() {
             {/* Gold Ledger & XP block */}
             <div className="row" style={{ marginBottom: '8px' }}>
               <div className="parchment-box flex-1 h-38mm">
+                {/* Gold Coins Illustration */}
                 <svg className="box-illustration" viewBox="0 0 100 100">
-                  <path d="M25,55 L75,55 L75,85 L25,85 Z" fill="#4a2e13" opacity="0.15"/>
-                  <path d="M22,55 L78,55 L78,48 C78,40 65,38 50,38 C35,38 22,40 22,48 Z" fill="#4a2e13" opacity="0.12"/>
-                  <path d="M45,38 L45,85 M55,38 L55,85" stroke="#4a2e13" strokeWidth="1.5" opacity="0.1"/>
-                  <circle cx="50" cy="65" r="3" fill="#4a2e13" opacity="0.15"/>
-                  <path d="M50,68 L50,73" stroke="#4a2e13" strokeWidth="2" opacity="0.12"/>
-                  <ellipse cx="35" cy="32" rx="6" ry="3" fill="#4a2e13" opacity="0.1"/>
-                  <ellipse cx="58" cy="30" rx="5" ry="2.5" fill="#4a2e13" opacity="0.12"/>
-                  <ellipse cx="48" cy="28" rx="5" ry="2.5" fill="#4a2e13" opacity="0.08"/>
-                  <ellipse cx="68" cy="34" rx="4" ry="2" fill="#4a2e13" opacity="0.1"/>
+                  {/* Stack 1 (left/back) */}
+                  <ellipse cx="38" cy="55" rx="12" ry="5" fill="#4a2e13" opacity="0.08"/>
+                  <ellipse cx="38" cy="61" rx="12" ry="5" fill="#4a2e13" opacity="0.1"/>
+                  <ellipse cx="38" cy="67" rx="12" ry="5" fill="#4a2e13" opacity="0.12"/>
+                  <ellipse cx="38" cy="73" rx="12" ry="5" fill="#4a2e13" opacity="0.14"/>
+                  <ellipse cx="38" cy="79" rx="12" ry="5" fill="#4a2e13" opacity="0.16"/>
+                  
+                  {/* Stack 2 (right/back) */}
+                  <ellipse cx="62" cy="58" rx="11" ry="4.5" fill="#4a2e13" opacity="0.08"/>
+                  <ellipse cx="62" cy="64" rx="11" ry="4.5" fill="#4a2e13" opacity="0.1"/>
+                  <ellipse cx="62" cy="70" rx="11" ry="4.5" fill="#4a2e13" opacity="0.12"/>
+                  <ellipse cx="62" cy="76" rx="11" ry="4.5" fill="#4a2e13" opacity="0.14"/>
+                  <ellipse cx="62" cy="82" rx="11" ry="4.5" fill="#4a2e13" opacity="0.16"/>
+
+                  {/* Stack 3 (center/front) */}
+                  <ellipse cx="50" cy="66" rx="13" ry="5.5" fill="#4a2e13" opacity="0.1"/>
+                  <ellipse cx="50" cy="72" rx="13" ry="5.5" fill="#4a2e13" opacity="0.12"/>
+                  <ellipse cx="50" cy="78" rx="13" ry="5.5" fill="#4a2e13" opacity="0.14"/>
+                  <ellipse cx="50" cy="84" rx="13" ry="5.5" fill="#4a2e13" opacity="0.16"/>
+                  <ellipse cx="50" cy="90" rx="13" ry="5.5" fill="#4a2e13" opacity="0.18"/>
+
+                  {/* Some scattered coins */}
+                  <ellipse cx="25" cy="85" rx="10" ry="4" fill="#4a2e13" opacity="0.12" transform="rotate(-15 25 85)"/>
+                  <ellipse cx="75" cy="83" rx="10" ry="4" fill="#4a2e13" opacity="0.14" transform="rotate(20 75 83)"/>
+                  <ellipse cx="32" cy="88" rx="9" ry="3.5" fill="#4a2e13" opacity="0.1" transform="rotate(5 32 88)"/>
                 </svg>
                 
                 <div className="gold-header">
                   <h3>
+                    {/* Gold Coins Icon */}
                     <svg className="deco-icon" viewBox="0 0 24 24" width="13" height="13">
-                      <path d="M4,12 L20,12 L20,20 L4,20 Z M4,12 L20,12 C20,8 16,6 12,6 C8,6 4,8 4,12 Z M10,6 L10,20 M14,6 L14,20" fill="none" stroke="#5c3e21" strokeWidth="1.2"/>
-                      <circle cx="12" cy="15" r="1.2" fill="#5c3e21"/>
+                      <circle cx="8" cy="12" r="5" fill="#fdf8eb" stroke="#5c3e21" strokeWidth="1.3"/>
+                      <circle cx="8" cy="12" r="2.5" fill="none" stroke="#5c3e21" strokeWidth="0.8"/>
+                      <circle cx="15" cy="12" r="5" fill="#fdf8eb" stroke="#5c3e21" strokeWidth="1.3"/>
+                      <circle cx="15" cy="12" r="2.5" fill="none" stroke="#5c3e21" strokeWidth="0.8"/>
                     </svg>
                     Gold Coins
                   </h3>
                 </div>
-                <div className="field" style={{ marginBottom: '2px' }}>
-                  <label style={{ fontSize: '8px' }}>Current Gold:</label>
-                  <input type="text" id="char-gold" style={{ fontWeight: 'bold', color: '#724216', fontSize: '13px' }} {...bindInput('char-gold')} />
-                </div>
                 <div className="lines" style={{ marginTop: '2px' }}>
+                  <div><input type="text" id="char-gold" {...bindInput('char-gold')} /></div>
                   {Array.from({ length: 5 }, (_, i) => (
                     <div key={i}><input type="text" id={`gold-line-${i+1}`} {...bindInput(`gold-line-${i+1}`)} /></div>
                   ))}
@@ -231,9 +248,9 @@ export function CharacterSheet() {
                   <circle cx="50" cy="50" r="35" strokeDasharray="3 3" strokeWidth="1"/>
                   <circle cx="50" cy="50" r="28" strokeWidth="0.6"/>
                   <polygon points="50,18 53,42 50,38 47,42" fill="#855d14" fillOpacity="0.2" stroke="#855d14" strokeWidth="0.8"/>
-                  <polygon points="50,82 53,58 50,62 47,58" fill="#855d14" fillOpacity="0.1" stroke="#855d14" strokeWidth="0.8"/>
-                  <polygon points="18,50 42,47 38,50 42,53" fill="#855d14" fillOpacity="0.1" stroke="#855d14" strokeWidth="0.8"/>
-                  <polygon points="82,50 58,47 62,50 58,53" fill="#855d14" fillOpacity="0.1" stroke="#855d14" strokeWidth="0.8"/>
+                  <polygon points="50,82 53,58 50,62 47,58" fill="#855d14" fill-opacity="0.1" stroke="#855d14" stroke-width="0.8"/>
+                  <polygon points="18,50 42,47 38,50 42,53" fill="#855d14" fill-opacity="0.1" stroke="#855d14" stroke-width="0.8"/>
+                  <polygon points="82,50 58,47 62,50 58,53" fill="#855d14" fill-opacity="0.1" stroke="#855d14" stroke-width="0.8"/>
                   <path d="M30,30 L45,45 M70,30 L55,45 M30,70 L45,55 M70,70 L55,55" strokeWidth="0.6" opacity="0.5"/>
                   <circle cx="50" cy="50" r="4" fill="#f3e5c8" stroke="#855d14" strokeWidth="1"/>
                   <circle cx="50" cy="50" r="1.5" fill="#855d14"/>
@@ -249,10 +266,13 @@ export function CharacterSheet() {
                   </svg>
                   XP & Level
                 </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '3px' }}>
-                  <div className="field"><label style={{ fontSize: '8.5px' }}>Current XP:</label><input type="text" id="char-xp" {...bindInput('char-xp')} /></div>
-                  <div className="field"><label style={{ fontSize: '8.5px' }}>Next Level:</label><input type="text" id="char-next-level" readOnly {...bindInput('char-next-level')} /></div>
-                  <div className="field" style={{ marginBottom: 0 }}><label style={{ fontSize: '8.5px' }}>Hero Rank:</label><input type="text" id="char-rank" {...bindInput('char-rank')} /></div>
+                <div className="lines" style={{ marginTop: '2px' }}>
+                  <div><input type="text" id="char-xp" {...bindInput('char-xp')} /></div>
+                  <div><input type="text" id="char-next-level" readOnly {...bindInput('char-next-level')} /></div>
+                  <div><input type="text" id="char-rank" {...bindInput('char-rank')} /></div>
+                  <div><input type="text" id="xp-line-1" {...bindInput('xp-line-1')} /></div>
+                  <div><input type="text" id="xp-line-2" {...bindInput('xp-line-2')} /></div>
+                  <div><input type="text" id="xp-line-3" {...bindInput('xp-line-3')} /></div>
                 </div>
               </div>
             </div>

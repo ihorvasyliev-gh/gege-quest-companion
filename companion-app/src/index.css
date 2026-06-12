@@ -1405,7 +1405,7 @@ h1.main-title {
     input::placeholder {
         color: transparent !important;
     }
-    .xp-zero-print .field input {
+    .xp-zero-print .lines input {
         color: transparent !important;
         -webkit-text-fill-color: transparent !important;
     }

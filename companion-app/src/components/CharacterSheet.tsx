@@ -460,14 +460,14 @@ export function CharacterSheet() {
             <path d="M135,65 C145,75 145,90 140,100 C150,90 152,75 145,62 Z" fill="#5c3e21" opacity="0.15"/>
           </svg>
 
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
             <div className="header-container">
               <h1 className="main-title" style={{ fontSize: '20px' }}>THE HERO'S ARSENAL</h1>
               <div className="subtitle" style={{ fontSize: '9px', letterSpacing: '2.5px' }}>Equipment & Trophies</div>
             </div>
 
             {/* Combat Gear Layout */}
-            <div className="row h-38mm">
+            <div className="row h-38mm" style={{ marginBottom: '8px' }}>
               <div className="parchment-box flex-1 lined-zone" style={{ zIndex: 2 }}>
                 {/* Detailed Weapon Rack Illustration */}
                 <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.085, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
@@ -635,7 +635,7 @@ export function CharacterSheet() {
                 <h1 className="main-title" style={{ fontSize: '20px' }}>DEFEATED FOES</h1>
               </div>
               
-              <div className="parchment-box h-112mm" style={{ overflow: 'hidden', zIndex: 2 }}>
+              <div className="parchment-box h-125mm" style={{ overflow: 'hidden', zIndex: 2 }}>
                 {/* Large Thematic Skull Watermark */}
                 <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', height: '70%', width: 'auto', opacity: 0.035, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round', pointerEvents: 'none', zIndex: 1 }}>
                   {/* Left Horn */}
@@ -672,7 +672,7 @@ export function CharacterSheet() {
                   <span style={{ marginLeft: 'auto', marginRight: '15px' }}>Kills</span>
                 </h3>
                 <div className="monster-lines">
-                  {Array.from({ length: 18 }, (_, index) => {
+                  {Array.from({ length: 22 }, (_, index) => {
                     const i = index + 1;
                     const nameId = `foe-name-${i}`;
                     const killsId = `foe-kills-${i}`;

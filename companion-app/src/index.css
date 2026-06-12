@@ -302,6 +302,7 @@ body {
 .h-100mm { height: 100mm; }
 .h-110mm { height: 110mm; }
 .h-112mm { height: 112mm; }
+.h-125mm { height: 125mm; }
 
 /* Keep elements side-by-side even on mobile (e.g. stats) */
 .row-no-stack {
@@ -1220,7 +1221,7 @@ h1.main-title {
     }
     
     /* Override fixed physical heights to expand automatically */
-    .h-38mm, .h-43mm, .h-52mm, .h-65mm, .h-68mm, .h-75mm, .h-100mm, .h-110mm, .h-112mm {
+    .h-38mm, .h-43mm, .h-52mm, .h-65mm, .h-68mm, .h-75mm, .h-100mm, .h-110mm, .h-112mm, .h-125mm {
         height: auto !important;
     }
     
@@ -1366,6 +1367,7 @@ h1.main-title {
     .h-100mm { height: 100mm !important; }
     .h-110mm { height: 110mm !important; }
     .h-112mm { height: 112mm !important; }
+    .h-125mm { height: 125mm !important; }
 
     input::placeholder {
         color: transparent !important;

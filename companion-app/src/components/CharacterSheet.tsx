@@ -632,10 +632,34 @@ export function CharacterSheet() {
             {/* Giant Defeated Foes Ledger */}
             <div>
               <div className="header-container" style={{ marginTop: '6px', marginBottom: '6px' }}>
-                <h1 className="main-title" style={{ fontSize: '20px' }}>THE LEDGER OF DEFEATED FOES</h1>
+                <h1 className="main-title" style={{ fontSize: '20px' }}>DEFEATED FOES</h1>
               </div>
               
               <div className="parchment-box h-112mm" style={{ overflow: 'hidden', zIndex: 2 }}>
+                {/* Large Thematic Skull Watermark */}
+                <svg viewBox="0 0 100 100" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', height: '70%', width: 'auto', opacity: 0.035, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round', pointerEvents: 'none', zIndex: 1 }}>
+                  {/* Left Horn */}
+                  <path d="M38,40 C22,35 15,18 20,8 C22,5 28,12 30,22 C32,29 36,36 38,40 Z" />
+                  <path d="M25,25 C20,20 18,15 22,12" opacity={0.6} />
+                  {/* Right Horn */}
+                  <path d="M62,40 C78,35 85,18 80,8 C78,5 72,12 70,22 C68,29 64,36 62,40 Z" />
+                  <path d="M75,25 C80,20 82,15 78,12" opacity={0.6} />
+                  {/* Skull Main Body */}
+                  <path d="M38,40 C36,44 34,50 34,60 C34,70 38,72 40,78 C42,82 43,86 45,86 C47,86 47,80 50,80 C53,80 53,86 55,86 C57,86 58,82 60,78 C62,72 66,70 66,60 C66,50 64,44 62,40 C58,35 42,35 38,40 Z" strokeWidth={1.5} />
+                  {/* Eyeballs/Cavities */}
+                  <path d="M41,48 C37,50 37,58 43,58 C47,58 47,50 41,48 Z" fill="#4a2e13" fillOpacity={0.08} />
+                  <path d="M59,48 C63,50 63,58 57,58 C53,58 53,50 59,48 Z" fill="#4a2e13" fillOpacity={0.08} />
+                  {/* Nasal Cavity */}
+                  <path d="M48,64 L52,64 L50,58 Z" fill="#4a2e13" fillOpacity={0.15} />
+                  {/* Cracks */}
+                  <path d="M50,37 L50,45" opacity={0.5} />
+                  <path d="M38,41 L42,43 M62,41 L58,43" opacity={0.5} />
+                  <path d="M34,55 C32,56 30,55 28,57" opacity={0.4} />
+                  <path d="M66,55 C68,56 70,55 72,57" opacity={0.4} />
+                  {/* Teeth Detail */}
+                  <path d="M43,74 L45,71 L47,74 L49,71 L51,71 L53,74 L55,71 L57,74" />
+                </svg>
+
                 <h3>
                   <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '3px' }}>
                     <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>

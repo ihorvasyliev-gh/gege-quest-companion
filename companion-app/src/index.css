@@ -712,59 +712,32 @@ h1.main-title {
 }
 
 /* --- Back Page: MONSTER SLAYER LEDGER --- */
-.monster-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.monster-table th {
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    font-weight: 900;
-    background: #4a2e13;
-    color: #fffdfa;
-    padding: 5px;
-    text-align: left;
-    border: 1px solid #4a2e13;
-    text-transform: uppercase;
-}
-.monster-table td {
-    border-bottom: 1px solid rgba(92, 62, 33, 0.22);
-    height: 19.5px;
-    vertical-align: middle;
-    padding: 0;
-}
-.monster-table td.num {
-    width: 20px;
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    font-weight: bold;
-    text-align: center;
-    color: #5c3e21;
-    border-right: 1px dashed rgba(92, 62, 33, 0.2);
-}
-.monster-table td.name-input {
-    padding-left: 6px;
-}
-.monster-table td.name-input input {
-    width: 100%;
+.monster-lines {
+    display: flex;
+    flex-direction: column;
     height: 100%;
+}
+.monster-line {
+    height: 19.5px;
+    border-bottom: 1px dotted rgba(92, 62, 33, 0.3);
+    display: flex;
+    align-items: center;
+}
+.monster-name-input {
+    flex: 1;
     border: none;
     background: transparent;
     font-family: 'MedievalSharp', cursive;
     font-size: 11px;
     color: #2a1805;
+    height: 100%;
+    padding-left: 6px;
 }
-.monster-table td.name-input input:focus {
+.monster-name-input:focus {
     outline: none;
 }
-.monster-table td.tally {
-    border-left: 1px solid rgba(92, 62, 33, 0.25);
-    width: 28%;
-    padding: 0 4px;
-}
-.monster-table td.tally input {
-    width: 100%;
-    height: 100%;
+.monster-kills-input {
+    width: 25%;
     border: none;
     background: transparent;
     font-family: 'Cormorant Garamond', serif;
@@ -773,8 +746,9 @@ h1.main-title {
     color: #8c1e13;
     letter-spacing: 2px;
     text-align: center;
+    height: 100%;
 }
-.monster-table td.tally input:focus {
+.monster-kills-input:focus {
     outline: none;
 }
 

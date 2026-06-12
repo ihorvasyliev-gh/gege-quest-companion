@@ -629,60 +629,37 @@ export function CharacterSheet() {
               </div>
             </div>
 
-            {/* Crossed swords divider to fill vertical space */}
-            <div className="divider" style={{ margin: '14px 0' }}>
-              <div className="divider-line"></div>
-              <svg viewBox="0 0 100 24" style={{ width: '65px', height: '18px', fill: 'none', stroke: '#4a2e13', strokeWidth: 1.2, margin: '0 8px', opacity: 0.8 }}>
-                <path d="M5,12 L38,12 M62,12 L95,12" strokeWidth="1" />
-                <path d="M42,17 L58,7 M58,17 L42,7" strokeLinecap="round" />
-                <path d="M40,19 L43,16 M60,19 L57,16" strokeLinecap="round" />
-                <circle cx="50" cy="12" r="3" fill="#4a2e13" stroke="none" />
-              </svg>
-              <div className="divider-line"></div>
-            </div>
-
             {/* Giant Defeated Foes Ledger */}
             <div>
-              <div className="scroll-header">
-                <h3>The Ledger of Defeated Foes</h3>
+              <div className="header-container" style={{ marginTop: '6px', marginBottom: '6px' }}>
+                <h1 className="main-title" style={{ fontSize: '20px' }}>THE LEDGER OF DEFEATED FOES</h1>
               </div>
               
               <div className="parchment-box h-112mm" style={{ overflow: 'hidden', zIndex: 2 }}>
-                <table className="monster-table">
-                  <thead>
-                    <tr>
-                      <th colSpan={2}>
-                        <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#fffdfa" style={{ marginRight: '3px' }}>
-                          <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>
-                          <circle cx="9" cy="10" r="2" fill="#4a2e13"/>
-                          <circle cx="15" cy="10" r="2" fill="#4a2e13"/>
-                          <path d="M10,14 L12,15 L14,14" fill="none" stroke="#4a2e13" strokeWidth="1"/>
-                          <path d="M4,8 L2,3 L5,6 M20,8 L22,3 L19,6" fill="#fffdfa" stroke="#fffdfa" strokeWidth="0.5"/>
-                        </svg>
-                        Monster Type (Write-in)
-                      </th>
-                      <th className="tally">Kills</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: 18 }, (_, index) => {
-                      const i = index + 1;
-                      const nameId = `foe-name-${i}`;
-                      const killsId = `foe-kills-${i}`;
-                      return (
-                        <tr key={i}>
-                          <td className="num">{i}</td>
-                          <td className="name-input">
-                            <input type="text" id={nameId} {...bindInput(nameId)} />
-                          </td>
-                          <td className="tally">
-                            <input type="text" id={killsId} {...bindInput(killsId)} />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                <h3>
+                  <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '3px' }}>
+                    <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>
+                    <circle cx="9" cy="10" r="2" fill="#fdfbfa"/>
+                    <circle cx="15" cy="10" r="2" fill="#fdfbfa"/>
+                    <path d="M10,14 L12,15 L14,14" fill="none" stroke="#fdfbfa" strokeWidth="1"/>
+                    <path d="M4,8 L2,3 L5,6 M20,8 L22,3 L19,6" fill="#4a2e13" stroke="#4a2e13" strokeWidth="0.5"/>
+                  </svg>
+                  Monster Type (Write-in)
+                  <span style={{ marginLeft: 'auto', marginRight: '15px' }}>Kills</span>
+                </h3>
+                <div className="monster-lines">
+                  {Array.from({ length: 18 }, (_, index) => {
+                    const i = index + 1;
+                    const nameId = `foe-name-${i}`;
+                    const killsId = `foe-kills-${i}`;
+                    return (
+                      <div key={i} className="monster-line">
+                        <input type="text" id={nameId} className="monster-name-input" {...bindInput(nameId)} />
+                        <input type="text" id={killsId} className="monster-kills-input" {...bindInput(killsId)} />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

@@ -268,12 +268,14 @@ export function CharacterSheet() {
                 </h3>
                 <div className="lines" style={{ marginTop: '2px' }}>
                   <div><input type="text" id="char-xp" {...bindInput('char-xp')} /></div>
-                  <div><input type="text" id="char-next-level" readOnly {...bindInput('char-next-level')} /></div>
-                  <div><input type="text" id="char-rank" {...bindInput('char-rank')} /></div>
                   <div><input type="text" id="xp-line-1" {...bindInput('xp-line-1')} /></div>
                   <div><input type="text" id="xp-line-2" {...bindInput('xp-line-2')} /></div>
                   <div><input type="text" id="xp-line-3" {...bindInput('xp-line-3')} /></div>
+                  <div><input type="text" id="xp-line-4" {...bindInput('xp-line-4')} /></div>
+                  <div><input type="text" id="xp-line-5" {...bindInput('xp-line-5')} /></div>
                 </div>
+                <input type="hidden" id="char-next-level" {...bindInput('char-next-level')} />
+                <input type="hidden" id="char-rank" {...bindInput('char-rank')} />
               </div>
             </div>
 

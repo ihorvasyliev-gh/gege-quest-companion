@@ -1832,33 +1832,15 @@
                     </div>
                 </div>
 
-                <!-- Facing Dragons Filigree -->
-                <svg class="filigree-flourish" viewBox="0 0 140 16" style="max-width: 160px;">
-                    <!-- Left dragon silhouette -->
-                    <path d="M10,12 C8,10 5,10 3,12 C5,8 8,6 12,7 L20,8 C25,8 28,10 30,12 L35,10 C38,8 42,8 45,9 L50,10 C52,10 55,9 58,10 L62,11" fill="none" stroke="#5c3e21" stroke-width="0.8" opacity="0.4"/>
-                    <!-- Right dragon silhouette (mirrored) -->
-                    <path d="M130,12 C132,10 135,10 137,12 C135,8 132,6 128,7 L120,8 C115,8 112,10 110,12 L105,10 C102,8 98,8 95,9 L90,10 C88,10 85,9 82,10 L78,11" fill="none" stroke="#5c3e21" stroke-width="0.8" opacity="0.4"/>
-                    <!-- Central gem -->
-                    <polygon points="70,4 74,8 70,12 66,8" fill="#5c3e21" opacity="0.35"/>
-                    <circle cx="70" cy="8" r="1.5" fill="#f3e5c8" stroke="#5c3e21" stroke-width="0.5" opacity="0.5"/>
-                    <!-- Wings -->
-                    <path d="M12,7 C15,3 20,2 25,4 M128,7 C125,3 120,2 115,4" fill="none" stroke="#5c3e21" stroke-width="0.6" opacity="0.3"/>
-                </svg>
+                <!-- Pets & Companions Header -->
+                <div class="header-container" style="margin-top: 6px; margin-bottom: 6px;">
+                    <h1 class="main-title" style="font-size: 20px;">PETS & COMPANIONS</h1>
+                    <div class="subtitle" style="font-size: 9px; letter-spacing: 2.5px;">Loyal Allies & Mounts</div>
+                </div>
 
                 <!-- Pets & Companions Block -->
-                <div class="parchment-box" style="height: 38mm;">
-                    <h3>
-                        <!-- Wolf Head Icon -->
-                        <svg class="deco-icon" viewBox="0 0 24 24" width="12" height="12">
-                            <path d="M12,2 L8,6 L4,5 L6,10 L4,14 L8,13 L10,18 L12,22 L14,18 L16,13 L20,14 L18,10 L20,5 L16,6 L12,2 Z" fill="none" stroke="#5c3e21" stroke-width="1.2" stroke-linejoin="round"/>
-                            <circle cx="9.5" cy="9" r="1" fill="#5c3e21"/>
-                            <circle cx="14.5" cy="9" r="1" fill="#5c3e21"/>
-                            <path d="M10,13 L12,15 L14,13" fill="none" stroke="#5c3e21" stroke-width="0.8"/>
-                        </svg>
-                        Pets & Companions
-                    </h3>
-                    
-                    <div class="pet-portrait-frame">
+                <div class="parchment-box" style="height: 38mm; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <div class="pet-portrait-frame" style="float: none; margin-right: 0; flex-shrink: 0; width: 44px; height: 44px;">
                         <svg viewBox="0 0 24 24" style="fill: none;">
                             <path d="M 3.15,12 A 8.85,8.85 0 0,1 20.85,12" fill="#8a6c51" fill-opacity="0.25" />
                             <circle cx="12" cy="12" r="9" stroke="#8a6c51" stroke-width="1.6" />
@@ -1868,18 +1850,38 @@
                         </svg>
                     </div>
 
-                    <div style="margin-left: 52px;">
-                        <div class="row" style="margin-bottom: 3px;">
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                        <div class="row" style="margin-bottom: 0;">
                             <div class="field flex-2"><label style="font-size: 8px;">Companion:</label><input type="text" id="pet-name" placeholder=""></div>
-                            <div class="field flex-1"><label style="font-size: 8px;">Type:</label><input type="text" id="pet-type" placeholder=""></div>
+                            <div class="field flex-1" style="margin-left: 8px;"><label style="font-size: 8px;">Type:</label><input type="text" id="pet-type" placeholder=""></div>
                         </div>
-                        <div class="row" style="margin-bottom: 3px; gap: 6px;">
-                            <div class="field flex-1"><label style="font-size: 7.5px;">Atk:</label><input type="text" id="pet-atk" placeholder=""></div>
-                            <div class="field flex-1"><label style="font-size: 7.5px;">Def:</label><input type="text" id="pet-def" placeholder=""></div>
-                            <div class="field flex-1"><label style="font-size: 7.5px;">Body:</label><input type="text" id="pet-body" placeholder=""></div>
-                            <div class="field flex-1"><label style="font-size: 7.5px;">Mind:</label><input type="text" id="pet-mind" placeholder=""></div>
+                        <div class="stone-stats" style="margin-bottom: 0; gap: 6px; margin-top: 4px;">
+                            <div class="stone-block">
+                                <div class="stone-title" style="font-size: 7px; margin-bottom: 2px;">Atk</div>
+                                <div class="stone-value-box" style="height: 18px;">
+                                    <input type="text" id="pet-atk" placeholder="" style="font-size: 11px; height: 100%;">
+                                </div>
+                            </div>
+                            <div class="stone-block">
+                                <div class="stone-title" style="font-size: 7px; margin-bottom: 2px;">Def</div>
+                                <div class="stone-value-box" style="height: 18px;">
+                                    <input type="text" id="pet-def" placeholder="" style="font-size: 11px; height: 100%;">
+                                </div>
+                            </div>
+                            <div class="stone-block">
+                                <div class="stone-title" style="font-size: 7px; margin-bottom: 2px;">Body</div>
+                                <div class="stone-value-box" style="height: 18px;">
+                                    <input type="text" id="pet-body" placeholder="" style="font-size: 11px; height: 100%;">
+                                </div>
+                            </div>
+                            <div class="stone-block">
+                                <div class="stone-title" style="font-size: 7px; margin-bottom: 2px;">Mind</div>
+                                <div class="stone-value-box" style="height: 18px;">
+                                    <input type="text" id="pet-mind" placeholder="" style="font-size: 11px; height: 100%;">
+                                </div>
+                            </div>
                         </div>
-                        <div class="field" style="margin-bottom: 0;"><label style="font-size: 7.5px;">Abilities:</label><input type="text" id="pet-abilities" placeholder=""></div>
+                        <div class="field" style="margin-bottom: 0; margin-top: 4px;"><label style="font-size: 7.5px;">Abilities:</label><input type="text" id="pet-abilities" placeholder=""></div>
                     </div>
                 </div>
             </div>

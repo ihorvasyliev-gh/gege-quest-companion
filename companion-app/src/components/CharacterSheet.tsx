@@ -369,27 +369,15 @@ export function CharacterSheet() {
             </div>
           </div>
 
-          <svg className="filigree-flourish" viewBox="0 0 140 16" style={{ maxWidth: '160px' }}>
-            <path d="M10,12 C8,10 5,10 3,12 C5,8 8,6 12,7 L20,8 C25,8 28,10 30,12 L35,10 C38,8 42,8 45,9 L50,10 C52,10 55,9 58,10 L62,11" fill="none" stroke="#5c3e21" strokeWidth="0.8" opacity="0.4"/>
-            <path d="M130,12 C132,10 135,10 137,12 C135,8 132,6 128,7 L120,8 C115,8 112,10 110,12 L105,10 C102,8 98,8 95,9 L90,10 C88,10 85,9 82,10 L78,11" fill="none" stroke="#5c3e21" strokeWidth="0.8" opacity="0.4"/>
-            <polygon points="70,4 74,8 70,12 66,8" fill="#5c3e21" opacity="0.35"/>
-            <circle cx="70" cy="8" r="1.5" fill="#f3e5c8" stroke="#5c3e21" strokeWidth="0.5" opacity="0.5"/>
-            <path d="M12,7 C15,3 20,2 25,4 M128,7 C125,3 120,2 115,4" fill="none" stroke="#5c3e21" strokeWidth="0.6" opacity="0.3"/>
-          </svg>
+          {/* Pets & Companions Header */}
+          <div className="header-container" style={{ marginTop: '6px', marginBottom: '6px' }}>
+            <h1 className="main-title" style={{ fontSize: '20px' }}>PETS & COMPANIONS</h1>
+            <div className="subtitle" style={{ fontSize: '9px', letterSpacing: '2.5px' }}>Loyal Allies & Mounts</div>
+          </div>
 
           {/* Pets & Companions Block */}
-          <div className="parchment-box h-38mm">
-            <h3>
-              <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12">
-                <path d="M12,2 L8,6 L4,5 L6,10 L4,14 L8,13 L10,18 L12,22 L14,18 L16,13 L20,14 L18,10 L20,5 L16,6 L12,2 Z" fill="none" stroke="#5c3e21" strokeWidth="1.2" strokeLinejoin="round"/>
-                <circle cx="9.5" cy="9" r="1" fill="#5c3e21"/>
-                <circle cx="14.5" cy="9" r="1" fill="#5c3e21"/>
-                <path d="M10,13 L12,15 L14,13" fill="none" stroke="#5c3e21" strokeWidth="0.8"/>
-              </svg>
-              Pets & Companions
-            </h3>
-            
-            <div className="pet-portrait-frame">
+          <div className="parchment-box h-38mm" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+            <div className="pet-portrait-frame" style={{ float: 'none', marginRight: 0, flexShrink: 0, width: '44px', height: '44px' }}>
               <svg viewBox="0 0 24 24" style={{ fill: 'none' }}>
                 <path d="M 3.15,12 A 8.85,8.85 0 0,1 20.85,12" fill="#8a6c51" fillOpacity="0.25" />
                 <circle cx="12" cy="12" r="9" stroke="#8a6c51" strokeWidth="1.6" />
@@ -399,18 +387,38 @@ export function CharacterSheet() {
               </svg>
             </div>
 
-            <div style={{ marginLeft: '52px' }}>
-              <div className="row" style={{ marginBottom: '3px' }}>
+            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+              <div className="row" style={{ marginBottom: 0 }}>
                 <div className="field flex-2"><label style={{ fontSize: '8px' }}>Companion:</label><input type="text" id="pet-name" {...bindInput('pet-name')} /></div>
-                <div className="field flex-1"><label style={{ fontSize: '8px' }}>Type:</label><input type="text" id="pet-type" {...bindInput('pet-type')} /></div>
+                <div className="field flex-1" style={{ marginLeft: '8px' }}><label style={{ fontSize: '8px' }}>Type:</label><input type="text" id="pet-type" {...bindInput('pet-type')} /></div>
               </div>
-              <div className="row row-no-stack" style={{ marginBottom: '3px', gap: '6px' }}>
-                <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Atk:</label><input type="text" id="pet-atk" {...bindInput('pet-atk')} /></div>
-                <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Def:</label><input type="text" id="pet-def" {...bindInput('pet-def')} /></div>
-                <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Body:</label><input type="text" id="pet-body" {...bindInput('pet-body')} /></div>
-                <div className="field flex-1"><label style={{ fontSize: '7.5px' }}>Mind:</label><input type="text" id="pet-mind" {...bindInput('pet-mind')} /></div>
+              <div className="stone-stats" style={{ marginBottom: 0, gap: '6px', marginTop: '4px' }}>
+                <div className="stone-block">
+                  <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Atk</div>
+                  <div className="stone-value-box" style={{ height: '18px' }}>
+                    <input type="text" id="pet-atk" {...bindInput('pet-atk')} style={{ fontSize: '11px', height: '100%' }} />
+                  </div>
+                </div>
+                <div className="stone-block">
+                  <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Def</div>
+                  <div className="stone-value-box" style={{ height: '18px' }}>
+                    <input type="text" id="pet-def" {...bindInput('pet-def')} style={{ fontSize: '11px', height: '100%' }} />
+                  </div>
+                </div>
+                <div className="stone-block">
+                  <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Body</div>
+                  <div className="stone-value-box" style={{ height: '18px' }}>
+                    <input type="text" id="pet-body" {...bindInput('pet-body')} style={{ fontSize: '11px', height: '100%' }} />
+                  </div>
+                </div>
+                <div className="stone-block">
+                  <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Mind</div>
+                  <div className="stone-value-box" style={{ height: '18px' }}>
+                    <input type="text" id="pet-mind" {...bindInput('pet-mind')} style={{ fontSize: '11px', height: '100%' }} />
+                  </div>
+                </div>
               </div>
-              <div className="field" style={{ marginBottom: 0 }}><label style={{ fontSize: '7.5px' }}>Abilities:</label><input type="text" id="pet-abilities" {...bindInput('pet-abilities')} /></div>
+              <div className="field" style={{ marginBottom: 0, marginTop: '4px' }}><label style={{ fontSize: '7.5px' }}>Abilities:</label><input type="text" id="pet-abilities" {...bindInput('pet-abilities')} /></div>
             </div>
           </div>
         </div>

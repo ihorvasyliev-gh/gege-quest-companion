@@ -636,65 +636,6 @@ export function CharacterSheet() {
               </div>
               
               <div className="parchment-box h-125mm" style={{ overflow: 'hidden', zIndex: 2 }}>
-                {/* Large Thematic Dragon Watermark */}
-                <svg viewBox="0 0 160 160" style={{ position: 'absolute', top: '52%', left: '50%', transform: 'translate(-50%, -50%)', height: '75%', width: 'auto', opacity: 0.035, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.1, strokeLinecap: 'round', strokeLinejoin: 'round', pointerEvents: 'none', zIndex: 1 }}>
-                  {/* Dragon Skull/Head Details */}
-                  <path d="M76,28 C74,23 68,22 66,26 C64,28 66,32 70,33 C73,34 76,32 78,35 C80,38 78,42 76,43 C74,44 71,42 70,39" />
-                  <path d="M76,24 L79,18 C79,18 77,20 76,21" /> {/* Primary horn */}
-                  <path d="M73,25 L75,20" /> {/* Secondary horn */}
-                  <path d="M70,27 L67,23" /> {/* Crown spike */}
-                  <path d="M68,36 L64,36 L66,38" /> {/* Lower jaw/barb */}
-                  <circle cx="73" cy="29" r="0.6" fill="#4a2e13" /> {/* Eye */}
-
-                  {/* Neck and Spine with scales/spikes */}
-                  <path d="M70,39 C66,42 63,47 62,53 C61,59 63,65 67,70 C71,75 75,81 74,88 C73,95 67,100 62,99 C57,98 53,92 53,86 C53,80 57,75 61,74" />
-                  {/* Spine Spikes */}
-                  <path d="M67,41 L69,38 M63,47 L65,43 M61,54 L62,50 M62,61 L64,57 M65,68 L68,65 M71,74 L74,71 M74,81 L78,79 M73,88 L77,87 M69,94 L72,94 M64,98 L66,100" />
-
-                  {/* Underbelly Scales (horizontal ridges) */}
-                  <path d="M62,50 L59,51 M61,56 L58,57 M61,62 L58,63 M63,67 L60,69 M67,72 L64,74 M70,77 L67,79 M72,82 L69,84 M71,87 L69,89" opacity={0.8} />
-
-                  {/* Left Wing */}
-                  {/* Main Wing Bone */}
-                  <path d="M62,53 C46,45 32,48 20,58 C16,61 12,65 8,70" strokeWidth={1.5} />
-                  <path d="M20,58 L24,53 L21,50" /> {/* Wing thumb claw */}
-                  {/* Struts/Webbing Bones */}
-                  <path d="M20,58 C18,72 15,86 12,100" />
-                  <path d="M20,58 C26,75 30,90 32,105" />
-                  <path d="M20,58 C34,72 44,84 48,96" />
-                  {/* Scalloped Webbing edges */}
-                  <path d="M8,70 C10,82 11,92 12,100 C18,103 26,105 32,105 C38,102 44,99 48,96 C53,85 58,74 61,74" fill="#4a2e13" fillOpacity={0.015} />
-                  {/* Wing Rib Details */}
-                  <path d="M14,76 C13,84 13,92 13,96 M24,73 C22,83 20,93 19,99 M28,78 C30,86 31,94 31,99 M38,72 C41,80 43,87 44,92" opacity={0.5} />
-
-                  {/* Right Wing */}
-                  {/* Main Wing Bone */}
-                  <path d="M66,53 C82,45 96,48 108,58 C112,61 116,65 120,70" strokeWidth={1.5} />
-                  <path d="M100,58 L96,53 L99,50" /> {/* Wing thumb claw */}
-                  {/* Struts/Webbing Bones */}
-                  <path d="M100,58 C102,72 105,86 108,100" />
-                  <path d="M100,58 C94,75 90,90 88,105" />
-                  <path d="M100,58 C86,72 76,84 72,96" />
-                  {/* Scalloped Webbing edges */}
-                  <path d="M120,70 C118,82 117,92 108,100 C102,103 94,105 88,105 C82,102 76,99 72,96 C67,85 62,74 59,74" fill="#4a2e13" fillOpacity={0.015} />
-                  {/* Wing Rib Details */}
-                  <path d="M116,76 C117,84 117,92 117,96 M106,73 C108,83 110,93 111,99 M100,78 C98,86 97,94 97,99 M90,72 C87,80 85,87 84,92" opacity={0.5} />
-
-                  {/* Coiled Tail & Spikes */}
-                  <path d="M62,99 C58,105 52,108 46,108 C38,108 30,102 32,92 C34,84 42,82 48,85 C54,88 56,96 52,102 C48,108 40,110 32,106 C24,102 18,92 22,82" />
-                  {/* Tail spade / tip */}
-                  <path d="M22,82 L16,78 L20,74 L25,78 Z" fill="#4a2e13" fillOpacity={0.1} />
-                  <path d="M16,78 L12,77 L15,81" /> {/* Spades spikes */}
-
-                  {/* Claws/Limb Silhouettes */}
-                  {/* Front Left Leg */}
-                  <path d="M54,65 L48,70 L46,67" />
-                  <path d="M48,70 L46,72 L44,70" /> {/* Claws */}
-                  {/* Front Right Leg */}
-                  <path d="M72,65 L78,70 L80,67" />
-                  <path d="M78,70 L80,72 L82,70" />
-                </svg>
-
                 <h3>
                   <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '3px' }}>
                     <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>

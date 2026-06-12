@@ -281,27 +281,83 @@ export function CharacterSheet() {
 
             {/* Alchemy Container */}
             <div className="parchment-box h-43mm" style={{ marginBottom: '6px' }}>
-              <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.08, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.8 }}>
-                <path d="M30,50 C30,42 40,38 50,38 C60,38 70,42 70,50 L70,70 C70,78 60,82 50,82 C40,82 30,78 30,70 Z" strokeLinecap="round"/>
-                <path d="M35,80 L32,90 M65,80 L68,90 M50,82 L50,90" strokeWidth="2" strokeLinecap="round"/>
-                <circle cx="42" cy="35" r="2.5" fill="#4a2e13" opacity="0.15"/>
-                <circle cx="55" cy="30" r="3" fill="#4a2e13" opacity="0.12"/>
-                <circle cx="48" cy="25" r="2" fill="#4a2e13" opacity="0.1"/>
-                <circle cx="60" cy="22" r="1.5" fill="#4a2e13" opacity="0.08"/>
-                <path d="M45,35 C42,28 48,22 45,15" strokeWidth="1" opacity="0.6"/>
-                <path d="M55,33 C58,26 52,20 55,13" strokeWidth="1" opacity="0.5"/>
-                <path d="M18,55 L18,45 L22,42 L26,42 L30,45 L30,55 C30,58 26,60 24,60 C22,60 18,58 18,55 Z" strokeWidth="1.2"/>
-                <path d="M20,50 L28,50" strokeWidth="0.8" strokeDasharray="1 1"/>
-                <path d="M75,55 L75,48 L78,46 L81,48 L81,55 C81,57 78,58 78,58 C78,58 75,57 75,55 Z" strokeWidth="1"/>
+              <svg className="box-illustration" viewBox="0 0 100 100" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.08, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.5 }}>
+                {/* Firewood Logs at the bottom */}
+                <path d="M30,89 L70,87" strokeWidth="2.5" />
+                <path d="M35,85 L65,91" strokeWidth="2" />
+                <path d="M28,91 L33,83" strokeWidth="2" />
+                <path d="M72,90 L67,82" strokeWidth="2" />
+                
+                {/* Flames rising */}
+                <path d="M42,86 C40,78 46,73 48,78 C50,73 56,77 54,86" strokeWidth="1.2" />
+                <path d="M48,87 C46,75 52,68 55,75 C58,70 64,76 60,87" strokeWidth="1.2" />
+                <path d="M53,88 C52,80 58,74 60,79 C62,75 67,80 65,88" strokeWidth="1.2" />
+
+                {/* Cauldron Legs */}
+                {/* Left Leg */}
+                <path d="M32,74 C29,80 26,85 27,88" strokeWidth="2.2" />
+                <path d="M35,76 C32,81 30,86 31,88" strokeWidth="1.5" />
+                <path d="M27,88 L31,88" strokeWidth="2" />
+                {/* Right Leg */}
+                <path d="M68,74 C71,80 74,85 73,88" strokeWidth="2.2" />
+                <path d="M65,76 C68,81 70,86 69,88" strokeWidth="1.5" />
+                <path d="M69,88 L73,88" strokeWidth="2" />
+                {/* Center Leg */}
+                <path d="M50,77 L50,89" strokeWidth="2.2" />
+                <path d="M48,77 L48,89" strokeWidth="1.2" />
+                <path d="M48,89 L52,89" strokeWidth="2" />
+
+                {/* Cauldron Bulbous Body */}
+                <path d="M28,42 C16,48 16,68 30,75 C40,80 60,80 70,75 C84,68 84,48 72,42" strokeWidth="2" />
+                
+                {/* Double Rim at the top */}
+                <path d="M28,42 C28,39 72,39 72,42 C72,45 28,45 28,42 Z" strokeWidth="1.8" />
+                <path d="M30,42 C30,40.5 70,40.5 70,42 C70,43.5 30,43.5 30,42 Z" strokeWidth="1" />
+
+                {/* Reinforcing Horizontal Band */}
+                <path d="M19.5,58 C30,64 70,64 80.5,58" strokeWidth="1.5" />
+                <path d="M20,61.5 C30,67.5 70,67.5 80,61.5" strokeWidth="1" />
+
+                {/* Rivets along the band */}
+                <circle cx="28" cy="61" r="1" fill="#4a2e13" stroke="none" />
+                <circle cx="39" cy="62.7" r="1" fill="#4a2e13" stroke="none" />
+                <circle cx="50" cy="63.3" r="1" fill="#4a2e13" stroke="none" />
+                <circle cx="61" cy="62.7" r="1" fill="#4a2e13" stroke="none" />
+                <circle cx="72" cy="61" r="1" fill="#4a2e13" stroke="none" />
+
+                {/* Side Handles (Rings) */}
+                {/* Left Handle */}
+                <path d="M21,50 C16,50 16,58 21,58 C23,58 24.5,56 24.5,53" strokeWidth="1.5" />
+                <path d="M21,51 L25,51 M21,55 L25,55" strokeWidth="1.2" />
+                {/* Right Handle */}
+                <path d="M79,50 C84,50 84,58 79,58 C77,58 75.5,56 75.5,53" strokeWidth="1.5" />
+                <path d="M79,51 L75,51 M79,55 L75,55" strokeWidth="1.2" />
+
+                {/* Stirring Spoon / Ladle slanted inside */}
+                <path d="M43,20 L51,41" strokeWidth="1.8" />
+                <path d="M45,19 L53,40" strokeWidth="0.8" />
+                <path d="M43,20 C42,18.5 44,17.5 45,19" strokeWidth="1.2" />
+
+                {/* Swirling Steam */}
+                <path d="M35,34 C31,24 43,18 36,10" strokeWidth="0.8" opacity="0.6" />
+                <path d="M50,34 C52,22 41,15 47,8" strokeWidth="1" opacity="0.7" />
+                <path d="M65,34 C60,25 71,18 64,11" strokeWidth="0.8" opacity="0.6" />
+
+                {/* Bubbles rising */}
+                <circle cx="36" cy="33" r="1.5" fill="#4a2e13" stroke="none" opacity="0.4" />
+                <circle cx="47" cy="27" r="2" fill="#4a2e13" stroke="none" opacity="0.5" />
+                <circle cx="56" cy="30" r="1" fill="#4a2e13" stroke="none" opacity="0.3" />
+                <circle cx="62" cy="25" r="2.5" fill="#4a2e13" stroke="none" opacity="0.4" />
               </svg>
 
               <h3>
                 <svg className="deco-icon" viewBox="0 0 24 24" width="13" height="13">
-                  <path d="M6,12 C6,9 9,7 12,7 C15,7 18,9 18,12 L18,17 C18,19 15,21 12,21 C9,21 6,19 6,17 Z" fill="none" stroke="#5c3e21" strokeWidth="1.3"/>
-                  <path d="M5,12 L19,12" stroke="#5c3e21" strokeWidth="1.3"/>
-                  <circle cx="10" cy="5" r="1" fill="#5c3e21"/>
-                  <circle cx="14" cy="3.5" r="1.2" fill="#5c3e21" opacity="0.7"/>
-                  <path d="M8,20 L7,23 M16,20 L17,23" stroke="#5c3e21" strokeWidth="1"/>
+                  {/* Cork stopper */}
+                  <path d="M10,3 L14,3 L13,6 L11,6 Z" fill="#5c3e21" />
+                  {/* Potion jar outline */}
+                  <path d="M9,6 L15,6 M10,6 L10,9 C8,10 6,12 6,15 C6,19 8.5,21 12,21 C15.5,21 18,19 18,15 C18,12 16,10 14,9 L14,6" fill="none" stroke="#5c3e21" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* Liquid level */}
+                  <path d="M7,16 C8.5,17 9.5,15 12,16 C14.5,17 15.5,15 17,16" fill="none" stroke="#5c3e21" strokeWidth="0.8" opacity="0.6" />
                 </svg>
                 Alchemy & Other Items
               </h3>

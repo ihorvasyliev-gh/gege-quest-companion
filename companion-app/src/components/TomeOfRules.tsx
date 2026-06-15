@@ -1,4 +1,4 @@
-import { useCharacterStore, TALENTS, getClassNameReadable, getTierKillsFromInputs } from '../store/useCharacterStore';
+import { useCharacterStore, TALENTS, getClassNameReadable } from '../store/useCharacterStore';
 import type { Talent } from '../types';
 
 export function TomeOfRules() {
@@ -27,8 +27,6 @@ export function TomeOfRules() {
   const logMonsterKill = useCharacterStore((state) => state.logMonsterKill);
   const adjustTomeMonster = useCharacterStore((state) => state.adjustTomeMonster);
   const inputs = useCharacterStore((state) => state.inputs);
-
-  const computedTierKills = getTierKillsFromInputs(inputs);
 
   // Parse active monsters from sheet inputs (rows 1-22)
   const getActiveMonsters = () => {
@@ -143,22 +141,12 @@ export function TomeOfRules() {
                 </td>
                 <td className="desktop-table-cell calc-cell-monsters">Goblin, Skeleton, Zombie</td>
                 <td className="calc-cell-xp"><strong>1</strong></td>
-                <td className="calc-cell-kills" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    textAlign: 'center',
-                    border: '1px solid #855d14',
-                    backgroundColor: 'rgba(253, 248, 235, 0.6)',
-                    fontFamily: 'MedievalSharp, cursive',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    padding: '2px 0',
-                    borderRadius: '3px',
-                    color: '#5c3e21'
-                  }}>
-                    {computedTierKills.tier1}
-                  </span>
+                <td className="calc-cell-kills">
+                  <div className="calc-control">
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier1', -1)}>-</button>
+                    <input type="text" className="calc-input" value={calculator.tier1} readOnly />
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier1', 1)}>+</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -168,22 +156,12 @@ export function TomeOfRules() {
                 </td>
                 <td className="desktop-table-cell calc-cell-monsters">Orc, Fimir, Ghoul, Mummy</td>
                 <td className="calc-cell-xp"><strong>2</strong></td>
-                <td className="calc-cell-kills" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    textAlign: 'center',
-                    border: '1px solid #855d14',
-                    backgroundColor: 'rgba(253, 248, 235, 0.6)',
-                    fontFamily: 'MedievalSharp, cursive',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    padding: '2px 0',
-                    borderRadius: '3px',
-                    color: '#5c3e21'
-                  }}>
-                    {computedTierKills.tier2}
-                  </span>
+                <td className="calc-cell-kills">
+                  <div className="calc-control">
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier2', -1)}>-</button>
+                    <input type="text" className="calc-input" value={calculator.tier2} readOnly />
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier2', 1)}>+</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -193,22 +171,12 @@ export function TomeOfRules() {
                 </td>
                 <td className="desktop-table-cell calc-cell-monsters">Chaos Warrior, Wight, Abomination</td>
                 <td className="calc-cell-xp"><strong>4</strong></td>
-                <td className="calc-cell-kills" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    textAlign: 'center',
-                    border: '1px solid #855d14',
-                    backgroundColor: 'rgba(253, 248, 235, 0.6)',
-                    fontFamily: 'MedievalSharp, cursive',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    padding: '2px 0',
-                    borderRadius: '3px',
-                    color: '#5c3e21'
-                  }}>
-                    {computedTierKills.tier3}
-                  </span>
+                <td className="calc-cell-kills">
+                  <div className="calc-control">
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier3', -1)}>-</button>
+                    <input type="text" className="calc-input" value={calculator.tier3} readOnly />
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier3', 1)}>+</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -218,22 +186,12 @@ export function TomeOfRules() {
                 </td>
                 <td className="desktop-table-cell calc-cell-monsters">Ogre, Gargoyle, Minotaur</td>
                 <td className="calc-cell-xp"><strong>8</strong></td>
-                <td className="calc-cell-kills" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    textAlign: 'center',
-                    border: '1px solid #855d14',
-                    backgroundColor: 'rgba(253, 248, 235, 0.6)',
-                    fontFamily: 'MedievalSharp, cursive',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    padding: '2px 0',
-                    borderRadius: '3px',
-                    color: '#5c3e21'
-                  }}>
-                    {computedTierKills.tier4}
-                  </span>
+                <td className="calc-cell-kills">
+                  <div className="calc-control">
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier4', -1)}>-</button>
+                    <input type="text" className="calc-input" value={calculator.tier4} readOnly />
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier4', 1)}>+</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -243,22 +201,12 @@ export function TomeOfRules() {
                 </td>
                 <td className="desktop-table-cell calc-cell-monsters">Giant, Dragonling, Demon Champ.</td>
                 <td className="calc-cell-xp"><strong>12</strong></td>
-                <td className="calc-cell-kills" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    textAlign: 'center',
-                    border: '1px solid #855d14',
-                    backgroundColor: 'rgba(253, 248, 235, 0.6)',
-                    fontFamily: 'MedievalSharp, cursive',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    padding: '2px 0',
-                    borderRadius: '3px',
-                    color: '#5c3e21'
-                  }}>
-                    {computedTierKills.tier5}
-                  </span>
+                <td className="calc-cell-kills">
+                  <div className="calc-control">
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier5', -1)}>-</button>
+                    <input type="text" className="calc-input" value={calculator.tier5} readOnly />
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier5', 1)}>+</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -268,22 +216,12 @@ export function TomeOfRules() {
                 </td>
                 <td className="desktop-table-cell calc-cell-monsters">Greater Demon, Ancient Dragon</td>
                 <td className="calc-cell-xp"><strong>20</strong></td>
-                <td className="calc-cell-kills" style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    width: '32px',
-                    textAlign: 'center',
-                    border: '1px solid #855d14',
-                    backgroundColor: 'rgba(253, 248, 235, 0.6)',
-                    fontFamily: 'MedievalSharp, cursive',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    padding: '2px 0',
-                    borderRadius: '3px',
-                    color: '#5c3e21'
-                  }}>
-                    {computedTierKills.tier6}
-                  </span>
+                <td className="calc-cell-kills">
+                  <div className="calc-control">
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier6', -1)}>-</button>
+                    <input type="text" className="calc-input" value={calculator.tier6} readOnly />
+                    <button className="calc-btn" onClick={() => adjustCalculator('tier6', 1)}>+</button>
+                  </div>
                 </td>
               </tr>
             </tbody>

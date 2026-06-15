@@ -193,32 +193,23 @@ function recalculate(xpVal: number, purchased: Record<string, number>, className
   };
 }
 
-export function getTierKillsFromInputs(inputs: Record<string, string>) {
-  const counts = {
-    tier1: 0,
-    tier2: 0,
-    tier3: 0,
-    tier4: 0,
-    tier5: 0,
-    tier6: 0
-  };
-  for (let i = 1; i <= 22; i++) {
-    const name = (inputs[`foe-name-${i}`] || '').trim();
-    const kills = parseInt(inputs[`foe-kills-${i}`]) || 0;
-    if (name && kills > 0) {
-      const match = name.match(/\(Tier (I|II|III|IV|V|VI)\)$/i);
-      if (match) {
-        const tierStr = match[1].toUpperCase();
-        if (tierStr === 'I') counts.tier1 += kills;
-        else if (tierStr === 'II') counts.tier2 += kills;
-        else if (tierStr === 'III') counts.tier3 += kills;
-        else if (tierStr === 'IV') counts.tier4 += kills;
-        else if (tierStr === 'V') counts.tier5 += kills;
-        else if (tierStr === 'VI') counts.tier6 += kills;
-      }
-    }
+export function getXpForTier(tierStr: string): number {
+  const clean = tierStr.trim().toUpperCase();
+  if (clean === 'TIER I' || clean === 'I') return 1;
+  if (clean === 'TIER II' || clean === 'II') return 2;
+  if (clean === 'TIER III' || clean === 'III') return 4;
+  if (clean === 'TIER IV' || clean === 'IV') return 8;
+  if (clean === 'TIER V' || clean === 'V') return 12;
+  if (clean === 'TIER VI' || clean === 'VI') return 20;
+  return 0;
+}
+
+export function getXpFromMonsterName(name: string): number {
+  const match = name.match(/\(Tier (I|II|III|IV|V|VI)\)$/i);
+  if (match) {
+    return getXpForTier(match[1]);
   }
-  return counts;
+  return 0;
 }
 
 export const useCharacterStore = create<AppState>()(
@@ -286,6 +277,32 @@ export const useCharacterStore = create<AppState>()(
           };
         }
         
+        if (id.startsWith('foe-name-') || id.startsWith('foe-kills-')) {
+          const parts = id.split('-');
+          const index = parts[2];
+          
+          const oldName = state.inputs[`foe-name-${index}`] || '';
+          const oldKills = parseInt(state.inputs[`foe-kills-${index}`]) || 0;
+          const oldRowXP = getXpFromMonsterName(oldName) * oldKills;
+          
+          const newName = nextInputs[`foe-name-${index}`] || '';
+          const newKills = parseInt(nextInputs[`foe-kills-${index}`]) || 0;
+          const newRowXP = getXpFromMonsterName(newName) * newKills;
+          
+          const xpDiff = newRowXP - oldRowXP;
+          if (xpDiff !== 0) {
+            const currentXP = parseInt(state.inputs['char-xp']) || 0;
+            const newXP = Math.max(0, currentXP + xpDiff);
+            nextInputs['char-xp'] = String(newXP);
+            
+            const recomputed = recalculate(newXP, state.charState.purchasedTalents, state.charState.class, nextInputs);
+            return {
+              inputs: recomputed.inputs,
+              charState: recomputed.charState
+            };
+          }
+        }
+
         return { inputs: nextInputs };
       }),
 
@@ -404,6 +421,8 @@ export const useCharacterStore = create<AppState>()(
           }
         }
         
+        const xpPerKill = getXpForTier(tier);
+        
         if (foundIndex !== -1) {
           const currentKills = parseInt(nextInputs['foe-kills-' + foundIndex]) || 0;
           nextInputs['foe-kills-' + foundIndex] = String(currentKills + 1);
@@ -428,8 +447,14 @@ export const useCharacterStore = create<AppState>()(
           }
         }
         
+        const currentXP = parseInt(nextInputs['char-xp']) || 0;
+        const newXP = currentXP + xpPerKill;
+        nextInputs['char-xp'] = String(newXP);
+        const recomputed = recalculate(newXP, state.charState.purchasedTalents, state.charState.class, nextInputs);
+        
         return {
-          inputs: nextInputs,
+          inputs: recomputed.inputs,
+          charState: recomputed.charState,
           tomeMonsterInput: ''
         };
       }),
@@ -440,6 +465,9 @@ export const useCharacterStore = create<AppState>()(
         const currentKills = parseInt(nextInputs['foe-kills-' + rowIndex]) || 0;
         const nextKills = currentKills + delta;
         
+        const xpPerKill = getXpFromMonsterName(name);
+        const xpDiff = xpPerKill * delta;
+        
         if (nextKills < 1) {
           nextInputs['foe-name-' + rowIndex] = '';
           nextInputs['foe-kills-' + rowIndex] = '';
@@ -448,7 +476,15 @@ export const useCharacterStore = create<AppState>()(
           nextInputs['foe-kills-' + rowIndex] = String(nextKills);
         }
         
-        return { inputs: nextInputs };
+        const currentXP = parseInt(nextInputs['char-xp']) || 0;
+        const newXP = Math.max(0, currentXP + xpDiff);
+        nextInputs['char-xp'] = String(newXP);
+        const recomputed = recalculate(newXP, state.charState.purchasedTalents, state.charState.class, nextInputs);
+        
+        return {
+          inputs: recomputed.inputs,
+          charState: recomputed.charState
+        };
       }),
 
       adjustCalculator: (key, delta) => set((state) => {
@@ -465,8 +501,7 @@ export const useCharacterStore = create<AppState>()(
 
       applyCalculatorXP: () => set((state) => {
         const c = state.calculator;
-        const tierKills = getTierKillsFromInputs(state.inputs);
-        const addedXP = (tierKills.tier1 * 1) + (tierKills.tier2 * 2) + (tierKills.tier3 * 4) + (tierKills.tier4 * 8) + (tierKills.tier5 * 12) + (tierKills.tier6 * 20) +
+        const addedXP = (c.tier1 * 1) + (c.tier2 * 2) + (c.tier3 * 4) + (c.tier4 * 8) + (c.tier5 * 12) + (c.tier6 * 20) +
                         (c.bounty * 5) + (c.named * 10) + (c.dboss * 25) + (c.cboss * 100);
         
         if (addedXP <= 0) {
@@ -479,12 +514,6 @@ export const useCharacterStore = create<AppState>()(
         
         const nextInputs = { ...state.inputs };
         nextInputs['char-xp'] = String(newXP);
-        
-        // Clear all 22 active monster slots
-        for (let i = 1; i <= 22; i++) {
-          nextInputs['foe-name-' + i] = '';
-          nextInputs['foe-kills-' + i] = '';
-        }
         
         const recomputed = recalculate(newXP, state.charState.purchasedTalents, state.charState.class, nextInputs);
         

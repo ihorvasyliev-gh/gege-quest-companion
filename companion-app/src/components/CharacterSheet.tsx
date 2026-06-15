@@ -1,4 +1,4 @@
-import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable } from '../store/useCharacterStore';
+import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable, getXpFromMonsterName } from '../store/useCharacterStore';
 
 // Pages corner Celtic knots
 const Corners = () => (
@@ -652,10 +652,26 @@ export function CharacterSheet() {
                     const i = index + 1;
                     const nameId = `foe-name-${i}`;
                     const killsId = `foe-kills-${i}`;
+                    const nameVal = inputs[nameId] || '';
+                    const killsVal = parseInt(inputs[killsId]) || 0;
+                    const rowXP = getXpFromMonsterName(nameVal) * killsVal;
                     return (
                       <div key={i} className="monster-line">
                         <input type="text" id={nameId} className="monster-name-input" {...bindInput(nameId)} />
                         <input type="text" id={killsId} className="monster-kills-input" {...bindInput(killsId)} />
+                        {rowXP > 0 && (
+                          <span style={{
+                            fontFamily: 'MedievalSharp, cursive',
+                            fontSize: '9px',
+                            fontWeight: 'bold',
+                            color: '#8c1e13',
+                            marginRight: '6px',
+                            whiteSpace: 'nowrap',
+                            opacity: 0.85
+                          }}>
+                            +{rowXP} XP
+                          </span>
+                        )}
                       </div>
                     );
                   })}

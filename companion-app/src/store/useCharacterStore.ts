@@ -235,8 +235,6 @@ export function getXpFromMonsterName(name: string): number {
       currentCharId: null,
       savingState: 'idle',
 
-      // Theme state
-      theme: (localStorage.getItem('gege_theme') || 'dark') as 'light' | 'dark',
 
       setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -602,10 +600,19 @@ export function getXpFromMonsterName(name: string): number {
 
       signUp: async (email, password) => {
         set({ authLoading: true });
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: redirectTo
+          }
+        });
         set({ authLoading: false });
-        if (!error && data?.user) {
+        if (!error && data?.user && data?.session) {
           set({ user: data.user, session: data.session });
+        } else {
+          set({ user: null, session: null });
         }
         return { error };
       },
@@ -650,7 +657,11 @@ export function getXpFromMonsterName(name: string): number {
           });
           await get().fetchCharacters();
         } else {
-          set({ authLoading: false });
+          set({
+            session: null,
+            user: null,
+            authLoading: false
+          });
         }
       },
 
@@ -801,17 +812,6 @@ export function getXpFromMonsterName(name: string): number {
 
       setSavingState: (savingState) => set({ savingState }),
 
-      // Theme actions
-      toggleTheme: () => {
-        const nextTheme = get().theme === 'light' ? 'dark' : 'light';
-        get().setTheme(nextTheme);
-      },
-
-      setTheme: (theme) => {
-        localStorage.setItem('gege_theme', theme);
-        document.documentElement.setAttribute('data-theme', theme);
-        set({ theme });
-      }
     }),
     {
       name: 'gege_quest_char_data',
@@ -825,7 +825,6 @@ export function getXpFromMonsterName(name: string): number {
               state: {
                 inputs: parsed.inputs || {},
                 charState: parsed.charState || { ...emptyCharState },
-                theme: parsed.theme || 'dark',
                 rememberMe: parsed.rememberMe !== false
               }
             };
@@ -838,7 +837,6 @@ export function getXpFromMonsterName(name: string): number {
           const data = {
             inputs: value.state.inputs || {},
             charState: value.state.charState || { ...emptyCharState },
-            theme: value.state.theme || 'dark',
             rememberMe: value.state.rememberMe !== false
           };
           localStorage.setItem(name, JSON.stringify(data));
@@ -850,7 +848,6 @@ export function getXpFromMonsterName(name: string): number {
       partialize: (state) => ({
         inputs: state.inputs,
         charState: state.charState,
-        theme: state.theme,
         rememberMe: state.rememberMe
       })
     }

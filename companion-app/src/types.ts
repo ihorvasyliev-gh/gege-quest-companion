@@ -74,7 +74,6 @@ export interface AppState {
   savingState: 'idle' | 'saving' | 'saved' | 'error';
 
   // Theme state
-  theme: 'light' | 'dark';
   
   // Navigation actions
   setActiveTab: (tab: 'sheet-tab' | 'rulebook-tab') => void;
@@ -125,8 +124,5 @@ export interface AppState {
   saveCharacterToCloud: (id: string, inputs: Record<string, string>, charState: CharacterState) => Promise<{ error: { message: string } | null }>;
   setSavingState: (state: 'idle' | 'saving' | 'saved' | 'error') => void;
 
-  // Theme actions
-  toggleTheme: () => void;
-  setTheme: (theme: 'light' | 'dark') => void;
 }
 

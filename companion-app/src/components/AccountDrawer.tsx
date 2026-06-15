@@ -45,8 +45,14 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
       if (error) {
         showToast(error.message, 'error');
       } else {
-        showToast('Registration successful! Please sign in.', 'success');
-        setIsRegisterMode(false);
+        const currentUser = useCharacterStore.getState().user;
+        if (currentUser) {
+          showToast('Welcome, adventurer! Your account is ready.', 'success');
+          onClose();
+        } else {
+          showToast('Registration successful! Please sign in.', 'success');
+          setIsRegisterMode(false);
+        }
       }
     } else {
       const { error } = await signIn(email, password);

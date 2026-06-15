@@ -15,13 +15,11 @@ export default function App() {
   const recoverSession = useCharacterStore((state) => state.recoverSession);
   const saveCharacterToCloud = useCharacterStore((state) => state.saveCharacterToCloud);
   const setSavingState = useCharacterStore((state) => state.setSavingState);
-  const theme = useCharacterStore((state) => state.theme);
 
-  // Initialize session and theme
+  // Initialize session
   useEffect(() => {
     recoverSession();
-    // Set initial theme attribute
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.removeAttribute('data-theme');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -11,12 +11,10 @@ export function Navbar() {
   const importCharacter = useCharacterStore((state) => state.importCharacter);
   const showToast = useCharacterStore((state) => state.showToast);
 
-  // Supabase & Theme state
+  // Supabase state
   const user = useCharacterStore((state) => state.user);
   const currentCharId = useCharacterStore((state) => state.currentCharId);
   const savingState = useCharacterStore((state) => state.savingState);
-  const theme = useCharacterStore((state) => state.theme);
-  const toggleTheme = useCharacterStore((state) => state.toggleTheme);
   const createCharacter = useCharacterStore((state) => state.createCharacter);
   const saveCharacterToCloud = useCharacterStore((state) => state.saveCharacterToCloud);
   const selectCharacter = useCharacterStore((state) => state.selectCharacter);
@@ -173,9 +171,7 @@ export function Navbar() {
         </div>
 
         <div className="navbar-actions desktop-only">
-          <button type="button" className="action-btn theme-toggle-btn" onClick={toggleTheme} title="Toggle Dark/Light Mode">
-            {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
-          </button>
+
           <button type="button" className="action-btn account-btn" onClick={() => setAccountDrawerOpen(true)}>
             🛡️ {user ? 'Tavern' : 'Sign In'}
           </button>
@@ -186,9 +182,7 @@ export function Navbar() {
         </div>
 
         <div className="navbar-actions mobile-only">
-          <button type="button" className="action-btn theme-toggle-btn" onClick={toggleTheme} style={{ marginRight: '5px' }}>
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
+
           <button type="button" className="action-btn" onClick={toggleMobileDrawer}>☰ Menu</button>
         </div>
       </div>

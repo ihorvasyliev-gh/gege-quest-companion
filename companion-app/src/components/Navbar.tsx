@@ -146,7 +146,7 @@ export function Navbar() {
         <div className="navbar-left">
           <div className="navbar-brand">
             <span className="desktop-only">GeGe QUEST RPG Companion</span>
-            <span className="mobile-only">GeGe QUEST RPG Companion</span>
+            <span className="mobile-only">GEGE QUEST</span>
           </div>
           {renderSyncBadge()}
         </div>

@@ -119,6 +119,9 @@ body {
 .desktop-only {
     display: inline-flex;
 }
+h1.main-title .desktop-only {
+    display: inline;
+}
 .desktop-table-cell {
     display: table-cell;
 }
@@ -135,6 +138,9 @@ body {
     }
     .mobile-only {
         display: inline-flex !important;
+    }
+    h1.main-title .mobile-only {
+        display: inline !important;
     }
     .mobile-monster-list {
         display: block !important;

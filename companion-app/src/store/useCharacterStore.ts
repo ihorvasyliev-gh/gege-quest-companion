@@ -631,18 +631,35 @@ export function getXpFromMonsterName(name: string): number {
       signOut: async () => {
         set({ authLoading: true });
         await supabase.auth.signOut();
+
+        let loadedInputs = {};
+        let loadedCharState = { ...emptyCharState };
+
+        const localOfflineData = localStorage.getItem('gege_quest_offline_char_data');
+        if (localOfflineData) {
+          try {
+            const parsed = JSON.parse(localOfflineData);
+            loadedInputs = parsed.inputs || {};
+            loadedCharState = parsed.charState || { ...emptyCharState };
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          // Fallback to recalculating an empty character
+          const recomputed = recalculate(0, {}, '', {});
+          loadedInputs = recomputed.inputs;
+          loadedCharState = recomputed.charState;
+        }
+
         set({
           user: null,
           session: null,
           authLoading: false,
           cloudCharacters: [],
           currentCharId: null,
-          savingState: 'idle'
-        });
-        const recomputed = recalculate(0, {}, '', {});
-        set({
-          inputs: recomputed.inputs,
-          charState: recomputed.charState
+          savingState: 'idle',
+          inputs: loadedInputs,
+          charState: loadedCharState
         });
       },
 
@@ -656,11 +673,18 @@ export function getXpFromMonsterName(name: string): number {
             authLoading: false
           });
           await get().fetchCharacters();
+
+          // Sync the active cloud character if one was selected
+          const currentId = get().currentCharId;
+          if (currentId) {
+            await get().selectCharacter(currentId);
+          }
         } else {
           set({
             session: null,
             user: null,
-            authLoading: false
+            authLoading: false,
+            currentCharId: null,
           });
         }
       },
@@ -721,7 +745,35 @@ export function getXpFromMonsterName(name: string): number {
       },
 
       selectCharacter: async (id) => {
+        // If switching from offline (currentCharId === null) to a cloud character (id !== null),
+        // save the current offline character's data to gege_quest_offline_char_data first
+        if (get().currentCharId === null) {
+          const offlineData = {
+            inputs: get().inputs,
+            charState: get().charState
+          };
+          localStorage.setItem('gege_quest_offline_char_data', JSON.stringify(offlineData));
+        }
+
         if (!id) {
+          // Switching back to offline character. Load from dedicated backup first
+          const localOfflineData = localStorage.getItem('gege_quest_offline_char_data');
+          if (localOfflineData) {
+            try {
+              const parsed = JSON.parse(localOfflineData);
+              set({
+                currentCharId: null,
+                inputs: parsed.inputs || {},
+                charState: parsed.charState || { ...emptyCharState },
+                savingState: 'idle'
+              });
+              return;
+            } catch (e) {
+              console.error(e);
+            }
+          }
+
+          // Fallback to gege_quest_char_data for backward compatibility if no offline data exists
           const localData = localStorage.getItem('gege_quest_char_data');
           if (localData) {
             try {
@@ -825,7 +877,8 @@ export function getXpFromMonsterName(name: string): number {
               state: {
                 inputs: parsed.inputs || {},
                 charState: parsed.charState || { ...emptyCharState },
-                rememberMe: parsed.rememberMe !== false
+                rememberMe: parsed.rememberMe !== false,
+                currentCharId: parsed.currentCharId || null
               }
             };
           } catch {
@@ -837,7 +890,8 @@ export function getXpFromMonsterName(name: string): number {
           const data = {
             inputs: value.state.inputs || {},
             charState: value.state.charState || { ...emptyCharState },
-            rememberMe: value.state.rememberMe !== false
+            rememberMe: value.state.rememberMe !== false,
+            currentCharId: value.state.currentCharId || null
           };
           localStorage.setItem(name, JSON.stringify(data));
         },
@@ -848,7 +902,8 @@ export function getXpFromMonsterName(name: string): number {
       partialize: (state) => ({
         inputs: state.inputs,
         charState: state.charState,
-        rememberMe: state.rememberMe
+        rememberMe: state.rememberMe,
+        currentCharId: state.currentCharId
       })
     }
   )

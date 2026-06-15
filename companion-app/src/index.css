@@ -2304,6 +2304,36 @@ h1.main-title {
     background-color: rgba(244, 233, 212, 0.5);
 }
 
+/* --- DM Panel Responsive Styling --- */
+@media screen and (max-width: 768px) {
+    .dm-table th, .dm-table td {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+    .dm-table select.dm-select, .dm-table input.dm-input {
+        padding: 2px 4px !important;
+        font-size: 10px !important;
+        height: 24px !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .dm-table th, .dm-table td {
+        padding: 3px 4px;
+        font-size: 10px;
+    }
+    .dm-table select.dm-select, .dm-table input.dm-input {
+        padding: 2px !important;
+        font-size: 9px !important;
+        height: 22px !important;
+    }
+    .dm-tab-btn {
+        padding: 6px 8px;
+        font-size: 9.5px;
+        letter-spacing: 0.5px;
+    }
+}
+
 
 
 

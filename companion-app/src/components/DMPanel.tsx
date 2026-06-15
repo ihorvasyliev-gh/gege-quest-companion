@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCharacterStore, getDefaultGameConfig } from '../store/useCharacterStore';
 import type { GameConfig, Talent, XPSetting } from '../types';
-import { XPIcon } from './XPIcon';
 
 const AVAILABLE_ICONS = [
   { key: 'goblin', label: '👺 Goblin' },
@@ -353,7 +352,7 @@ export function DMPanel() {
                     <div>
                       <h3>Talents for {getClassName(selectedClassKey)}</h3>
                       
-                      <div style={{ maxHeight: '250px', overflowY: 'auto', marginTop: '10px', paddingRight: '5px' }}>
+                      <div style={{ marginTop: '10px' }}>
                         {draftConfig.classes[selectedClassKey]?.talents.length === 0 ? (
                           <div style={{ fontSize: '12px', fontStyle: 'italic', padding: '10px 0' }}>
                             No talents added yet for this class. Add one below!
@@ -476,29 +475,29 @@ export function DMPanel() {
                 Modify the challenge categories for the player's XP Calculator. Slaying counts of these categories will automatically sum up to compute their XP.
               </p>
 
-              <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+              <div>
                 <table className="dm-table" style={{ width: '100%' }}>
                   <thead>
                     <tr>
-                      <th style={{ width: '10%', textAlign: 'center' }}>Move</th>
-                      <th style={{ width: '20%' }}>Category Key (ID)</th>
-                      <th style={{ width: '30%' }}>Display Name</th>
-                      <th style={{ width: '20%' }}>Icon</th>
-                      <th style={{ width: '10%', textAlign: 'center' }}>XP Reward</th>
-                      <th style={{ width: '10%', textAlign: 'center' }}>Action</th>
+                      <th style={{ width: '8%', textAlign: 'center' }}>Move</th>
+                      <th className="desktop-table-cell" style={{ width: '22%' }}>Category Key (ID)</th>
+                      <th style={{ width: '32%' }}>Display Name</th>
+                      <th style={{ width: '22%' }}>Icon</th>
+                      <th style={{ width: '8%', textAlign: 'center' }}>XP</th>
+                      <th style={{ width: '8%', textAlign: 'center' }}>Del</th>
                     </tr>
                   </thead>
                   <tbody>
                     {draftConfig.xpSettings.map((setting, index) => (
                       <tr key={index}>
                         <td style={{ textAlign: 'center' }}>
-                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
                             <button
                               type="button"
                               onClick={() => handleMoveXPCategoryUp(index)}
                               disabled={index === 0}
                               className="action-btn"
-                              style={{ padding: '2px 6px', fontSize: '9px', minWidth: '22px', height: '22px' }}
+                              style={{ padding: '0', fontSize: '8px', width: '20px', height: '16px', lineHeight: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                               title="Move Up"
                             >
                               ▲
@@ -508,21 +507,15 @@ export function DMPanel() {
                               onClick={() => handleMoveXPCategoryDown(index)}
                               disabled={index === draftConfig.xpSettings.length - 1}
                               className="action-btn"
-                              style={{ padding: '2px 6px', fontSize: '9px', minWidth: '22px', height: '22px' }}
+                              style={{ padding: '0', fontSize: '8px', width: '20px', height: '16px', lineHeight: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                               title="Move Down"
                             >
                               ▼
                             </button>
                           </div>
                         </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={setting.key}
-                            onChange={(e) => handleUpdateXPSetting(index, 'key', e.target.value)}
-                            className="dm-input"
-                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px' }}
-                          />
+                        <td className="desktop-table-cell" style={{ textAlign: 'center' }}>
+                          <code style={{ fontSize: '11px', color: '#5c3e21', wordBreak: 'break-all' }}>{setting.key}</code>
                         </td>
                         <td>
                           <input
@@ -530,25 +523,22 @@ export function DMPanel() {
                             value={setting.label}
                             onChange={(e) => handleUpdateXPSetting(index, 'label', e.target.value)}
                             className="dm-input"
-                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px' }}
+                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px', width: '100%', boxSizing: 'border-box' }}
                           />
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <XPIcon name={setting.icon || 'skull'} size={18} style={{ color: '#4a2e13', flexShrink: 0 }} />
-                            <select
-                              value={setting.icon || 'skull'}
-                              onChange={(e) => handleUpdateXPSetting(index, 'icon', e.target.value)}
-                              className="dm-select"
-                              style={{ padding: '2px 4px', fontSize: '11px', height: '28px', minWidth: '85px' }}
-                            >
-                              {AVAILABLE_ICONS.map((iconOpt) => (
-                                <option key={iconOpt.key} value={iconOpt.key}>
-                                  {iconOpt.label}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
+                          <select
+                            value={setting.icon || 'skull'}
+                            onChange={(e) => handleUpdateXPSetting(index, 'icon', e.target.value)}
+                            className="dm-select"
+                            style={{ padding: '2px 4px', fontSize: '11px', height: '28px', width: '100%', minWidth: '75px', boxSizing: 'border-box' }}
+                          >
+                            {AVAILABLE_ICONS.map((iconOpt) => (
+                              <option key={iconOpt.key} value={iconOpt.key}>
+                                {iconOpt.label}
+                              </option>
+                            ))}
+                          </select>
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           <input
@@ -557,7 +547,7 @@ export function DMPanel() {
                             value={setting.xp}
                             onChange={(e) => handleUpdateXPSetting(index, 'xp', e.target.value)}
                             className="dm-input"
-                            style={{ width: '55px', padding: '4px', textAlign: 'center', fontSize: '11px', height: '28px', margin: '0 auto' }}
+                            style={{ width: '45px', padding: '4px 2px', textAlign: 'center', fontSize: '11px', height: '28px', margin: '0 auto', boxSizing: 'border-box' }}
                           />
                         </td>
                         <td style={{ textAlign: 'center' }}>

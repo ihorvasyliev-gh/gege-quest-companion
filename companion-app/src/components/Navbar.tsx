@@ -86,7 +86,7 @@ export function Navbar() {
       if (success) {
         showToast("Hero Character imported successfully!", "success");
       } else {
-        showToast("Failed to parse JSON file. Ensure it is a valid GeGe character save file.", "error");
+        showToast("Failed to parse JSON file. Ensure it is a valid GeGe QUEST RPG Companion character save file.", "error");
       }
     };
     reader.readAsText(file);
@@ -146,7 +146,7 @@ export function Navbar() {
         <div className="navbar-left">
           <div className="navbar-brand">
             <span className="desktop-only">GeGe QUEST RPG Companion</span>
-            <span className="mobile-only">GeGe QUEST</span>
+            <span className="mobile-only">GeGe QUEST RPG Companion</span>
           </div>
           {renderSyncBadge()}
         </div>

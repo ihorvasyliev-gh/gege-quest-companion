@@ -116,7 +116,7 @@ export function CharacterSheet() {
 
           <div>
             <div className="header-container">
-              <h1 className="main-title">GeGe QUEST</h1>
+              <h1 className="main-title">GeGe QUEST RPG Companion</h1>
               <div className="subtitle">Character Sheet</div>
             </div>
 

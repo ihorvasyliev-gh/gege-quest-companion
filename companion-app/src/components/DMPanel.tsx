@@ -806,21 +806,21 @@ export function DMPanel() {
 
       {/* Edit Talent Modal */}
       {editingTalent && (
-        <div className="conflict-modal-overlay" onClick={() => setEditingTalent(null)}>
-          <div className="conflict-modal-panel" onClick={(e) => e.stopPropagation()} style={{ width: '450px' }}>
-            <div className="conflict-modal-header">
+        <div className="parchment-modal-overlay" onClick={() => setEditingTalent(null)}>
+          <div className="parchment-modal-panel" onClick={(e) => e.stopPropagation()} style={{ width: '450px' }}>
+            <div className="parchment-modal-header">
               <h2>✍️ Edit Talent</h2>
               <button
                 type="button"
                 className="close-btn"
-                style={{ background: 'transparent', border: 'none', color: '#bfae95', fontSize: '28px', cursor: 'pointer' }}
+                style={{ background: 'transparent', border: 'none', color: '#4a2e13', fontSize: '28px', cursor: 'pointer' }}
                 onClick={() => setEditingTalent(null)}
               >
                 &times;
               </button>
             </div>
 
-            <div className="conflict-modal-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="parchment-modal-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
                 <label className="dm-label">Talent Name:</label>
                 <input
@@ -874,7 +874,7 @@ export function DMPanel() {
               </div>
             </div>
 
-            <div className="conflict-modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="parchment-modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <button
                 type="button"
                 className="action-btn reset"

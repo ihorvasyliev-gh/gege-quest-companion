@@ -2503,8 +2503,94 @@ h1.main-title {
     transform: scale(1.05);
 }
 
-.conflict-modal-panel .dm-label {
-    color: #ebd5b3 !important;
+/* --- Parchment Modal Dialog --- */
+.parchment-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+    z-index: 10002;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.parchment-modal-panel {
+    width: 450px;
+    max-width: 95%;
+    max-height: 90vh;
+    background-color: #f3e5c8;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%);
+    border: 3px double #4a2e13;
+    outline: 1.5px solid rgba(74, 46, 19, 0.35);
+    outline-offset: -5px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    overflow: hidden;
+    color: #4a2e13;
+    animation: modalScaleUp 0.15s ease-out;
+}
+
+@keyframes modalScaleUp {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.parchment-modal-header {
+    padding: 18px 20px 12px 20px;
+    border-bottom: 1.5px solid #4a2e13;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.parchment-modal-header h2 {
+    margin: 0;
+    font-family: 'Cinzel Decorative', 'Cinzel', serif;
+    color: #4a2e13;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.parchment-modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    color: #2a1805;
+}
+
+.parchment-modal-footer {
+    padding: 15px 20px;
+    border-top: 1.5px solid #4a2e13;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(74, 46, 19, 0.05);
+}
+
+.parchment-modal-panel .conflict-btn-cancel {
+    border: 1px solid #4a2e13;
+    color: #4a2e13;
+    background: transparent;
+}
+.parchment-modal-panel .conflict-btn-cancel:hover {
+    background-color: rgba(74, 46, 19, 0.08);
+    color: #2a1805;
+    border-color: #2a1805;
 }
 
 

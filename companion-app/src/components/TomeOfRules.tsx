@@ -247,7 +247,8 @@ export function TomeOfRules() {
               <input
                 type="number"
                 id="tome-gold-input"
-                style={{ width: '85px', textAlign: 'center', padding: '4px', border: '1px solid #5c3e21', backgroundColor: 'rgba(255,255,255,0.7)', fontFamily: 'MedievalSharp, cursive', fontSize: '13px', borderRadius: '3px' }}
+                className="gothic-input"
+                style={{ width: '85px', textAlign: 'center' }}
                 placeholder="Amount"
                 value={tomeGoldInput}
                 onChange={(e) => setTomeGoldInput(e.target.value)}
@@ -263,7 +264,8 @@ export function TomeOfRules() {
               <input
                 type="text"
                 id="tome-monster-input"
-                style={{ flex: 1, minWidth: 0, padding: '5px 8px', border: '1px solid #5c3e21', backgroundColor: 'rgba(255,255,255,0.7)', fontFamily: 'MedievalSharp, cursive', fontSize: '12px', borderRadius: '3px' }}
+                className="gothic-input"
+                style={{ flex: 1, minWidth: 0 }}
                 placeholder="Monster Name (e.g., Goblin)"
                 value={tomeMonsterInput}
                 onChange={(e) => setTomeMonsterInput(e.target.value)}
@@ -271,16 +273,7 @@ export function TomeOfRules() {
               />
               <select
                 id="tome-monster-tier-select"
-                style={{
-                  padding: '5px 8px',
-                  border: '1px solid #5c3e21',
-                  backgroundColor: 'rgba(255,255,255,0.7)',
-                  fontFamily: 'MedievalSharp, cursive',
-                  fontSize: '12px',
-                  borderRadius: '3px',
-                  color: '#4a2e13',
-                  cursor: 'pointer'
-                }}
+                className="gothic-select-small"
                 value={tomeMonsterTierInput}
                 onChange={(e) => setTomeMonsterTierInput(e.target.value)}
               >

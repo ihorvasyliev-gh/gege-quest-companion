@@ -980,8 +980,14 @@ export function getXpFromMonsterName(name: string): number {
             
             // Merge missing fields with defaults to prevent crash if some fields are missing in DB
             const mergedLayout = { ...DEFAULT_SHEET_LAYOUT, ...loadedConfig.sheetLayout };
+            
+            // Pull in default classes if the DB is empty
+            const mergedClasses = (!loadedConfig.classes || Object.keys(loadedConfig.classes).length === 0)
+              ? getDefaultGameConfig().classes
+              : loadedConfig.classes;
+
             const finalConfig = {
-              classes: loadedConfig.classes,
+              classes: mergedClasses,
               xpSettings: loadedConfig.xpSettings.length > 0 ? loadedConfig.xpSettings : DEFAULT_XP_SETTINGS,
               sheetLayout: mergedLayout
             };
@@ -996,7 +1002,19 @@ export function getXpFromMonsterName(name: string): number {
           const cached = localStorage.getItem('gege_quest_game_config');
           if (cached) {
             try {
-              set({ gameConfig: JSON.parse(cached), configLoading: false });
+              const parsed = JSON.parse(cached);
+              const mergedLayout = { ...DEFAULT_SHEET_LAYOUT, ...parsed.sheetLayout };
+              const mergedClasses = (!parsed.classes || Object.keys(parsed.classes).length === 0)
+                ? getDefaultGameConfig().classes
+                : parsed.classes;
+              set({
+                gameConfig: {
+                  classes: mergedClasses,
+                  xpSettings: parsed.xpSettings && parsed.xpSettings.length > 0 ? parsed.xpSettings : DEFAULT_XP_SETTINGS,
+                  sheetLayout: mergedLayout
+                },
+                configLoading: false
+              });
             } catch {
               set({ gameConfig: getDefaultGameConfig(), configLoading: false });
             }

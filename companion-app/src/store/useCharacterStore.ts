@@ -193,6 +193,34 @@ function recalculate(xpVal: number, purchased: Record<string, number>, className
   };
 }
 
+export function getTierKillsFromInputs(inputs: Record<string, string>) {
+  const counts = {
+    tier1: 0,
+    tier2: 0,
+    tier3: 0,
+    tier4: 0,
+    tier5: 0,
+    tier6: 0
+  };
+  for (let i = 1; i <= 22; i++) {
+    const name = (inputs[`foe-name-${i}`] || '').trim();
+    const kills = parseInt(inputs[`foe-kills-${i}`]) || 0;
+    if (name && kills > 0) {
+      const match = name.match(/\(Tier (I|II|III|IV|V|VI)\)$/i);
+      if (match) {
+        const tierStr = match[1].toUpperCase();
+        if (tierStr === 'I') counts.tier1 += kills;
+        else if (tierStr === 'II') counts.tier2 += kills;
+        else if (tierStr === 'III') counts.tier3 += kills;
+        else if (tierStr === 'IV') counts.tier4 += kills;
+        else if (tierStr === 'V') counts.tier5 += kills;
+        else if (tierStr === 'VI') counts.tier6 += kills;
+      }
+    }
+  }
+  return counts;
+}
+
 export const useCharacterStore = create<AppState>()(
   persist(
     (set) => ({
@@ -202,6 +230,7 @@ export const useCharacterStore = create<AppState>()(
       calculator: { ...defaultCalculator },
       tomeGoldInput: '',
       tomeMonsterInput: '',
+      tomeMonsterTierInput: 'Tier I',
       toasts: [],
 
       setActiveTab: (tab) => set({ activeTab: tab }),
@@ -354,18 +383,22 @@ export const useCharacterStore = create<AppState>()(
 
       setTomeMonsterInput: (val) => set({ tomeMonsterInput: val }),
 
+      setTomeMonsterTierInput: (val) => set({ tomeMonsterTierInput: val }),
+
       logMonsterKill: () => set((state) => {
         const name = state.tomeMonsterInput.trim();
+        const tier = state.tomeMonsterTierInput;
         if (!name) {
           state.showToast("Please enter a monster name.", "error");
           return {};
         }
         
+        const fullName = `${name} (${tier})`;
         const nextInputs = { ...state.inputs };
         let foundIndex = -1;
-        for (let i = 1; i <= 18; i++) {
+        for (let i = 1; i <= 22; i++) {
           const mName = (nextInputs['foe-name-' + i] || '').trim();
-          if (mName.toLowerCase() === name.toLowerCase()) {
+          if (mName.toLowerCase() === fullName.toLowerCase()) {
             foundIndex = i;
             break;
           }
@@ -374,10 +407,10 @@ export const useCharacterStore = create<AppState>()(
         if (foundIndex !== -1) {
           const currentKills = parseInt(nextInputs['foe-kills-' + foundIndex]) || 0;
           nextInputs['foe-kills-' + foundIndex] = String(currentKills + 1);
-          state.showToast(`Logged kill for existing monster: ${name}.\nNew kills count: ${currentKills + 1}`, "success");
+          state.showToast(`Logged kill for existing monster: ${fullName}.\nNew kills count: ${currentKills + 1}`, "success");
         } else {
           let emptyIndex = -1;
-          for (let i = 1; i <= 18; i++) {
+          for (let i = 1; i <= 22; i++) {
             const mName = (nextInputs['foe-name-' + i] || '').trim();
             if (!mName) {
               emptyIndex = i;
@@ -386,11 +419,11 @@ export const useCharacterStore = create<AppState>()(
           }
           
           if (emptyIndex !== -1) {
-            nextInputs['foe-name-' + emptyIndex] = name;
+            nextInputs['foe-name-' + emptyIndex] = fullName;
             nextInputs['foe-kills-' + emptyIndex] = '1';
-            state.showToast(`Added new monster to ledger: ${name} (Row ${emptyIndex}) with 1 kill.`, "success");
+            state.showToast(`Added new monster to ledger: ${fullName} (Row ${emptyIndex}) with 1 kill.`, "success");
           } else {
-            state.showToast("Cannot add monster: Your ledger on Page 2 is full (all 18 rows are occupied)!", "error");
+            state.showToast("Cannot add monster: Your ledger on Page 2 is full (all 22 rows are occupied)!", "error");
             return {};
           }
         }
@@ -432,7 +465,8 @@ export const useCharacterStore = create<AppState>()(
 
       applyCalculatorXP: () => set((state) => {
         const c = state.calculator;
-        const addedXP = (c.tier1 * 1) + (c.tier2 * 2) + (c.tier3 * 4) + (c.tier4 * 8) + (c.tier5 * 12) + (c.tier6 * 20) +
+        const tierKills = getTierKillsFromInputs(state.inputs);
+        const addedXP = (tierKills.tier1 * 1) + (tierKills.tier2 * 2) + (tierKills.tier3 * 4) + (tierKills.tier4 * 8) + (tierKills.tier5 * 12) + (tierKills.tier6 * 20) +
                         (c.bounty * 5) + (c.named * 10) + (c.dboss * 25) + (c.cboss * 100);
         
         if (addedXP <= 0) {
@@ -445,6 +479,12 @@ export const useCharacterStore = create<AppState>()(
         
         const nextInputs = { ...state.inputs };
         nextInputs['char-xp'] = String(newXP);
+        
+        // Clear all 22 active monster slots
+        for (let i = 1; i <= 22; i++) {
+          nextInputs['foe-name-' + i] = '';
+          nextInputs['foe-kills-' + i] = '';
+        }
         
         const recomputed = recalculate(newXP, state.charState.purchasedTalents, state.charState.class, nextInputs);
         
@@ -476,7 +516,8 @@ export const useCharacterStore = create<AppState>()(
           charState: recomputed.charState,
           calculator: { ...defaultCalculator },
           tomeGoldInput: '',
-          tomeMonsterInput: ''
+          tomeMonsterInput: '',
+          tomeMonsterTierInput: 'Tier I'
         };
       }),
 

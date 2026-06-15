@@ -43,6 +43,7 @@ export interface AppState {
   // Tome inputs
   tomeGoldInput: string;
   tomeMonsterInput: string;
+  tomeMonsterTierInput: string;
   
   // Toast notifications list
   toasts: Array<{
@@ -68,6 +69,7 @@ export interface AppState {
   
   // Monster logger actions
   setTomeMonsterInput: (val: string) => void;
+  setTomeMonsterTierInput: (val: string) => void;
   logMonsterKill: () => void;
   adjustTomeMonster: (rowIndex: number, delta: number) => void;
   

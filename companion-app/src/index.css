@@ -1174,6 +1174,15 @@ h1.main-title {
     color: #8c1e13;
     font-weight: bold;
 }
+.stat-upgrade-slot.interactive {
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.stat-upgrade-slot.interactive:hover {
+    background-color: #f5ecd5;
+    border-color: #8c1e13;
+    color: #b32d20;
+}
 .stat-upgrade-slot.checked::before {
     content: 'X';
 }

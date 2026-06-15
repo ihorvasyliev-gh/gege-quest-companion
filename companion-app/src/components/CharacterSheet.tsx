@@ -82,6 +82,8 @@ export function CharacterSheet() {
   const inputs = useCharacterStore((state) => state.inputs);
   const updateInput = useCharacterStore((state) => state.updateInput);
   const charState = useCharacterStore((state) => state.charState);
+  const buyTalent = useCharacterStore((state) => state.buyTalent);
+  const refundTalent = useCharacterStore((state) => state.refundTalent);
 
   // Helper for input binding
   const bindInput = (id: string) => ({
@@ -705,49 +707,136 @@ export function CharacterSheet() {
               <div className="subtitle" style={{ fontSize: '9px', letterSpacing: '2px' }}>Advancements & Codex</div>
             </div>
 
-            {/* Permanent Stat Advancements */}
+            {/* Permanent Stat Advancements / Shared Talents */}
             <div className="parchment-box" style={{ padding: '5px 8px' }}>
               <h3>Permanent Stat Advancements (AP Purchases)</h3>
               <div className="stat-upgrades-grid">
+                {/* Toughness */}
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Toughness (Body)</span>
+                  <span className="stat-upgrade-label">Toughness (Body) [1 AP]</span>
                   <div className="stat-upgrade-slots">
-                    {Array.from({ length: 3 }, (_, i) => (
-                      <div
-                        key={i}
-                        className={`stat-upgrade-slot ${(i + 1) <= (charState.purchasedTalents['toughness'] || 0) ? 'checked' : ''}`}
-                        id={`slot-toughness-${i+1}`}
-                      ></div>
-                    ))}
+                    {Array.from({ length: 3 }, (_, i) => {
+                      const val = i + 1;
+                      const isChecked = val <= (charState.purchasedTalents['toughness'] || 0);
+                      return (
+                        <div
+                          key={i}
+                          className={`stat-upgrade-slot interactive ${isChecked ? 'checked' : ''}`}
+                          id={`slot-toughness-${val}`}
+                          title={`Toughness (Body) Rank ${val} - Click to toggle`}
+                          onClick={() => {
+                            if (isChecked) {
+                              const count = charState.purchasedTalents['toughness'] || 0;
+                              for (let j = count; j >= val; j--) {
+                                refundTalent('toughness');
+                              }
+                            } else {
+                              const count = charState.purchasedTalents['toughness'] || 0;
+                              for (let j = count + 1; j <= val; j++) {
+                                buyTalent('toughness');
+                              }
+                            }
+                          }}
+                        ></div>
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/* Iron Will */}
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Iron Will (Mind)</span>
+                  <span className="stat-upgrade-label">Iron Will (Mind) [1 AP]</span>
                   <div className="stat-upgrade-slots">
-                    {Array.from({ length: 2 }, (_, i) => (
-                      <div
-                        key={i}
-                        className={`stat-upgrade-slot ${(i + 1) <= (charState.purchasedTalents['iron_will'] || 0) ? 'checked' : ''}`}
-                        id={`slot-iron-will-${i+1}`}
-                      ></div>
-                    ))}
+                    {Array.from({ length: 2 }, (_, i) => {
+                      const val = i + 1;
+                      const isChecked = val <= (charState.purchasedTalents['iron_will'] || 0);
+                      return (
+                        <div
+                          key={i}
+                          className={`stat-upgrade-slot interactive ${isChecked ? 'checked' : ''}`}
+                          id={`slot-iron-will-${val}`}
+                          title={`Iron Will (Mind) Rank ${val} - Click to toggle`}
+                          onClick={() => {
+                            if (isChecked) {
+                              const count = charState.purchasedTalents['iron_will'] || 0;
+                              for (let j = count; j >= val; j--) {
+                                refundTalent('iron_will');
+                              }
+                            } else {
+                              const count = charState.purchasedTalents['iron_will'] || 0;
+                              for (let j = count + 1; j <= val; j++) {
+                                buyTalent('iron_will');
+                              }
+                            }
+                          }}
+                        ></div>
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/* Veteran */}
                 <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Attack Die</span>
-                  <div className="stat-upgrade-slots">
-                    <div className="stat-upgrade-slot" id="slot-attack-1"></div>
-                  </div>
-                </div>
-                <div className="stat-upgrade-card">
-                  <span className="stat-upgrade-label">Defend Die</span>
+                  <span className="stat-upgrade-label">Veteran [1 AP]</span>
                   <div className="stat-upgrade-slots">
                     <div
-                      className={`stat-upgrade-slot ${(charState.purchasedTalents['living_fortress'] || 0) > 0 ? 'checked' : ''}`}
-                      id="slot-defense-1"
+                      className={`stat-upgrade-slot interactive ${(charState.purchasedTalents['veteran'] || 0) > 0 ? 'checked' : ''}`}
+                      id="slot-veteran-1"
+                      title="Veteran - Click to toggle"
+                      onClick={() => {
+                        const isLearned = (charState.purchasedTalents['veteran'] || 0) > 0;
+                        if (isLearned) {
+                          refundTalent('veteran');
+                        } else {
+                          buyTalent('veteran');
+                        }
+                      }}
                     ></div>
                   </div>
                 </div>
+
+                {/* Lucky */}
+                <div className="stat-upgrade-card">
+                  <span className="stat-upgrade-label">Lucky [2 AP]</span>
+                  <div className="stat-upgrade-slots">
+                    <div
+                      className={`stat-upgrade-slot interactive ${(charState.purchasedTalents['lucky'] || 0) > 0 ? 'checked' : ''}`}
+                      id="slot-lucky-1"
+                      title="Lucky - Click to toggle"
+                      onClick={() => {
+                        const isLearned = (charState.purchasedTalents['lucky'] || 0) > 0;
+                        if (isLearned) {
+                          refundTalent('lucky');
+                        } else {
+                          buyTalent('lucky');
+                        }
+                      }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Battle Hardened */}
+                <div className="stat-upgrade-card">
+                  <span className="stat-upgrade-label">Battle Hardened [2 AP]</span>
+                  <div className="stat-upgrade-slots">
+                    <div
+                      className={`stat-upgrade-slot interactive ${(charState.purchasedTalents['battle_hardened'] || 0) > 0 ? 'checked' : ''}`}
+                      id="slot-battle-hardened-1"
+                      title="Battle Hardened - Click to toggle"
+                      onClick={() => {
+                        const isLearned = (charState.purchasedTalents['battle_hardened'] || 0) > 0;
+                        if (isLearned) {
+                          refundTalent('battle_hardened');
+                        } else {
+                          buyTalent('battle_hardened');
+                        }
+                      }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Spacer for grid alignment */}
+                <div className="stat-upgrade-card" style={{ borderBottom: 'none' }}></div>
               </div>
             </div>
 
@@ -774,28 +863,40 @@ export function CharacterSheet() {
                 Unlocked Talents & Special Abilities
               </h3>
               <div className="unlocked-talents-list" id="unlocked-talents-list" style={{ display: 'flex', flexDirection: 'column', gap: '3px', overflow: 'hidden', flexGrow: 1 }}>
-                {Object.keys(charState.purchasedTalents).filter(tid => charState.purchasedTalents[tid] > 0).length > 0 ? (
-                  Object.keys(charState.purchasedTalents)
+                {(() => {
+                  const classTalents = Object.keys(charState.purchasedTalents)
                     .filter(tid => charState.purchasedTalents[tid] > 0)
-                    .map((tid) => {
-                      const count = charState.purchasedTalents[tid];
-                      const talent = getTalentById(tid);
-                      if (!talent) return null;
-                      const displayCount = count > 1 ? ` (x${count})` : '';
-                      return (
-                        <div key={tid} className="unlocked-talent-item">
-                          <span className="unlocked-talent-name">{talent.name}{displayCount}:</span>
-                          <span className="unlocked-talent-desc">{talent.desc}</span>
+                    .filter(tid => !TALENTS.shared.some(st => st.id === tid));
+                  const remainingCount = Math.max(0, 15 - classTalents.length);
+                  return (
+                    <>
+                      {classTalents.map((tid) => {
+                        const count = charState.purchasedTalents[tid];
+                        const talent = getTalentById(tid);
+                        if (!talent) return null;
+                        const displayCount = count > 1 ? ` (x${count})` : '';
+                        return (
+                          <div key={tid} className="unlocked-talent-item">
+                            <span className="unlocked-talent-name">{talent.name}{displayCount}:</span>
+                            <span className="unlocked-talent-desc">{talent.desc}</span>
+                          </div>
+                        );
+                      })}
+                      {remainingCount > 0 && (
+                        <div className="lines" style={{ marginTop: '2px', flexGrow: 1, overflow: 'hidden' }}>
+                          {Array.from({ length: remainingCount }, (_, i) => {
+                            const lineIndex = classTalents.length + i + 1;
+                            return (
+                              <div key={lineIndex}>
+                                <input type="text" id={`hand-talent-line-${lineIndex}`} {...bindInput(`hand-talent-line-${lineIndex}`)} />
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })
-                ) : (
-                  <div className="lines" style={{ marginTop: '2px', flexGrow: 1, overflow: 'hidden' }}>
-                    {Array.from({ length: 15 }, (_, i) => (
-                      <div key={i}><input type="text" id={`hand-talent-line-${i+1}`} {...bindInput(`hand-talent-line-${i+1}`)} /></div>
-                    ))}
-                  </div>
-                )}
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
 

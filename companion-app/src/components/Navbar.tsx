@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from 'react';
-import { useCharacterStore } from '../store/useCharacterStore';
+import { useCharacterStore, getTalentById, getClassNameReadable } from '../store/useCharacterStore';
 import { AccountDrawer } from './AccountDrawer';
 import { supabase } from '../lib/supabaseClient';
+import { ConflictResolutionModal, type CharacterDiff } from './ConflictResolutionModal';
 
 export function Navbar() {
   const activeTab = useCharacterStore((state) => state.activeTab);
@@ -24,6 +25,137 @@ export function Navbar() {
   const [accountDrawerOpen, setAccountDrawerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Conflict Resolution state
+  const [conflictModalOpen, setConflictModalOpen] = useState(false);
+  const [conflictDiffs, setConflictDiffs] = useState<CharacterDiff[]>([]);
+  const [matchingCloudChar, setMatchingCloudChar] = useState<any>(null);
+
+  // Helper functions for comparing characters
+  const getLabelForKey = (key: string): string => {
+    const customLabels: Record<string, string> = {
+      'hero-name': 'Hero Name',
+      'hero-class': 'Hero Class',
+      'char-xp': 'XP',
+      'char-gold': 'Gold',
+      'char-movement': 'Movement',
+      'char-body-max': 'Max Body Points',
+      'char-body-current': 'Current Body Points',
+      'char-mind-max': 'Max Mind Points',
+      'char-mind-current': 'Current Mind Points',
+      'char-attack': 'Attack Dice',
+      'char-defence': 'Defense Dice',
+      'char-weapon-hand1': 'Weapon (Hand 1)',
+      'char-weapon-hand2': 'Weapon (Hand 2)',
+      'char-armour': 'Armor',
+      'char-shield': 'Shield',
+      'char-helm': 'Helm',
+      'char-other-gear': 'Other Gear / Inventory',
+      'quest-notes': 'Quest Notes',
+      'char-next-level': 'Next Level target',
+      'char-rank': 'Rank',
+    };
+
+    if (customLabels[key]) return customLabels[key];
+
+    const foeNameMatch = key.match(/^foe-name-(\d+)$/);
+    if (foeNameMatch) return `Foe Row ${foeNameMatch[1]} Name`;
+
+    const foeKillsMatch = key.match(/^foe-kills-(\d+)$/);
+    if (foeKillsMatch) return `Foe Row ${foeKillsMatch[1]} Kills`;
+
+    return key
+      .replace(/^char-|^hero-|^stat-/, '')
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
+  const getCharacterDifferences = (
+    localInputs: Record<string, string>,
+    localState: any,
+    cloudInputs: Record<string, string>,
+    cloudState: any
+  ): CharacterDiff[] => {
+    const diffs: CharacterDiff[] = [];
+
+    // 1. Check XP
+    const localXp = localState.xp || 0;
+    const cloudXp = cloudState.xp || 0;
+    if (localXp !== cloudXp) {
+      diffs.push({
+        key: 'xp',
+        label: 'Experience (XP)',
+        local: String(localXp),
+        cloud: String(cloudXp),
+      });
+    }
+
+    // 2. Check talents
+    const allTalentIds = new Set([
+      ...Object.keys(localState.purchasedTalents || {}),
+      ...Object.keys(cloudState.purchasedTalents || {}),
+    ]);
+
+    for (const tid of allTalentIds) {
+      const localCount = localState.purchasedTalents?.[tid] || 0;
+      const cloudCount = cloudState.purchasedTalents?.[tid] || 0;
+      if (localCount !== cloudCount) {
+        const talentName = getTalentById(tid)?.name || tid;
+        diffs.push({
+          key: `talent-${tid}`,
+          label: `Talent: ${talentName}`,
+          local: localCount > 0 ? `x${localCount}` : 'Not learned',
+          cloud: cloudCount > 0 ? `x${cloudCount}` : 'Not learned',
+        });
+      }
+    }
+
+    // 3. Check inputs
+    const allInputKeys = new Set([
+      ...Object.keys(localInputs || {}),
+      ...Object.keys(cloudInputs || {}),
+    ]);
+
+    const excludedKeys = ['char-xp', 'hero-class', 'char-next-level', 'char-rank'];
+
+    for (const key of allInputKeys) {
+      if (excludedKeys.includes(key)) continue;
+
+      const valLocal = (localInputs[key] || '').trim();
+      const valCloud = (cloudInputs[key] || '').trim();
+
+      if (valLocal !== valCloud) {
+        diffs.push({
+          key,
+          label: getLabelForKey(key),
+          local: valLocal || '(empty)',
+          cloud: valCloud || '(empty)',
+        });
+      }
+    }
+
+    return diffs;
+  };
+
+  const handleResolveConflict = async (choice: 'local' | 'cloud' | 'cancel') => {
+    setConflictModalOpen(false);
+    if (!matchingCloudChar) return;
+
+    if (choice === 'local') {
+      const res = await saveCharacterToCloud(matchingCloudChar.id, inputs, charState);
+      if (!res.error) {
+        await selectCharacter(matchingCloudChar.id);
+        showToast("Cloud character updated with your local offline version!", "success");
+      } else {
+        showToast("Failed to update cloud character: " + res.error.message, "error");
+      }
+    } else if (choice === 'cloud') {
+      await selectCharacter(matchingCloudChar.id);
+      showToast("Local sheet overwritten with the cloud version.", "success");
+    } else if (choice === 'cancel') {
+      showToast("Keeping local offline sheet. Conflict unresolved.", "error");
+    }
+  };
+
   // Check for local migration prompt after login
   useEffect(() => {
     const checkMigration = async () => {
@@ -33,31 +165,44 @@ export function Navbar() {
           // Fetch latest cloud characters to check if the current offline character has already been imported
           const { data, error } = await supabase
             .from('characters')
-            .select('id, name, class, level, char_state')
+            .select('id, name, class, level, char_state, inputs')
             .eq('user_id', user.id);
 
           if (!error && data) {
             const localName = (inputs['hero-name'] || '').trim().toLowerCase();
             const localClass = charState.class || '';
-            const localXp = charState.xp || 0;
 
-            const isAlreadyInCloud = data.some((dbChar) => {
+            // Find if there is a matching cloud character by name and class
+            const matchingDbChar = data.find((dbChar) => {
               const dbName = (dbChar.name || '').trim().toLowerCase();
               const dbClass = dbChar.class || '';
-              // Handle potential jsonb string or object parsing
-              const dbState = typeof dbChar.char_state === 'string'
-                ? JSON.parse(dbChar.char_state)
-                : dbChar.char_state;
-              const dbXp = dbState?.xp || 0;
-
-              return dbName === localName && dbClass === localClass && dbXp >= localXp;
+              return dbName === localName && dbClass === localClass;
             });
 
-            if (isAlreadyInCloud) {
-              return; // Skip prompting if matching or newer character is already in cloud
+            if (matchingDbChar) {
+              const dbState = typeof matchingDbChar.char_state === 'string'
+                ? JSON.parse(matchingDbChar.char_state)
+                : matchingDbChar.char_state;
+              const dbInputs = typeof matchingDbChar.inputs === 'string'
+                ? JSON.parse(matchingDbChar.inputs)
+                : matchingDbChar.inputs;
+
+              const diffs = getCharacterDifferences(inputs, charState, dbInputs || {}, dbState || {});
+              if (diffs.length > 0) {
+                // There are differences, show conflict modal
+                setMatchingCloudChar(matchingDbChar);
+                setConflictDiffs(diffs);
+                setConflictModalOpen(true);
+              } else {
+                // No differences, auto-connect to the cloud character
+                await selectCharacter(matchingDbChar.id);
+                showToast(`Connected to cloud character: ${matchingDbChar.name}!`, "success");
+              }
+              return;
             }
           }
 
+          // No matching cloud character found, ask if they want to copy/import
           const confirmMigration = window.confirm(
             "An offline local character sheet was detected. Would you like to import it to your tavern account as a cloud character?"
           );
@@ -241,6 +386,15 @@ export function Navbar() {
 
       {/* Tavern/Account Panel Drawer */}
       <AccountDrawer isOpen={accountDrawerOpen} onClose={() => setAccountDrawerOpen(false)} />
+
+      {/* Conflict Resolution Modal */}
+      <ConflictResolutionModal
+        isOpen={conflictModalOpen}
+        characterName={(inputs['hero-name'] || '').trim() || 'Unnamed Hero'}
+        characterClass={getClassNameReadable(charState.class) || 'No Class'}
+        diffs={conflictDiffs}
+        onResolve={handleResolveConflict}
+      />
     </>
   );
 }

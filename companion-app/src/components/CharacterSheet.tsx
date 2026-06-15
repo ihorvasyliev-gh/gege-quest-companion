@@ -636,16 +636,19 @@ export function CharacterSheet() {
               </div>
               
               <div className="parchment-box h-125mm" style={{ overflow: 'hidden', zIndex: 2 }}>
-                <h3>
-                  <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '3px' }}>
-                    <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>
-                    <circle cx="9" cy="10" r="2" fill="#fdfbfa"/>
-                    <circle cx="15" cy="10" r="2" fill="#fdfbfa"/>
-                    <path d="M10,14 L12,15 L14,14" fill="none" stroke="#fdfbfa" strokeWidth="1"/>
-                    <path d="M4,8 L2,3 L5,6 M20,8 L22,3 L19,6" fill="#4a2e13" stroke="#4a2e13" strokeWidth="0.5"/>
-                  </svg>
-                  Monster Type (Write-in)
-                  <span style={{ marginLeft: 'auto', marginRight: '15px' }}>Kills</span>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+                  <span style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                    <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '5px' }}>
+                      <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>
+                      <circle cx="9" cy="10" r="2" fill="#fdfbfa"/>
+                      <circle cx="15" cy="10" r="2" fill="#fdfbfa"/>
+                      <path d="M10,14 L12,15 L14,14" fill="none" stroke="#fdfbfa" strokeWidth="1"/>
+                      <path d="M4,8 L2,3 L5,6 M20,8 L22,3 L19,6" fill="#4a2e13" stroke="#4a2e13" strokeWidth="0.5"/>
+                    </svg>
+                    Monster Type (Write-in)
+                  </span>
+                  <span style={{ width: '60px', textAlign: 'center', flexShrink: 0 }}>Kills</span>
+                  <span style={{ width: '55px', textAlign: 'right', paddingRight: '6px', flexShrink: 0 }}>XP</span>
                 </h3>
                 <div className="monster-lines">
                   {Array.from({ length: 22 }, (_, index) => {
@@ -659,19 +662,9 @@ export function CharacterSheet() {
                       <div key={i} className="monster-line">
                         <input type="text" id={nameId} className="monster-name-input" {...bindInput(nameId)} />
                         <input type="text" id={killsId} className="monster-kills-input" {...bindInput(killsId)} />
-                        {rowXP > 0 && (
-                          <span style={{
-                            fontFamily: 'MedievalSharp, cursive',
-                            fontSize: '9px',
-                            fontWeight: 'bold',
-                            color: '#8c1e13',
-                            marginRight: '6px',
-                            whiteSpace: 'nowrap',
-                            opacity: 0.85
-                          }}>
-                            +{rowXP} XP
-                          </span>
-                        )}
+                        <span className="monster-xp-display">
+                          {rowXP > 0 ? `+${rowXP} XP` : ''}
+                        </span>
                       </div>
                     );
                   })}

@@ -84,6 +84,11 @@ export function CharacterSheet() {
   const charState = useCharacterStore((state) => state.charState);
   const buyTalent = useCharacterStore((state) => state.buyTalent);
   const refundTalent = useCharacterStore((state) => state.refundTalent);
+  const gameConfig = useCharacterStore((state) => state.gameConfig);
+
+  const getFieldSetting = (key: string) => {
+    return gameConfig?.sheetLayout?.[key] || { visible: true, label: '' };
+  };
 
   // Helper for input binding
   const bindInput = (id: string) => ({
@@ -124,62 +129,78 @@ export function CharacterSheet() {
             </div>
 
             {/* Identity Panel */}
-            <div className="row" style={{ marginBottom: '8px' }}>
-              <div className="field flex-2">
-                <label>Hero Name:</label>
-                <input type="text" id="hero-name" {...bindInput('hero-name')} />
+            {(getFieldSetting('hero-name').visible || getFieldSetting('hero-class').visible) && (
+              <div className="row" style={{ marginBottom: '8px' }}>
+                {getFieldSetting('hero-name').visible && (
+                  <div className="field flex-2">
+                    <label>{getFieldSetting('hero-name').label || 'Hero Name'}:</label>
+                    <input type="text" id="hero-name" {...bindInput('hero-name')} />
+                  </div>
+                )}
+                {getFieldSetting('hero-class').visible && (
+                  <div className="field flex-1">
+                    <label>{getFieldSetting('hero-class').label || 'Class'}:</label>
+                    <input type="text" id="hero-class" {...bindInput('hero-class')} />
+                  </div>
+                )}
               </div>
-              <div className="field flex-1">
-                <label>Class:</label>
-                <input type="text" id="hero-class" {...bindInput('hero-class')} />
-              </div>
-            </div>
+            )}
 
             {/* Stone Stats Blocks */}
             <div className="stone-stats">
-              <div className="stone-block">
-                <div className="stone-title">Attack Dice</div>
-                <div className="stone-value-box">
-                  <input type="text" id="stat-attack" {...bindInput('stat-attack')} />
+              {getFieldSetting('stat-attack').visible && (
+                <div className="stone-block">
+                  <div className="stone-title">{getFieldSetting('stat-attack').label || 'Attack Dice'}</div>
+                  <div className="stone-value-box">
+                    <input type="text" id="stat-attack" {...bindInput('stat-attack')} />
+                  </div>
                 </div>
-              </div>
-              <div className="stone-block">
-                <div className="stone-title">Defend Dice</div>
-                <div className="stone-value-box">
-                  <input type="text" id="stat-defense" {...bindInput('stat-defense')} />
+              )}
+              {getFieldSetting('stat-defense').visible && (
+                <div className="stone-block">
+                  <div className="stone-title">{getFieldSetting('stat-defense').label || 'Defend Dice'}</div>
+                  <div className="stone-value-box">
+                    <input type="text" id="stat-defense" {...bindInput('stat-defense')} />
+                  </div>
                 </div>
-              </div>
-              <div className="stone-block">
-                <div className="stone-title">Body</div>
-                <div className="stone-value-box">
-                  <input type="text" id="stat-body" {...bindInput('stat-body')} />
+              )}
+              {getFieldSetting('stat-body').visible && (
+                <div className="stone-block">
+                  <div className="stone-title">{getFieldSetting('stat-body').label || 'Body'}</div>
+                  <div className="stone-value-box">
+                    <input type="text" id="stat-body" {...bindInput('stat-body')} />
+                  </div>
                 </div>
-              </div>
-              <div className="stone-block">
-                <div className="stone-title">Mind</div>
-                <div className="stone-value-box">
-                  <input type="text" id="stat-mind" {...bindInput('stat-mind')} />
+              )}
+              {getFieldSetting('stat-mind').visible && (
+                <div className="stone-block">
+                  <div className="stone-title">{getFieldSetting('stat-mind').label || 'Mind'}</div>
+                  <div className="stone-value-box">
+                    <input type="text" id="stat-mind" {...bindInput('stat-mind')} />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Current Body Points tracker */}
-            <div className="health-container">
-              <div className="health-title">
-                <span>Current Body Points</span>
+            {getFieldSetting('health-tracker').visible && (
+              <div className="health-container">
+                <div className="health-title">
+                  <span>{getFieldSetting('health-tracker').label || 'Current Body Points'}</span>
+                </div>
+                <div className="health-grid">
+                  {Array.from({ length: 30 }, (_, index) => {
+                    const i = index + 1;
+                    const id = `health-${i}`;
+                    return (
+                      <div key={id} className="health-cell">
+                        <input type="text" id={id} maxLength={3} {...bindInput(id)} />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="health-grid">
-                {Array.from({ length: 30 }, (_, index) => {
-                  const i = index + 1;
-                  const id = `health-${i}`;
-                  return (
-                    <div key={id} className="health-cell">
-                      <input type="text" id={id} maxLength={3} {...bindInput(id)} />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            )}
 
             <div className="divider">
               <div className="divider-line"></div>
@@ -197,62 +218,64 @@ export function CharacterSheet() {
 
             {/* Gold Ledger & XP block */}
             <div className="row" style={{ marginBottom: '8px' }}>
-              <div className="parchment-box flex-1 h-38mm">
-                {/* Gold Coins Illustration */}
-                <svg className="box-illustration" viewBox="0 0 100 100">
-                  {/* Stack 1 (left/back) */}
-                  <ellipse cx="38" cy="55" rx="12" ry="5" fill="#4a2e13" opacity="0.08"/>
-                  <ellipse cx="38" cy="61" rx="12" ry="5" fill="#4a2e13" opacity="0.1"/>
-                  <ellipse cx="38" cy="67" rx="12" ry="5" fill="#4a2e13" opacity="0.12"/>
-                  <ellipse cx="38" cy="73" rx="12" ry="5" fill="#4a2e13" opacity="0.14"/>
-                  <ellipse cx="38" cy="79" rx="12" ry="5" fill="#4a2e13" opacity="0.16"/>
+              {getFieldSetting('char-gold').visible && (
+                <div className="parchment-box flex-1 h-38mm">
+                  {/* Gold Coins Illustration */}
+                  <svg className="box-illustration" viewBox="0 0 100 100">
+                    {/* Stack 1 (left/back) */}
+                    <ellipse cx="38" cy="55" rx="12" ry="5" fill="#4a2e13" opacity="0.08"/>
+                    <ellipse cx="38" cy="61" rx="12" ry="5" fill="#4a2e13" opacity="0.1"/>
+                    <ellipse cx="38" cy="67" rx="12" ry="5" fill="#4a2e13" opacity="0.12"/>
+                    <ellipse cx="38" cy="73" rx="12" ry="5" fill="#4a2e13" opacity="0.14"/>
+                    <ellipse cx="38" cy="79" rx="12" ry="5" fill="#4a2e13" opacity="0.16"/>
+                    
+                    {/* Stack 2 (right/back) */}
+                    <ellipse cx="62" cy="58" rx="11" ry="4.5" fill="#4a2e13" opacity="0.08"/>
+                    <ellipse cx="62" cy="64" rx="11" ry="4.5" fill="#4a2e13" opacity="0.1"/>
+                    <ellipse cx="62" cy="70" rx="11" ry="4.5" fill="#4a2e13" opacity="0.12"/>
+                    <ellipse cx="62" cy="76" rx="11" ry="4.5" fill="#4a2e13" opacity="0.14"/>
+                    <ellipse cx="62" cy="82" rx="11" ry="4.5" fill="#4a2e13" opacity="0.16"/>
+
+                    {/* Stack 3 (center/front) */}
+                    <ellipse cx="50" cy="66" rx="13" ry="5.5" fill="#4a2e13" opacity="0.1"/>
+                    <ellipse cx="50" cy="72" rx="13" ry="5.5" fill="#4a2e13" opacity="0.12"/>
+                    <ellipse cx="50" cy="78" rx="13" ry="5.5" fill="#4a2e13" opacity="0.14"/>
+                    <ellipse cx="50" cy="84" rx="13" ry="5.5" fill="#4a2e13" opacity="0.16"/>
+                    <ellipse cx="50" cy="90" rx="13" ry="5.5" fill="#4a2e13" opacity="0.18"/>
+
+                    {/* Some scattered coins */}
+                    <ellipse cx="25" cy="85" rx="10" ry="4" fill="#4a2e13" opacity="0.12" transform="rotate(-15 25 85)"/>
+                    <ellipse cx="75" cy="83" rx="10" ry="4" fill="#4a2e13" opacity="0.14" transform="rotate(20 75 83)"/>
+                    <ellipse cx="32" cy="88" rx="9" ry="3.5" fill="#4a2e13" opacity="0.1" transform="rotate(5 32 88)"/>
+                  </svg>
                   
-                  {/* Stack 2 (right/back) */}
-                  <ellipse cx="62" cy="58" rx="11" ry="4.5" fill="#4a2e13" opacity="0.08"/>
-                  <ellipse cx="62" cy="64" rx="11" ry="4.5" fill="#4a2e13" opacity="0.1"/>
-                  <ellipse cx="62" cy="70" rx="11" ry="4.5" fill="#4a2e13" opacity="0.12"/>
-                  <ellipse cx="62" cy="76" rx="11" ry="4.5" fill="#4a2e13" opacity="0.14"/>
-                  <ellipse cx="62" cy="82" rx="11" ry="4.5" fill="#4a2e13" opacity="0.16"/>
-
-                  {/* Stack 3 (center/front) */}
-                  <ellipse cx="50" cy="66" rx="13" ry="5.5" fill="#4a2e13" opacity="0.1"/>
-                  <ellipse cx="50" cy="72" rx="13" ry="5.5" fill="#4a2e13" opacity="0.12"/>
-                  <ellipse cx="50" cy="78" rx="13" ry="5.5" fill="#4a2e13" opacity="0.14"/>
-                  <ellipse cx="50" cy="84" rx="13" ry="5.5" fill="#4a2e13" opacity="0.16"/>
-                  <ellipse cx="50" cy="90" rx="13" ry="5.5" fill="#4a2e13" opacity="0.18"/>
-
-                  {/* Some scattered coins */}
-                  <ellipse cx="25" cy="85" rx="10" ry="4" fill="#4a2e13" opacity="0.12" transform="rotate(-15 25 85)"/>
-                  <ellipse cx="75" cy="83" rx="10" ry="4" fill="#4a2e13" opacity="0.14" transform="rotate(20 75 83)"/>
-                  <ellipse cx="32" cy="88" rx="9" ry="3.5" fill="#4a2e13" opacity="0.1" transform="rotate(5 32 88)"/>
-                </svg>
-                
-                <div className="gold-header">
-                  <h3>
-                    {/* Detailed Gold Coins Icon */}
-                    <svg className="deco-icon" viewBox="0 0 24 24" width="13" height="13" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
-                      {/* Left Stack Coin */}
-                      <circle cx={8} cy={11} r={4.5} fill="#fdf8eb" />
-                      <circle cx={8} cy={11} r={2.8} strokeDasharray="1 1" strokeWidth={0.8} />
-                      {/* Right Stack Coin */}
-                      <circle cx={16} cy={11} r={4.5} fill="#fdf8eb" />
-                      <circle cx={16} cy={11} r={2.8} strokeDasharray="1 1" strokeWidth={0.8} />
-                      {/* Center Front Coin */}
-                      <circle cx={12} cy={15} r={5} fill="#fdf8eb" strokeWidth={1.4} />
-                      <circle cx={12} cy={15} r={3.2} strokeWidth={0.8} />
-                      {/* Coin symbol (cross) */}
-                      <path d="M12,13 L12,17 M10,15 L14,15" strokeWidth={0.8} />
-                    </svg>
-                    Gold Coins
-                  </h3>
+                  <div className="gold-header">
+                    <h3>
+                      {/* Detailed Gold Coins Icon */}
+                      <svg className="deco-icon" viewBox="0 0 24 24" width="13" height="13" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.2, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+                        {/* Left Stack Coin */}
+                        <circle cx={8} cy={11} r={4.5} fill="#fdf8eb" />
+                        <circle cx={8} cy={11} r={2.8} strokeDasharray="1 1" strokeWidth={0.8} />
+                        {/* Right Stack Coin */}
+                        <circle cx={16} cy={11} r={4.5} fill="#fdf8eb" />
+                        <circle cx={16} cy={11} r={2.8} strokeDasharray="1 1" strokeWidth={0.8} />
+                        {/* Center Front Coin */}
+                        <circle cx={12} cy={15} r={5} fill="#fdf8eb" strokeWidth={1.4} />
+                        <circle cx={12} cy={15} r={3.2} strokeWidth={0.8} />
+                        {/* Coin symbol (cross) */}
+                        <path d="M12,13 L12,17 M10,15 L14,15" strokeWidth={0.8} />
+                      </svg>
+                      {getFieldSetting('char-gold').label || 'Gold Coins'}
+                    </h3>
+                  </div>
+                  <div className="lines" style={{ marginTop: '2px' }}>
+                    <div><input type="text" id="char-gold" {...bindInput('char-gold')} /></div>
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <div key={i}><input type="text" id={`gold-line-${i+1}`} {...bindInput(`gold-line-${i+1}`)} /></div>
+                    ))}
+                  </div>
                 </div>
-                <div className="lines" style={{ marginTop: '2px' }}>
-                  <div><input type="text" id="char-gold" {...bindInput('char-gold')} /></div>
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <div key={i}><input type="text" id={`gold-line-${i+1}`} {...bindInput(`gold-line-${i+1}`)} /></div>
-                  ))}
-                </div>
-              </div>
+              )}
 
               {/* XP Box */}
               <div className={`parchment-box flex-1 xp-box h-38mm ${isXpZero ? 'xp-zero-print' : ''}`}>
@@ -276,7 +299,7 @@ export function CharacterSheet() {
                     <path d="M12,19 L12,22" strokeWidth="1.2"/>
                     <path d="M9,21 L15,21" strokeWidth="0.8" opacity="0.5"/>
                   </svg>
-                  XP & Level
+                  {getFieldSetting('char-xp').label || 'XP & Level'}
                 </h3>
                 <div className="lines" style={{ marginTop: '2px' }}>
                   <div><input type="text" id="char-xp" {...bindInput('char-xp')} /></div>
@@ -371,7 +394,7 @@ export function CharacterSheet() {
                   {/* Liquid level */}
                   <path d="M7,16 C8.5,17 9.5,15 12,16 C14.5,17 15.5,15 17,16" fill="none" stroke="#5c3e21" strokeWidth="0.8" opacity="0.6" />
                 </svg>
-                Alchemy & Other Items
+                {getFieldSetting('alchemy-items').label || 'Alchemy & Other Items'}
               </h3>
               <div className="lines">
                 {Array.from({ length: 7 }, (_, i) => (
@@ -472,210 +495,211 @@ export function CharacterSheet() {
             </div>
 
             {/* Combat Gear Layout */}
-            <div className="row h-38mm" style={{ marginBottom: '8px' }}>
-              <div className="parchment-box flex-1 lined-zone" style={{ zIndex: 2 }}>
-                {/* Detailed Weapon Rack Illustration */}
-                <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.085, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
-                  {/* Central Heater Shield Backdrop */}
-                  <path d="M50,25 L68,31 C68,55 50,75 50,78 C50,75 32,55 32,31 Z" strokeWidth={1.2} />
-                  <path d="M50,29 L64,34 C64,52 50,69 50,72 C50,69 36,52 36,34 Z" strokeWidth={0.8} strokeDasharray="2 2" />
-                  <path d="M50,34 L50,65 M40,46 L60,46" strokeWidth={1} opacity={0.5} />
-                  
-                  {/* Rack Frame Support Posts */}
-                  <path d="M15,25 L15,85 M85,25 L85,85" strokeWidth={1.8} />
-                  <circle cx="15" cy="23" r="2" fill="#4a2e13" opacity={0.2} />
-                  <circle cx="85" cy="23" r="2" fill="#4a2e13" opacity={0.2} />
-                  
-                  {/* Rack Support Beams */}
-                  <path d="M10,35 L90,35 M10,75 L90,75" strokeWidth={1.5} />
-                  <path d="M18,38 L82,38 M22,78 L78,78" strokeWidth={0.8} opacity={0.4} />
-                  
-                  {/* Rack Feet */}
-                  <path d="M10,85 L20,85 L20,89 L10,89 Z" strokeWidth={1.2} />
-                  <path d="M80,85 L90,85 L90,89 L80,89 Z" strokeWidth={1.2} />
-                  
-                  {/* Left Weapon: Battle Axe */}
-                  {/* Shaft */}
-                  <path d="M28,12 L28,83" strokeWidth={1.8} />
-                  {/* Grip wraps */}
-                  <path d="M26,73 L30,73 M26,77 L30,77 M26,81 L30,81" strokeWidth={1} />
-                  {/* Axe head */}
-                  <path d="M28,24 C20,20 12,25 12,32 C12,40 20,45 28,40" strokeWidth={1.5} />
-                  <path d="M28,27 C22,25 17,28 17,32 C17,36 22,39 28,37" strokeWidth={0.8} opacity={0.5} />
-                  {/* Back spike */}
-                  <path d="M28,28 L34,32 L28,36" strokeWidth={1.2} />
-                  {/* Top spike */}
-                  <path d="M28,12 L26,16 L30,16 Z" strokeWidth={1} fill="#4a2e13" fillOpacity={0.15} />
-                  <circle cx="28" cy="30" r="0.8" fill="#4a2e13" />
-                  <circle cx="28" cy="34" r="0.8" fill="#4a2e13" />
-                  
-                  {/* Right Weapon: Spear/Halberd */}
-                  {/* Shaft */}
-                  <path d="M72,8 L72,83" strokeWidth={1.8} />
-                  {/* Grip wraps */}
-                  <path d="M70,73 L74,73 M70,77 L74,77 M70,81 L74,81" strokeWidth={1} />
-                  {/* Spear Head */}
-                  <path d="M72,8 L68,16 L70,22 L74,22 L76,16 Z" strokeWidth={1.5} />
-                  <path d="M72,8 L72,22" strokeWidth={1} />
-                  {/* Crossbar wings */}
-                  <path d="M66,22 L78,22" strokeWidth={1.2} />
-                  <path d="M66,22 L65,25 M78,22 L79,25" strokeWidth={1} />
-                  <circle cx="72" cy="24" r="0.8" fill="#4a2e13" />
-                  
-                  {/* Central Weapon: Greatsword */}
-                  {/* Grip & Pommel */}
-                  <path d="M50,60 L50,83" strokeWidth={1.5} />
-                  <circle cx="50" cy="85" r="2.2" strokeWidth={1.2} />
-                  {/* Crossguard */}
-                  <path d="M38,60 C43,62 57,62 62,60 C63,59 63,57 62,57 L38,57 Z" strokeWidth={1.2} />
-                  {/* Blade */}
-                  <path d="M47,57 L47,16 L50,10 L53,16 L53,57 Z" strokeWidth={1.5} />
-                  <path d="M50,57 L50,18" strokeWidth={0.8} />
-                  {/* Ricasso details */}
-                  <path d="M48,50 L52,50 M48,53 L52,53" strokeWidth={0.8} opacity={0.6} />
-                </svg>
+            {(getFieldSetting('weapons-gear').visible || getFieldSetting('armor-protection').visible) && (
+              <div className="row h-38mm" style={{ marginBottom: '8px' }}>
+                {getFieldSetting('weapons-gear').visible && (
+                  <div className="parchment-box flex-1 lined-zone" style={{ zIndex: 2 }}>
+                    {/* Detailed Weapon Rack Illustration */}
+                    <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.085, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+                      {/* Central Heater Shield Backdrop */}
+                      <path d="M50,25 L68,31 C68,55 50,75 50,78 C50,75 32,55 32,31 Z" strokeWidth={1.2} />
+                      <path d="M50,29 L64,34 C64,52 50,69 50,72 C50,69 36,52 36,34 Z" strokeWidth={0.8} strokeDasharray="2 2" />
+                      <path d="M50,34 L50,65 M40,46 L60,46" strokeWidth={1} opacity={0.5} />
+                      
+                      {/* Rack Frame Support Posts */}
+                      <path d="M15,25 L15,85 M85,25 L85,85" strokeWidth={1.8} />
+                      <circle cx="15" cy="23" r="2" fill="#4a2e13" opacity={0.2} />
+                      <circle cx="85" cy="23" r="2" fill="#4a2e13" opacity={0.2} />
+                      
+                      {/* Rack Support Beams */}
+                      <path d="M10,35 L90,35 M10,75 L90,75" strokeWidth={1.5} />
+                      <path d="M18,38 L82,38 M22,78 L78,78" strokeWidth={0.8} opacity={0.4} />
+                      
+                      {/* Rack Feet */}
+                      <path d="M10,85 L20,85 L20,89 L10,89 Z" strokeWidth={1.2} />
+                      <path d="M80,85 L90,85 L90,89 L80,89 Z" strokeWidth={1.2} />
+                      
+                      {/* Left Weapon: Battle Axe */}
+                      {/* Shaft */}
+                      <path d="M28,12 L28,83" strokeWidth={1.8} />
+                      {/* Grip wraps */}
+                      <path d="M26,73 L30,73 M26,77 L30,77 M26,81 L30,81" strokeWidth={1} />
+                      {/* Axe head */}
+                      <path d="M28,24 C20,20 12,25 12,32 C12,40 20,45 28,40" strokeWidth={1.5} />
+                      <path d="M28,27 C22,25 17,28 17,32 C17,36 22,39 28,37" strokeWidth={0.8} opacity={0.5} />
+                      {/* Back spike */}
+                      <path d="M28,28 L34,32 L28,36" strokeWidth={1.2} />
+                      {/* Top spike */}
+                      <path d="M28,12 L26,16 L30,16 Z" strokeWidth={1} fill="#4a2e13" fillOpacity={0.15} />
+                      <circle cx="28" cy="30" r="0.8" fill="#4a2e13" />
+                      <circle cx="28" cy="34" r="0.8" fill="#4a2e13" />
+                      {/* Crossbar wings */}
+                      <path d="M66,22 L78,22" strokeWidth={1.2} />
+                      <path d="M66,22 L65,25 M78,22 L79,25" strokeWidth={1} />
+                      <circle cx="72" cy="24" r="0.8" fill="#4a2e13" />
+                      
+                      {/* Central Weapon: Greatsword */}
+                      {/* Grip & Pommel */}
+                      <path d="M50,60 L50,83" strokeWidth={1.5} />
+                      <circle cx="50" cy="85" r="2.2" strokeWidth={1.2} />
+                      {/* Crossguard */}
+                      <path d="M38,60 C43,62 57,62 62,60 C63,59 63,57 62,57 L38,57 Z" strokeWidth={1.2} />
+                      {/* Blade */}
+                      <path d="M47,57 L47,16 L50,10 L53,16 L53,57 Z" strokeWidth={1.5} />
+                      <path d="M50,57 L50,18" strokeWidth={0.8} />
+                      {/* Ricasso details */}
+                      <path d="M48,50 L52,50 M48,53 L52,53" strokeWidth={0.8} opacity={0.6} />
+                    </svg>
 
-                <h3>
-                  {/* Detailed Crossed Sword & Axe with Shield Icon */}
-                  <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
-                    {/* Crossed Sword */}
-                    <path d="M4,20 L8,16 M9.5,14.5 L20,4" />
-                    <path d="M7,14 L10,17" strokeWidth={1.6} />
-                    <circle cx="3.5" cy="20.5" r="0.8" fill="#5c3e21" />
-                    {/* Crossed Axe */}
-                    <path d="M20,20 L12,12 M10,10 L4,4" />
-                    <path d="M6,6 C4,4 3,8 5,10" />
-                    <path d="M5,10 C7,9 8,7 6,6" fill="#5c3e21" fillOpacity={0.15} />
-                    {/* Central Small Shield */}
-                    <path d="M12,8 L15,10 L15,14 C15,17 12,19 12,19.5 C12,19 9,17 9,14 L9,10 Z" fill="#fffdfa" strokeWidth={1.2} />
-                    <path d="M12,10 L12,17 M10,13 L14,13" strokeWidth={0.8} opacity={0.6} />
-                  </svg>
-                  Weapons & Gear
-                </h3>
-                <div className="lines">
-                  {Array.from({ length: 7 }, (_, i) => (
-                    <div key={i}><input type="text" id={`weapon-line-${i+1}`} {...bindInput(`weapon-line-${i+1}`)} /></div>
-                  ))}
-                </div>
+                    <h3>
+                      {/* Detailed Crossed Sword & Axe with Shield Icon */}
+                      <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+                        {/* Crossed Sword */}
+                        <path d="M4,20 L8,16 M9.5,14.5 L20,4" />
+                        <path d="M7,14 L10,17" strokeWidth={1.6} />
+                        <circle cx="3.5" cy="20.5" r="0.8" fill="#5c3e21" />
+                        {/* Crossed Axe */}
+                        <path d="M20,20 L12,12 M10,10 L4,4" />
+                        <path d="M6,6 C4,4 3,8 5,10" />
+                        <path d="M5,10 C7,9 8,7 6,6" fill="#5c3e21" fillOpacity={0.15} />
+                        {/* Central Small Shield */}
+                        <path d="M12,8 L15,10 L15,14 C15,17 12,19 12,19.5 C12,19 9,17 9,14 L9,10 Z" fill="#fffdfa" strokeWidth={1.2} />
+                        <path d="M12,10 L12,17 M10,13 L14,13" strokeWidth={0.8} opacity={0.6} />
+                      </svg>
+                      {getFieldSetting('weapons-gear').label || 'Weapons & Gear'}
+                    </h3>
+                    <div className="lines">
+                      {Array.from({ length: 7 }, (_, i) => (
+                        <div key={i}><input type="text" id={`weapon-line-${i+1}`} {...bindInput(`weapon-line-${i+1}`)} /></div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Armor Block */}
+                {getFieldSetting('armor-protection').visible && (
+                  <div className="parchment-box flex-1 lined-zone" style={{ zIndex: 2 }}>
+                    {/* Detailed Armor Stand Backdrop Illustration */}
+                    <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.08, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+                      {/* Backdrop heater shield */}
+                      <path d="M50,12 L80,20 C80,55 70,78 50,91 C30,78 20,55 20,20 Z" strokeWidth={1.2} />
+                      <path d="M50,15 L76,22 C76,52 67,74 50,86 C33,74 24,52 24,22 Z" strokeDasharray="2 2" strokeWidth={0.8} opacity={0.6} />
+                      <path d="M50,12 L50,91" strokeWidth={0.8} opacity={0.4} />
+                      
+                      {/* Armor stand vertical post */}
+                      <path d="M50,30 L50,88" strokeWidth={2.5} opacity={0.5} />
+                      <path d="M35,88 L65,88" strokeWidth={2} />
+                      <path d="M38,88 L50,78 M62,88 L50,78" strokeWidth={1.2} />
+
+                      {/* Breastplate (Cuirass) */}
+                      <path d="M34,42 C34,36 66,36 66,42 C67,52 64,74 50,80 C36,74 33,52 34,42 Z" strokeWidth={1.8} />
+                      <path d="M50,38 L50,80" strokeWidth={1.2} />
+                      <path d="M38,48 C45,52 55,52 62,48" strokeWidth={1} />
+                      <path d="M37,58 C45,62 55,62 63,58" strokeWidth={1} />
+                      <path d="M34,42 C38,45 38,52 35,55" strokeWidth={1.2} />
+                      <path d="M66,42 C62,45 62,52 65,55" strokeWidth={1.2} />
+                      {/* Waist belt with buckle */}
+                      <path d="M36,70 C42,73 58,73 64,70" strokeWidth={1.5} />
+                      <rect x="48" y="68" width="4" height="4" strokeWidth={1} />
+
+                      {/* Pauldrons (Shoulder Guards) */}
+                      {/* Left Pauldron */}
+                      <path d="M34,38 C28,38 25,45 28,52 C31,50 33,45 34,42 Z" strokeWidth={1.5} />
+                      <path d="M29,42 C26,46 29,50 32,48" strokeWidth={0.8} />
+                      <path d="M31,40 C28,42 29,46 32,44" strokeWidth={0.8} />
+                      {/* Right Pauldron */}
+                      <path d="M66,38 C72,38 75,45 72,52 C69,50 67,45 66,42 Z" strokeWidth={1.5} />
+                      <path d="M71,42 C74,46 71,50 68,48" strokeWidth={0.8} />
+                      <path d="M69,40 C72,42 71,46 68,44" strokeWidth={0.8} />
+
+                      {/* Knight Helmet */}
+                      <path d="M40,28 C40,15 60,15 60,28 C60,33 58,36 50,36 C42,36 40,33 40,28 Z" strokeWidth={1.5} />
+                      <path d="M38,36 C38,40 62,40 62,36 Z" strokeWidth={1.2} />
+                      <path d="M38,38 L34,42 L66,42 L62,38" strokeWidth={1} />
+                      {/* Visor */}
+                      <path d="M42,24 C48,22 52,22 58,24 C60,28 58,32 50,34 C42,32 40,28 42,24 Z" strokeWidth={1} fill="#4a2e13" fillOpacity={0.1} />
+                      <path d="M45,26 L49,26 M51,26 L55,26" strokeWidth={0.8} />
+                      <circle cx="45" cy="30" r="0.6" fill="#4a2e13" />
+                      <circle cx="47" cy="31" r="0.6" fill="#4a2e13" />
+                      <circle cx="53" cy="31" r="0.6" fill="#4a2e13" />
+                      <circle cx="55" cy="30" r="0.6" fill="#4a2e13" />
+                      {/* Plume */}
+                      <path d="M50,16 C45,8 35,10 28,14 C35,16 42,15 48,18" strokeWidth={0.8} opacity={0.7} />
+                      <path d="M50,16 C48,6 40,5 34,8 C40,11 45,12 49,17" strokeWidth={0.8} opacity={0.5} />
+                    </svg>
+
+                    <h3>
+                      {/* Detailed Knight Helmet resting on Shield Icon */}
+                      <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
+                        {/* Shield */}
+                        <path d="M12,7 L19,10 L19,16 C19,20 12,23 12,23.5 C12,23 5,20 5,16 L5,10 Z" />
+                        {/* Inner Shield Pattern */}
+                        <path d="M12,10 L12,20 M8,14 L16,14" strokeWidth={0.8} opacity={0.6} />
+                        {/* Knight Helmet */}
+                        <path d="M8,10 C8,4 16,4 16,10 Z" fill="#fffdfa" />
+                        <path d="M9,8 C12,7 12,7 15,8" strokeWidth={1} />
+                        <path d="M10,6 L14,6" strokeWidth={0.8} />
+                        {/* Plume */}
+                        <path d="M12,4 C10,1 6,2 4,4" strokeWidth={0.8} opacity={0.7} />
+                      </svg>
+                      {getFieldSetting('armor-protection').label || 'Armor & Protection'}
+                    </h3>
+                    <div className="lines">
+                      {Array.from({ length: 7 }, (_, i) => (
+                        <div key={i}><input type="text" id={`armor-line-${i+1}`} {...bindInput(`armor-line-${i+1}`)} /></div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {/* Armor Block */}
-              <div className="parchment-box flex-1 lined-zone" style={{ zIndex: 2 }}>
-                {/* Detailed Armor Stand Backdrop Illustration */}
-                <svg className="box-illustration" viewBox="0 0 100 100" style={{ opacity: 0.08, fill: 'none', stroke: '#4a2e13', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
-                  {/* Backdrop heater shield */}
-                  <path d="M50,12 L80,20 C80,55 70,78 50,91 C30,78 20,55 20,20 Z" strokeWidth={1.2} />
-                  <path d="M50,15 L76,22 C76,52 67,74 50,86 C33,74 24,52 24,22 Z" strokeDasharray="2 2" strokeWidth={0.8} opacity={0.6} />
-                  <path d="M50,12 L50,91" strokeWidth={0.8} opacity={0.4} />
-                  
-                  {/* Armor stand vertical post */}
-                  <path d="M50,30 L50,88" strokeWidth={2.5} opacity={0.5} />
-                  <path d="M35,88 L65,88" strokeWidth={2} />
-                  <path d="M38,88 L50,78 M62,88 L50,78" strokeWidth={1.2} />
-
-                  {/* Breastplate (Cuirass) */}
-                  <path d="M34,42 C34,36 66,36 66,42 C67,52 64,74 50,80 C36,74 33,52 34,42 Z" strokeWidth={1.8} />
-                  <path d="M50,38 L50,80" strokeWidth={1.2} />
-                  <path d="M38,48 C45,52 55,52 62,48" strokeWidth={1} />
-                  <path d="M37,58 C45,62 55,62 63,58" strokeWidth={1} />
-                  <path d="M34,42 C38,45 38,52 35,55" strokeWidth={1.2} />
-                  <path d="M66,42 C62,45 62,52 65,55" strokeWidth={1.2} />
-                  {/* Waist belt with buckle */}
-                  <path d="M36,70 C42,73 58,73 64,70" strokeWidth={1.5} />
-                  <rect x="48" y="68" width="4" height="4" strokeWidth={1} />
-
-                  {/* Pauldrons (Shoulder Guards) */}
-                  {/* Left Pauldron */}
-                  <path d="M34,38 C28,38 25,45 28,52 C31,50 33,45 34,42 Z" strokeWidth={1.5} />
-                  <path d="M29,42 C26,46 29,50 32,48" strokeWidth={0.8} />
-                  <path d="M31,40 C28,42 29,46 32,44" strokeWidth={0.8} />
-                  {/* Right Pauldron */}
-                  <path d="M66,38 C72,38 75,45 72,52 C69,50 67,45 66,42 Z" strokeWidth={1.5} />
-                  <path d="M71,42 C74,46 71,50 68,48" strokeWidth={0.8} />
-                  <path d="M69,40 C72,42 71,46 68,44" strokeWidth={0.8} />
-
-                  {/* Knight Helmet */}
-                  <path d="M40,28 C40,15 60,15 60,28 C60,33 58,36 50,36 C42,36 40,33 40,28 Z" strokeWidth={1.5} />
-                  <path d="M38,36 C38,40 62,40 62,36 Z" strokeWidth={1.2} />
-                  <path d="M38,38 L34,42 L66,42 L62,38" strokeWidth={1} />
-                  {/* Visor */}
-                  <path d="M42,24 C48,22 52,22 58,24 C60,28 58,32 50,34 C42,32 40,28 42,24 Z" strokeWidth={1} fill="#4a2e13" fillOpacity={0.1} />
-                  <path d="M45,26 L49,26 M51,26 L55,26" strokeWidth={0.8} />
-                  <circle cx="45" cy="30" r="0.6" fill="#4a2e13" />
-                  <circle cx="47" cy="31" r="0.6" fill="#4a2e13" />
-                  <circle cx="53" cy="31" r="0.6" fill="#4a2e13" />
-                  <circle cx="55" cy="30" r="0.6" fill="#4a2e13" />
-                  {/* Plume */}
-                  <path d="M50,16 C45,8 35,10 28,14 C35,16 42,15 48,18" strokeWidth={0.8} opacity={0.7} />
-                  <path d="M50,16 C48,6 40,5 34,8 C40,11 45,12 49,17" strokeWidth={0.8} opacity={0.5} />
-                </svg>
-
-                <h3>
-                  {/* Detailed Knight Helmet resting on Shield Icon */}
-                  <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round' }}>
-                    {/* Shield */}
-                    <path d="M12,7 L19,10 L19,16 C19,20 12,23 12,23.5 C12,23 5,20 5,16 L5,10 Z" />
-                    {/* Inner Shield Pattern */}
-                    <path d="M12,10 L12,20 M8,14 L16,14" strokeWidth={0.8} opacity={0.6} />
-                    {/* Knight Helmet */}
-                    <path d="M8,10 C8,4 16,4 16,10 Z" fill="#fffdfa" />
-                    <path d="M9,8 C12,7 12,7 15,8" strokeWidth={1} />
-                    <path d="M10,6 L14,6" strokeWidth={0.8} />
-                    {/* Plume */}
-                    <path d="M12,4 C10,1 6,2 4,4" strokeWidth={0.8} opacity={0.7} />
-                  </svg>
-                  Armor & Protection
-                </h3>
-                <div className="lines">
-                  {Array.from({ length: 7 }, (_, i) => (
-                    <div key={i}><input type="text" id={`armor-line-${i+1}`} {...bindInput(`armor-line-${i+1}`)} /></div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Giant Defeated Foes Ledger */}
-            <div>
-              <div className="header-container" style={{ marginTop: '6px', marginBottom: '6px' }}>
-                <h1 className="main-title" style={{ fontSize: '20px' }}>DEFEATED FOES</h1>
-              </div>
-              
-              <div className="parchment-box h-125mm" style={{ overflow: 'hidden', zIndex: 2 }}>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
-                  <span style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                    <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '5px' }}>
-                      <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>
-                      <circle cx="9" cy="10" r="2" fill="#fdfbfa"/>
-                      <circle cx="15" cy="10" r="2" fill="#fdfbfa"/>
-                      <path d="M10,14 L12,15 L14,14" fill="none" stroke="#fdfbfa" strokeWidth="1"/>
-                      <path d="M4,8 L2,3 L5,6 M20,8 L22,3 L19,6" fill="#4a2e13" stroke="#4a2e13" strokeWidth="0.5"/>
-                    </svg>
-                    Monster Type (Write-in)
-                  </span>
-                  <span style={{ width: '60px', textAlign: 'center', flexShrink: 0 }}>Kills</span>
-                  <span style={{ width: '55px', textAlign: 'right', paddingRight: '6px', flexShrink: 0 }}>XP</span>
-                </h3>
-                <div className="monster-lines">
-                  {Array.from({ length: 22 }, (_, index) => {
-                    const i = index + 1;
-                    const nameId = `foe-name-${i}`;
-                    const killsId = `foe-kills-${i}`;
-                    const nameVal = inputs[nameId] || '';
-                    const killsVal = parseInt(inputs[killsId]) || 0;
-                    const rowXP = getXpFromMonsterName(nameVal) * killsVal;
-                    return (
-                      <div key={i} className="monster-line">
-                        <input type="text" id={nameId} className="monster-name-input" {...bindInput(nameId)} />
-                        <input type="text" id={killsId} className="monster-kills-input" {...bindInput(killsId)} />
-                        <span className="monster-xp-display">
-                          {rowXP > 0 ? `+${rowXP} XP` : ''}
-                        </span>
-                      </div>
-                    );
-                  })}
+            {getFieldSetting('defeated-foes').visible && (
+              <div>
+                <div className="header-container" style={{ marginTop: '6px', marginBottom: '6px' }}>
+                  <h1 className="main-title" style={{ fontSize: '20px' }}>
+                    {getFieldSetting('defeated-foes').label || 'DEFEATED FOES'}
+                  </h1>
+                </div>
+                
+                <div className="parchment-box h-125mm" style={{ overflow: 'hidden', zIndex: 2 }}>
+                  <h3 style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+                    <span style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+                      <svg className="deco-icon" viewBox="0 0 24 24" width="11" height="11" fill="#4a2e13" style={{ marginRight: '5px' }}>
+                        <path d="M12,2 C8,2 4,5 4,10 C4,13 5.5,15.5 8,17 L7,21 L10,19 L12,21 L14,19 L17,21 L16,17 C18.5,15.5 20,13 20,10 C20,5 16,2 12,2 Z"/>
+                        <circle cx="9" cy="10" r="2" fill="#fdfbfa"/>
+                        <circle cx="15" cy="10" r="2" fill="#fdfbfa"/>
+                        <path d="M10,14 L12,15 L14,14" fill="none" stroke="#fdfbfa" strokeWidth="1"/>
+                        <path d="M4,8 L2,3 L5,6 M20,8 L22,3 L19,6" fill="#4a2e13" stroke="#4a2e13" strokeWidth="0.5"/>
+                      </svg>
+                      Monster Type (Write-in)
+                    </span>
+                    <span style={{ width: '60px', textAlign: 'center', flexShrink: 0 }}>Kills</span>
+                    <span style={{ width: '55px', textAlign: 'right', paddingRight: '6px', flexShrink: 0 }}>XP</span>
+                  </h3>
+                  <div className="monster-lines">
+                    {Array.from({ length: 22 }, (_, index) => {
+                      const i = index + 1;
+                      const nameId = `foe-name-${i}`;
+                      const killsId = `foe-kills-${i}`;
+                      const nameVal = inputs[nameId] || '';
+                      const killsVal = parseInt(inputs[killsId]) || 0;
+                      const rowXP = getXpFromMonsterName(nameVal) * killsVal;
+                      return (
+                        <div key={i} className="monster-line">
+                          <input type="text" id={nameId} className="monster-name-input" {...bindInput(nameId)} />
+                          <input type="text" id={killsId} className="monster-kills-input" {...bindInput(killsId)} />
+                          <span className="monster-xp-display">
+                            {rowXP > 0 ? `+${rowXP} XP` : ''}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -915,21 +939,23 @@ export function CharacterSheet() {
             </div>
 
             {/* Spellbook / Notes Lined Section */}
-            <div className="parchment-box h-65mm">
-              <h3>
-                <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round', marginRight: '4px' }}>
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" fill="#5c3e21" fillOpacity="0.1" />
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" fill="#5c3e21" fillOpacity="0.1" />
-                  <path d="M12 5v14" />
-                </svg>
-                Spellbook & Magic Scrolls
-              </h3>
-              <div className="lines" style={{ marginTop: '2px' }}>
-                {Array.from({ length: 13 }, (_, i) => (
-                  <div key={i}><input type="text" id={`spell-line-${i+1}`} {...bindInput(`spell-line-${i+1}`)} /></div>
-                ))}
+            {getFieldSetting('spells-scrolls').visible && (
+              <div className="parchment-box h-65mm">
+                <h3>
+                  <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round', marginRight: '4px' }}>
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" fill="#5c3e21" fillOpacity="0.1" />
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" fill="#5c3e21" fillOpacity="0.1" />
+                    <path d="M12 5v14" />
+                  </svg>
+                  {getFieldSetting('spells-scrolls').label || 'Spellbook & Magic Scrolls'}
+                </h3>
+                <div className="lines" style={{ marginTop: '2px' }}>
+                  {Array.from({ length: 13 }, (_, i) => (
+                    <div key={i}><input type="text" id={`spell-line-${i+1}`} {...bindInput(`spell-line-${i+1}`)} /></div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -979,7 +1005,7 @@ export function CharacterSheet() {
                   </h3>
                   <div id="ref-class-talents-content" style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
                     {Array.from({ length: 13 }).map((_, i) => {
-                      const classTalents = charState.class ? (TALENTS.classes[charState.class] || []) : [];
+                      const classTalents = charState.class ? (gameConfig.classes[charState.class]?.talents || TALENTS.classes[charState.class] || []) : [];
                       const talent = classTalents[i];
                       if (talent) {
                         return (
@@ -1031,20 +1057,21 @@ export function CharacterSheet() {
                   </div>
                 </div>
 
-                {/* Notes & Special Rules Box */}
-                <div className="parchment-box reference-box h-38mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                  <h3>Notes & Special Rules</h3>
-                  <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
-                    {Array.from({ length: 8 }, (_, i) => {
-                      const lineIndex = i + 1;
-                      return (
-                        <div key={`notes-line-${lineIndex}`}>
-                          <input type="text" id={`ref-notes-line-${lineIndex}`} {...bindInput(`ref-notes-line-${lineIndex}`)} />
-                        </div>
-                      );
-                    })}
+                {getFieldSetting('notes-rules').visible && (
+                  <div className="parchment-box reference-box h-38mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                    <h3>{getFieldSetting('notes-rules').label || 'Notes & Special Rules'}</h3>
+                    <div className="lines" style={{ marginTop: '2px', flexGrow: 1 }}>
+                      {Array.from({ length: 8 }, (_, i) => {
+                        const lineIndex = i + 1;
+                        return (
+                          <div key={`notes-line-${lineIndex}`}>
+                            <input type="text" id={`ref-notes-line-${lineIndex}`} {...bindInput(`ref-notes-line-${lineIndex}`)} />
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
 
               </div>
 

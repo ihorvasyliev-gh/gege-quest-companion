@@ -3,6 +3,7 @@ import { useCharacterStore } from './store/useCharacterStore';
 import { Navbar } from './components/Navbar';
 import { CharacterSheet } from './components/CharacterSheet';
 import { TomeOfRules } from './components/TomeOfRules';
+import { DMPanel } from './components/DMPanel';
 import { ToastContainer } from './components/Toast';
 
 export default function App() {
@@ -56,7 +57,13 @@ export default function App() {
       </div>
 
       {/* Main Tab Views */}
-      {activeTab === 'sheet-tab' ? <CharacterSheet /> : <TomeOfRules />}
+      {activeTab === 'sheet-tab' ? (
+        <CharacterSheet />
+      ) : activeTab === 'rulebook-tab' ? (
+        <TomeOfRules />
+      ) : (
+        <DMPanel />
+      )}
 
       {/* Toast Alert Popups */}
       <ToastContainer />

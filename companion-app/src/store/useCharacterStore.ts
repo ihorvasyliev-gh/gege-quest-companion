@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { AppState, Talent, CharacterState } from '../types';
+import type { AppState, Talent, CharacterState, GameConfig, XPSetting, SheetFieldConfig } from '../types';
 import { supabase } from '../lib/supabaseClient';
 
 
@@ -88,9 +88,76 @@ export const TALENTS = {
   } as Record<string, Talent[]>
 };
 
+export const DEFAULT_XP_SETTINGS: XPSetting[] = [
+  { key: 'tier1', label: 'Tier I', xp: 1 },
+  { key: 'tier2', label: 'Tier II', xp: 2 },
+  { key: 'tier3', label: 'Tier III', xp: 4 },
+  { key: 'tier4', label: 'Tier IV', xp: 8 },
+  { key: 'tier5', label: 'Tier V', xp: 12 },
+  { key: 'tier6', label: 'Tier VI', xp: 20 },
+  { key: 'bounty', label: 'Bounty', xp: 5 },
+  { key: 'named', label: 'Named', xp: 10 },
+  { key: 'dboss', label: 'Dungeon Boss', xp: 25 },
+  { key: 'cboss', label: 'Campaign Boss', xp: 100 }
+];
+
+export const DEFAULT_SHEET_LAYOUT: Record<string, SheetFieldConfig> = {
+  'hero-name': { visible: true, label: 'Hero Name' },
+  'hero-class': { visible: true, label: 'Class' },
+  'stat-attack': { visible: true, label: 'Attack Dice' },
+  'stat-defense': { visible: true, label: 'Defend Dice' },
+  'stat-body': { visible: true, label: 'Body' },
+  'stat-mind': { visible: true, label: 'Mind' },
+  'health-tracker': { visible: true, label: 'Current Body Points' },
+  'char-gold': { visible: true, label: 'Gold Coins' },
+  'weapons-gear': { visible: true, label: 'Weapons & Gear' },
+  'armor-protection': { visible: true, label: 'Armor & Protection' },
+  'defeated-foes': { visible: true, label: 'Defeated Foes' },
+  'spells-scrolls': { visible: true, label: 'Spellbook & Magic Scrolls' },
+  'notes-rules': { visible: true, label: 'Notes & Special Rules' }
+};
+
+export const getDefaultGameConfig = (): GameConfig => {
+  const classesConfig: Record<string, { name: string; talents: Talent[] }> = {};
+  for (const k in TALENTS.classes) {
+    classesConfig[k] = {
+      name: k === 'barbarian' ? 'Barbarian' :
+            k === 'berserker' ? 'Berserker' :
+            k === 'lady_berserker' ? 'Lady Berserker' :
+            k === 'paladin' ? 'Paladin' :
+            k === 'wizard' ? 'Wizard' :
+            k === 'lady_elf_archer' ? 'Lady Elf Archer' :
+            k === 'mine_dwarf' ? 'Mine Dwarf' :
+            k === 'war_dwarf' ? 'War Dwarf' :
+            k === 'shamaness' ? 'Shamaness' : k,
+      talents: TALENTS.classes[k]
+    };
+  }
+  return {
+    classes: classesConfig,
+    xpSettings: DEFAULT_XP_SETTINGS,
+    sheetLayout: DEFAULT_SHEET_LAYOUT
+  };
+};
+
 export function getTalentById(id: string): Talent | null {
   const sharedTalent = TALENTS.shared.find(t => t.id === id);
   if (sharedTalent) return sharedTalent;
+  
+  // Search custom config first if initialized
+  try {
+    const storeConfig = useCharacterStore.getState()?.gameConfig;
+    if (storeConfig && storeConfig.classes) {
+      for (const className in storeConfig.classes) {
+        const classTalent = storeConfig.classes[className]?.talents?.find(t => t.id === id);
+        if (classTalent) return classTalent;
+      }
+    }
+  } catch (e) {
+    // Ignore error if store is not fully initialized
+  }
+
+  // Fallback to static
   for (const className in TALENTS.classes) {
     const classTalent = TALENTS.classes[className].find(t => t.id === id);
     if (classTalent) return classTalent;
@@ -100,6 +167,14 @@ export function getTalentById(id: string): Talent | null {
 
 export function getClassNameReadable(key: string): string {
   if (!key) return '';
+  try {
+    const storeConfig = useCharacterStore.getState()?.gameConfig;
+    if (storeConfig && storeConfig.classes && storeConfig.classes[key]) {
+      return storeConfig.classes[key].name;
+    }
+  } catch (e) {
+    // Ignore
+  }
   const names: Record<string, string> = {
     barbarian: 'Barbarian',
     berserker: 'Berserker',
@@ -122,19 +197,6 @@ const emptyCharState: CharacterState = {
   apAvailable: 0,
   purchasedTalents: {},
   class: ''
-};
-
-const defaultCalculator = {
-  tier1: 0,
-  tier2: 0,
-  tier3: 0,
-  tier4: 0,
-  tier5: 0,
-  tier6: 0,
-  bounty: 0,
-  named: 0,
-  dboss: 0,
-  cboss: 0
 };
 
 // Recomputes Level, Next Level target, Rank, AP, and updates matching text fields in inputs map.
@@ -197,6 +259,18 @@ function recalculate(xpVal: number, purchased: Record<string, number>, className
 
 export function getXpForTier(tierStr: string): number {
   const clean = tierStr.trim().toUpperCase();
+  try {
+    const storeConfig = useCharacterStore.getState()?.gameConfig;
+    if (storeConfig && storeConfig.xpSettings) {
+      const found = storeConfig.xpSettings.find(
+        s => s.label.toUpperCase() === clean || s.key.toUpperCase() === clean
+      );
+      if (found) return found.xp;
+    }
+  } catch (e) {
+    // Ignore
+  }
+
   if (clean === 'TIER I' || clean === 'I') return 1;
   if (clean === 'TIER II' || clean === 'II') return 2;
   if (clean === 'TIER III' || clean === 'III') return 4;
@@ -207,7 +281,7 @@ export function getXpForTier(tierStr: string): number {
 }
 
 export function getXpFromMonsterName(name: string): number {
-  const match = name.match(/\(Tier (I|II|III|IV|V|VI)\)$/i);
+  const match = name.match(/\(([^)]+)\)$/);
   if (match) {
     return getXpForTier(match[1]);
   }
@@ -218,7 +292,9 @@ export function getXpFromMonsterName(name: string): number {
       charState: { ...emptyCharState },
       inputs: {},
       activeTab: 'sheet-tab',
-      calculator: { ...defaultCalculator },
+      calculator: {},
+      gameConfig: getDefaultGameConfig(),
+      configLoading: false,
       tomeGoldInput: '',
       tomeMonsterInput: '',
       tomeMonsterTierInput: 'Tier I',
@@ -253,7 +329,13 @@ export function getXpFromMonsterName(name: string): number {
         if (id === 'hero-class') {
           const rawVal = value.trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
           let matchedKey = '';
-          for (const k in TALENTS.classes) {
+          const storeConfig = state.gameConfig;
+          const allClassKeys = new Set([
+            ...Object.keys(TALENTS.classes),
+            ...Object.keys(storeConfig?.classes || {})
+          ]);
+          
+          for (const k of allClassKeys) {
             if (k === rawVal || getClassNameReadable(k).toLowerCase() === value.trim().toLowerCase()) {
               matchedKey = k;
               break;
@@ -265,9 +347,13 @@ export function getXpFromMonsterName(name: string): number {
           
           if (matchedKey) {
             nextClass = matchedKey;
+            const classTalents = storeConfig?.classes?.[matchedKey]?.talents 
+              || TALENTS.classes[matchedKey] 
+              || [];
+              
             for (const tid in nextPurchased) {
               if (!TALENTS.shared.some(x => x.id === tid)) {
-                const belongsToNew = TALENTS.classes[matchedKey].some(x => x.id === tid);
+                const belongsToNew = classTalents.some(x => x.id === tid);
                 if (!belongsToNew) {
                   delete nextPurchased[tid];
                 }
@@ -320,12 +406,15 @@ export function getXpFromMonsterName(name: string): number {
 
       changeClass: (className) => set((state) => {
         const nextPurchased = { ...state.charState.purchasedTalents };
-        
+        const classTalents = state.gameConfig?.classes?.[className]?.talents 
+          || TALENTS.classes[className] 
+          || [];
+          
         for (const tid in nextPurchased) {
           const isShared = TALENTS.shared.some(x => x.id === tid);
           if (!isShared) {
-            const belongsToNew = className && TALENTS.classes[className]
-              ? TALENTS.classes[className].some(x => x.id === tid)
+            const belongsToNew = className
+              ? classTalents.some(x => x.id === tid)
               : false;
             if (!belongsToNew) {
               delete nextPurchased[tid];
@@ -500,21 +589,27 @@ export function getXpFromMonsterName(name: string): number {
       }),
 
       adjustCalculator: (key, delta) => set((state) => {
-        const val = state.calculator[key] + delta;
+        const currentVal = state.calculator[key] || 0;
+        const nextVal = currentVal + delta;
         return {
           calculator: {
             ...state.calculator,
-            [key]: val < 0 ? 0 : val
+            [key]: nextVal < 0 ? 0 : nextVal
           }
         };
       }),
 
-      clearCalculator: () => set({ calculator: { ...defaultCalculator } }),
+      clearCalculator: () => set({ calculator: {} }),
 
       applyCalculatorXP: () => set((state) => {
         const c = state.calculator;
-        const addedXP = (c.tier1 * 1) + (c.tier2 * 2) + (c.tier3 * 4) + (c.tier4 * 8) + (c.tier5 * 12) + (c.tier6 * 20) +
-                        (c.bounty * 5) + (c.named * 10) + (c.dboss * 25) + (c.cboss * 100);
+        const xpSettings = state.gameConfig.xpSettings;
+        let addedXP = 0;
+        
+        xpSettings.forEach((setting) => {
+          const count = c[setting.key] || 0;
+          addedXP += count * setting.xp;
+        });
         
         if (addedXP <= 0) {
           state.showToast("Please add some kills or achievements in the calculator first!", "error");
@@ -534,7 +629,7 @@ export function getXpFromMonsterName(name: string): number {
         return {
           inputs: recomputed.inputs,
           charState: recomputed.charState,
-          calculator: { ...defaultCalculator }
+          calculator: {}
         };
       }),
 
@@ -555,7 +650,7 @@ export function getXpFromMonsterName(name: string): number {
         return {
           inputs: recomputed.inputs,
           charState: recomputed.charState,
-          calculator: { ...defaultCalculator },
+          calculator: {},
           tomeGoldInput: '',
           tomeMonsterInput: '',
           tomeMonsterTierInput: 'Tier I'
@@ -624,6 +719,7 @@ export function getXpFromMonsterName(name: string): number {
         if (!error && data?.user) {
           set({ user: data.user, session: data.session });
           await get().fetchCharacters();
+          await get().fetchGameConfig();
         }
         return { error };
       },
@@ -673,6 +769,7 @@ export function getXpFromMonsterName(name: string): number {
             authLoading: false
           });
           await get().fetchCharacters();
+          await get().fetchGameConfig();
 
           // Sync the active cloud character if one was selected
           const currentId = get().currentCharId;
@@ -686,6 +783,7 @@ export function getXpFromMonsterName(name: string): number {
             authLoading: false,
             currentCharId: null,
           });
+          await get().fetchGameConfig();
         }
       },
 
@@ -863,6 +961,71 @@ export function getXpFromMonsterName(name: string): number {
       },
 
       setSavingState: (savingState) => set({ savingState }),
+
+      fetchGameConfig: async () => {
+        set({ configLoading: true });
+        try {
+          const { data, error } = await supabase
+            .from('game_config')
+            .select('classes, xp_settings, sheet_layout')
+            .eq('id', 'default')
+            .single();
+            
+          if (!error && data) {
+            const loadedConfig = {
+              classes: data.classes || {},
+              xpSettings: data.xp_settings || [],
+              sheetLayout: data.sheet_layout || {}
+            };
+            
+            // Merge missing fields with defaults to prevent crash if some fields are missing in DB
+            const mergedLayout = { ...DEFAULT_SHEET_LAYOUT, ...loadedConfig.sheetLayout };
+            const finalConfig = {
+              classes: loadedConfig.classes,
+              xpSettings: loadedConfig.xpSettings.length > 0 ? loadedConfig.xpSettings : DEFAULT_XP_SETTINGS,
+              sheetLayout: mergedLayout
+            };
+            
+            localStorage.setItem('gege_quest_game_config', JSON.stringify(finalConfig));
+            set({ gameConfig: finalConfig, configLoading: false });
+          } else {
+            throw new Error(error?.message || "No data");
+          }
+        } catch (e) {
+          console.warn("Failed to fetch game config from Supabase, loading from cache...", e);
+          const cached = localStorage.getItem('gege_quest_game_config');
+          if (cached) {
+            try {
+              set({ gameConfig: JSON.parse(cached), configLoading: false });
+            } catch {
+              set({ gameConfig: getDefaultGameConfig(), configLoading: false });
+            }
+          } else {
+            set({ gameConfig: getDefaultGameConfig(), configLoading: false });
+          }
+        }
+      },
+
+      saveGameConfig: async (config) => {
+        const { error } = await supabase
+          .from('game_config')
+          .update({
+            classes: config.classes,
+            xp_settings: config.xpSettings,
+            sheet_layout: config.sheetLayout,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', 'default');
+          
+        if (!error) {
+          localStorage.setItem('gege_quest_game_config', JSON.stringify(config));
+          set({ gameConfig: config });
+          get().showToast("Game configuration saved successfully to the cloud!", "success");
+        } else {
+          get().showToast("Failed to save configuration: " + error.message, "error");
+        }
+        return { error };
+      },
 
     }),
     {

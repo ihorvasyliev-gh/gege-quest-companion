@@ -8,6 +8,27 @@ export interface Talent {
   max?: number;
 }
 
+export interface XPSetting {
+  key: string;
+  label: string;
+  xp: number;
+}
+
+export interface SheetFieldConfig {
+  visible: boolean;
+  label: string;
+}
+
+export interface GameConfig {
+  classes: Record<string, {
+    name: string;
+    talents: Talent[];
+  }>;
+  xpSettings: XPSetting[];
+  sheetLayout: Record<string, SheetFieldConfig>;
+}
+
+
 export interface CharacterState {
   xp: number;
   level: number;
@@ -34,22 +55,15 @@ export interface AppState {
   inputs: Record<string, string>;
   
   // Currently active tab
-  activeTab: 'sheet-tab' | 'rulebook-tab';
+  activeTab: 'sheet-tab' | 'rulebook-tab' | 'dm-tab';
   
   // Temporary state for the interactive XP calculator
-  calculator: {
-    tier1: number;
-    tier2: number;
-    tier3: number;
-    tier4: number;
-    tier5: number;
-    tier6: number;
-    bounty: number;
-    named: number;
-    dboss: number;
-    cboss: number;
-  };
+  calculator: Record<string, number>;
   
+  // Game Config (Classes, XP rules, layout settings)
+  gameConfig: GameConfig;
+  configLoading: boolean;
+
   // Tome inputs
   tomeGoldInput: string;
   tomeMonsterInput: string;
@@ -76,7 +90,7 @@ export interface AppState {
   // Theme state
   
   // Navigation actions
-  setActiveTab: (tab: 'sheet-tab' | 'rulebook-tab') => void;
+  setActiveTab: (tab: 'sheet-tab' | 'rulebook-tab' | 'dm-tab') => void;
   
   // Input changes
   updateInput: (id: string, value: string) => void;
@@ -97,7 +111,7 @@ export interface AppState {
   adjustTomeMonster: (rowIndex: number, delta: number) => void;
   
   // Calculator actions
-  adjustCalculator: (key: keyof AppState['calculator'], delta: number) => void;
+  adjustCalculator: (key: string, delta: number) => void;
   clearCalculator: () => void;
   applyCalculatorXP: () => void;
   
@@ -124,5 +138,8 @@ export interface AppState {
   saveCharacterToCloud: (id: string, inputs: Record<string, string>, charState: CharacterState) => Promise<{ error: { message: string } | null }>;
   setSavingState: (state: 'idle' | 'saving' | 'saved' | 'error') => void;
 
+  // DM / Game Config actions
+  fetchGameConfig: () => Promise<void>;
+  saveGameConfig: (config: GameConfig) => Promise<{ error: { message: string } | null }>;
 }
 

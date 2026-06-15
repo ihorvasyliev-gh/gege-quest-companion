@@ -20,6 +20,12 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
   const createCharacter = useCharacterStore((state) => state.createCharacter);
   const deleteCharacter = useCharacterStore((state) => state.deleteCharacter);
   const showToast = useCharacterStore((state) => state.showToast);
+  const gameConfig = useCharacterStore((state) => state.gameConfig);
+
+  const allClassKeys = Array.from(new Set([
+    ...Object.keys(TALENTS.classes),
+    ...Object.keys(gameConfig?.classes || {})
+  ]));
 
   // Forms local state
   const [isRegisterMode, setIsRegisterMode] = useState(false);
@@ -199,7 +205,7 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
                         value={newCharClass}
                         onChange={(e) => setNewCharClass(e.target.value)}
                       >
-                        {Object.keys(TALENTS.classes).map((cKey) => (
+                        {allClassKeys.map((cKey) => (
                           <option key={cKey} value={cKey}>
                             {getClassNameReadable(cKey)}
                           </option>

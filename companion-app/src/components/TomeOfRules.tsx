@@ -8,6 +8,12 @@ export function TomeOfRules() {
   const buyTalent = useCharacterStore((state) => state.buyTalent);
   const refundTalent = useCharacterStore((state) => state.refundTalent);
 
+  const gameConfig = useCharacterStore((state) => state.gameConfig);
+  const allClassKeys = Array.from(new Set([
+    ...Object.keys(TALENTS.classes),
+    ...Object.keys(gameConfig?.classes || {})
+  ]));
+
   // Calculator State & Actions
   const calculator = useCharacterStore((state) => state.calculator);
   const adjustCalculator = useCharacterStore((state) => state.adjustCalculator);
@@ -123,151 +129,39 @@ export function TomeOfRules() {
         <div className="tome-page">
           <h2>XP Calculator</h2>
           
-          <h3>1. Slaying Log</h3>
-          <table className="rulebook-table">
-            <thead>
-              <tr>
-                <th>Monster Tier</th>
-                <th className="desktop-table-cell">Examples</th>
-                <th className="calc-cell-xp">XP</th>
-                <th className="calc-cell-kills">Kills</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="calc-cell-tier">
-                  <strong>Tier I</strong>
-                  <span className="mobile-monster-list">Goblin, Skeleton, Zombie</span>
-                </td>
-                <td className="desktop-table-cell calc-cell-monsters">Goblin, Skeleton, Zombie</td>
-                <td className="calc-cell-xp"><strong>1</strong></td>
-                <td className="calc-cell-kills">
-                  <div className="calc-control">
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier1', -1)}>-</button>
-                    <input type="text" className="calc-input" value={calculator.tier1} readOnly />
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier1', 1)}>+</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="calc-cell-tier">
-                  <strong>Tier II</strong>
-                  <span className="mobile-monster-list">Orc, Fimir, Ghoul, Mummy</span>
-                </td>
-                <td className="desktop-table-cell calc-cell-monsters">Orc, Fimir, Ghoul, Mummy</td>
-                <td className="calc-cell-xp"><strong>2</strong></td>
-                <td className="calc-cell-kills">
-                  <div className="calc-control">
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier2', -1)}>-</button>
-                    <input type="text" className="calc-input" value={calculator.tier2} readOnly />
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier2', 1)}>+</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="calc-cell-tier">
-                  <strong>Tier III</strong>
-                  <span className="mobile-monster-list">Chaos Warrior, Wight, Abomination</span>
-                </td>
-                <td className="desktop-table-cell calc-cell-monsters">Chaos Warrior, Wight, Abomination</td>
-                <td className="calc-cell-xp"><strong>4</strong></td>
-                <td className="calc-cell-kills">
-                  <div className="calc-control">
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier3', -1)}>-</button>
-                    <input type="text" className="calc-input" value={calculator.tier3} readOnly />
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier3', 1)}>+</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="calc-cell-tier">
-                  <strong>Tier IV</strong>
-                  <span className="mobile-monster-list">Ogre, Gargoyle, Minotaur</span>
-                </td>
-                <td className="desktop-table-cell calc-cell-monsters">Ogre, Gargoyle, Minotaur</td>
-                <td className="calc-cell-xp"><strong>8</strong></td>
-                <td className="calc-cell-kills">
-                  <div className="calc-control">
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier4', -1)}>-</button>
-                    <input type="text" className="calc-input" value={calculator.tier4} readOnly />
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier4', 1)}>+</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="calc-cell-tier">
-                  <strong>Tier V</strong>
-                  <span className="mobile-monster-list">Giant, Dragonling, Demon Champ.</span>
-                </td>
-                <td className="desktop-table-cell calc-cell-monsters">Giant, Dragonling, Demon Champ.</td>
-                <td className="calc-cell-xp"><strong>12</strong></td>
-                <td className="calc-cell-kills">
-                  <div className="calc-control">
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier5', -1)}>-</button>
-                    <input type="text" className="calc-input" value={calculator.tier5} readOnly />
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier5', 1)}>+</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="calc-cell-tier">
-                  <strong>Tier VI</strong>
-                  <span className="mobile-monster-list">Greater Demon, Ancient Dragon</span>
-                </td>
-                <td className="desktop-table-cell calc-cell-monsters">Greater Demon, Ancient Dragon</td>
-                <td className="calc-cell-xp"><strong>20</strong></td>
-                <td className="calc-cell-kills">
-                  <div className="calc-control">
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier6', -1)}>-</button>
-                    <input type="text" className="calc-input" value={calculator.tier6} readOnly />
-                    <button className="calc-btn" onClick={() => adjustCalculator('tier6', 1)}>+</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3 style={{ marginTop: '5px' }}>3. Bonus XP & Achievements</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px', fontFamily: 'Cormorant Garamond, serif', fontSize: '13.5px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>🎯 <strong>Bounty Target</strong></span>
-              <div className="calc-control">
-                <span style={{ color: '#855d14', fontWeight: 'bold', marginRight: '5px' }}>+5</span>
-                <button className="calc-btn" onClick={() => adjustCalculator('bounty', -1)}>-</button>
-                <input type="text" className="calc-input" value={calculator.bounty} readOnly />
-                <button className="calc-btn" onClick={() => adjustCalculator('bounty', 1)}>+</button>
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>👤 <strong>Named Character</strong></span>
-              <div className="calc-control">
-                <span style={{ color: '#855d14', fontWeight: 'bold', marginRight: '5px' }}>+10</span>
-                <button className="calc-btn" onClick={() => adjustCalculator('named', -1)}>-</button>
-                <input type="text" className="calc-input" value={calculator.named} readOnly />
-                <button className="calc-btn" onClick={() => adjustCalculator('named', 1)}>+</button>
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>🏰 <strong>Dungeon Boss</strong></span>
-              <div className="calc-control">
-                <span style={{ color: '#855d14', fontWeight: 'bold', marginRight: '5px' }}>+25</span>
-                <button className="calc-btn" onClick={() => adjustCalculator('dboss', -1)}>-</button>
-                <input type="text" className="calc-input" value={calculator.dboss} readOnly />
-                <button className="calc-btn" onClick={() => adjustCalculator('dboss', 1)}>+</button>
-              </div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>👑 <strong>Campaign Boss</strong></span>
-              <div className="calc-control">
-                <span style={{ color: '#855d14', fontWeight: 'bold', marginRight: '5px' }}>+100</span>
-                <button className="calc-btn" onClick={() => adjustCalculator('cboss', -1)}>-</button>
-                <input type="text" className="calc-input" value={calculator.cboss} readOnly />
-                <button className="calc-btn" onClick={() => adjustCalculator('cboss', 1)}>+</button>
-              </div>
-            </div>
+          <h3>Select Slayings & Achievements</h3>
+          <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '10px' }}>
+            <table className="rulebook-table" style={{ width: '100%' }}>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th style={{ width: '50px', textAlign: 'center' }}>XP</th>
+                  <th style={{ width: '100px', textAlign: 'center' }}>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {gameConfig.xpSettings.map((setting) => (
+                  <tr key={setting.key}>
+                    <td>
+                      <strong>{setting.label}</strong>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span style={{ color: '#855d14', fontWeight: 'bold' }}>+{setting.xp}</span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div className="calc-control" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <button className="calc-btn" onClick={() => adjustCalculator(setting.key, -1)}>-</button>
+                        <input type="text" className="calc-input" value={calculator[setting.key] || 0} readOnly style={{ width: '30px', textAlign: 'center' }} />
+                        <button className="calc-btn" onClick={() => adjustCalculator(setting.key, 1)}>+</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '15px', gap: '10px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', flexShrink: 0 }}>
             <button className="action-btn reset" style={{ backgroundColor: '#724216', borderColor: '#5c3e21' }} onClick={clearCalculator}>Reset</button>
             <button className="action-btn" style={{ backgroundColor: '#2e5c1e', borderColor: '#1a3c0e', color: '#fff' }} onClick={applyCalculatorXP}>Add to XP</button>
           </div>
@@ -307,17 +201,13 @@ export function TomeOfRules() {
             value={charState.class}
             onChange={(e) => changeClass(e.target.value)}
           >
-            <option value="">-- Choose Specialization --</option>
-            <option value="barbarian">Barbarian</option>
-            <option value="berserker">Berserker</option>
-            <option value="lady_berserker">Lady Berserker</option>
-            <option value="paladin">Paladin</option>
-            <option value="wizard">Wizard</option>
-            <option value="lady_elf_archer">Lady Elf Archer</option>
-            <option value="mine_dwarf">Mine Dwarf</option>
-            <option value="war_dwarf">War Dwarf</option>
-            <option value="shamaness">Shamaness</option>
-          </select>
+              <option value="">-- Choose Specialization --</option>
+              {allClassKeys.map((cKey) => (
+                <option key={cKey} value={cKey}>
+                  {getClassNameReadable(cKey)}
+                </option>
+              ))}
+            </select>
 
           {/* Scrollable Talent Catalog */}
           <div id="codex-talent-list" style={{ overflowY: 'auto', maxHeight: '430px' }}>
@@ -326,11 +216,11 @@ export function TomeOfRules() {
               {TALENTS.shared.map((t) => renderTalentCard(t))}
             </div>
 
-            {charState.class && TALENTS.classes[charState.class] ? (
+            {charState.class && (gameConfig.classes[charState.class] || TALENTS.classes[charState.class]) ? (
               <>
                 <div className="talent-group-title">{getClassNameReadable(charState.class)} Talents</div>
                 <div className="talent-grid">
-                  {TALENTS.classes[charState.class].map((t) => renderTalentCard(t))}
+                  {(gameConfig.classes[charState.class]?.talents || TALENTS.classes[charState.class] || []).map((t) => renderTalentCard(t))}
                 </div>
               </>
             ) : (
@@ -394,12 +284,11 @@ export function TomeOfRules() {
                 value={tomeMonsterTierInput}
                 onChange={(e) => setTomeMonsterTierInput(e.target.value)}
               >
-                <option value="Tier I">Tier I</option>
-                <option value="Tier II">Tier II</option>
-                <option value="Tier III">Tier III</option>
-                <option value="Tier IV">Tier IV</option>
-                <option value="Tier V">Tier V</option>
-                <option value="Tier VI">Tier VI</option>
+                {gameConfig.xpSettings.map((setting) => (
+                  <option key={setting.key} value={setting.label}>
+                    {setting.label}
+                  </option>
+                ))}
               </select>
               <button className="action-btn" style={{ backgroundColor: '#4a2e13', borderColor: '#d4af37', padding: '5px 12px', fontSize: '9px', flexShrink: 0 }} onClick={logMonsterKill}>Log Kill</button>
             </div>

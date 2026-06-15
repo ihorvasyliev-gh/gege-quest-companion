@@ -15,6 +15,7 @@ export function Navbar() {
 
   // Supabase state
   const user = useCharacterStore((state) => state.user);
+  const isAdmin = user?.user_metadata?.role === 'admin' || user?.user_metadata?.role === 'dm';
   const currentCharId = useCharacterStore((state) => state.currentCharId);
   const savingState = useCharacterStore((state) => state.savingState);
   const createCharacter = useCharacterStore((state) => state.createCharacter);
@@ -342,6 +343,16 @@ export function Navbar() {
             <span className="desktop-only">📖 Tome of Rules</span>
             <span className="mobile-only">📖 Rules</span>
           </button>
+          {isAdmin && (
+            <button
+              type="button"
+              className={`nav-btn ${activeTab === 'dm-tab' ? 'active' : ''}`}
+              onClick={() => setActiveTab('dm-tab')}
+            >
+              <span className="desktop-only">⚙️ DM Panel</span>
+              <span className="mobile-only">⚙️ DM</span>
+            </button>
+          )}
         </div>
 
         <div className="navbar-actions desktop-only">

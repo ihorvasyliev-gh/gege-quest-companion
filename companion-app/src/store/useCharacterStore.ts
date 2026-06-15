@@ -136,21 +136,25 @@ export const getDefaultGameConfig = (): GameConfig => {
   return {
     classes: classesConfig,
     xpSettings: DEFAULT_XP_SETTINGS,
-    sheetLayout: DEFAULT_SHEET_LAYOUT
+    sheetLayout: DEFAULT_SHEET_LAYOUT,
+    sharedTalents: TALENTS.shared
   };
 };
 
 export function getTalentById(id: string): Talent | null {
-  const sharedTalent = TALENTS.shared.find(t => t.id === id);
-  if (sharedTalent) return sharedTalent;
-  
   // Search custom config first if initialized
   try {
     const storeConfig = useCharacterStore.getState()?.gameConfig;
-    if (storeConfig && storeConfig.classes) {
-      for (const className in storeConfig.classes) {
-        const classTalent = storeConfig.classes[className]?.talents?.find(t => t.id === id);
-        if (classTalent) return classTalent;
+    if (storeConfig) {
+      if (storeConfig.sharedTalents) {
+        const shared = storeConfig.sharedTalents.find(t => t.id === id);
+        if (shared) return shared;
+      }
+      if (storeConfig.classes) {
+        for (const className in storeConfig.classes) {
+          const classTalent = storeConfig.classes[className]?.talents?.find(t => t.id === id);
+          if (classTalent) return classTalent;
+        }
       }
     }
   } catch (e) {
@@ -158,6 +162,9 @@ export function getTalentById(id: string): Talent | null {
   }
 
   // Fallback to static
+  const sharedTalent = TALENTS.shared.find(t => t.id === id);
+  if (sharedTalent) return sharedTalent;
+
   for (const className in TALENTS.classes) {
     const classTalent = TALENTS.classes[className].find(t => t.id === id);
     if (classTalent) return classTalent;
@@ -967,7 +974,7 @@ export function getXpFromMonsterName(name: string): number {
         try {
           const { data, error } = await supabase
             .from('game_config')
-            .select('classes, xp_settings, sheet_layout')
+            .select('*')
             .eq('id', 'default')
             .single();
             
@@ -975,7 +982,8 @@ export function getXpFromMonsterName(name: string): number {
             const loadedConfig = {
               classes: data.classes || {},
               xpSettings: data.xp_settings || [],
-              sheetLayout: data.sheet_layout || {}
+              sheetLayout: data.sheet_layout || {},
+              sharedTalents: data.shared_talents || TALENTS.shared
             };
             
             // Merge missing fields with defaults to prevent crash if some fields are missing in DB
@@ -989,7 +997,8 @@ export function getXpFromMonsterName(name: string): number {
             const finalConfig = {
               classes: mergedClasses,
               xpSettings: loadedConfig.xpSettings.length > 0 ? loadedConfig.xpSettings : DEFAULT_XP_SETTINGS,
-              sheetLayout: mergedLayout
+              sheetLayout: mergedLayout,
+              sharedTalents: loadedConfig.sharedTalents
             };
             
             localStorage.setItem('gege_quest_game_config', JSON.stringify(finalConfig));
@@ -1011,7 +1020,8 @@ export function getXpFromMonsterName(name: string): number {
                 gameConfig: {
                   classes: mergedClasses,
                   xpSettings: parsed.xpSettings && parsed.xpSettings.length > 0 ? parsed.xpSettings : DEFAULT_XP_SETTINGS,
-                  sheetLayout: mergedLayout
+                  sheetLayout: mergedLayout,
+                  sharedTalents: parsed.sharedTalents || TALENTS.shared
                 },
                 configLoading: false
               });
@@ -1031,6 +1041,7 @@ export function getXpFromMonsterName(name: string): number {
             classes: config.classes,
             xp_settings: config.xpSettings,
             sheet_layout: config.sheetLayout,
+            shared_talents: config.sharedTalents,
             updated_at: new Date().toISOString()
           })
           .eq('id', 'default');

@@ -27,6 +27,7 @@ export interface GameConfig {
   }>;
   xpSettings: XPSetting[];
   sheetLayout: Record<string, SheetFieldConfig>;
+  sharedTalents?: Talent[];
 }
 
 

@@ -29,7 +29,8 @@ export function DMPanel() {
   const [activeSubTab, setActiveSubTab] = useState<'classes' | 'xp' | 'layout'>('classes');
   
   // Selected class for Class & Talents editor
-  const [selectedClassKey, setSelectedClassKey] = useState<string>('');
+  const [selectedClassKey, setSelectedClassKey] = useState<string>('__shared__');
+  const [talentSearchQuery, setTalentSearchQuery] = useState('');
   
   // Temp state for new class
   const [newClassKey, setNewClassKey] = useState('');
@@ -50,11 +51,10 @@ export function DMPanel() {
 
   // Initialize selected class key if empty
   useEffect(() => {
-    const keys = Object.keys(draftConfig.classes);
-    if (keys.length > 0 && !selectedClassKey) {
-      setSelectedClassKey(keys[0]);
+    if (!selectedClassKey) {
+      setSelectedClassKey('__shared__');
     }
-  }, [draftConfig, selectedClassKey]);
+  }, [selectedClassKey]);
 
   // Handle Save
   const handleSave = async () => {
@@ -84,7 +84,7 @@ export function DMPanel() {
     if (window.confirm('Are you sure you want to reset all game rules, classes, and layouts to default? All custom settings will be lost!')) {
       const defaultConfig = getDefaultGameConfig();
       setDraftConfig(defaultConfig);
-      setSelectedClassKey(Object.keys(defaultConfig.classes)[0] || '');
+      setSelectedClassKey('__shared__');
       showToast('Reset to default values in draft. Click "Save Changes" to publish.', 'success');
     }
   };
@@ -119,7 +119,7 @@ export function DMPanel() {
       const updated = { ...draftConfig };
       delete updated.classes[key];
       setDraftConfig(updated);
-      setSelectedClassKey(Object.keys(updated.classes)[0] || '');
+      setSelectedClassKey('__shared__');
       showToast('Class deleted from draft.', 'success');
     }
   };
@@ -133,6 +133,25 @@ export function DMPanel() {
       return;
     }
 
+    const updated = { ...draftConfig };
+    if (!updated.sharedTalents) {
+      updated.sharedTalents = [];
+    }
+
+    // Validation check for duplicates
+    const talentList = selectedClassKey === '__shared__'
+      ? updated.sharedTalents
+      : (updated.classes[selectedClassKey]?.talents || []);
+
+    const isDuplicate = talentList.some(
+      (t) => t.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      showToast(`A talent with the name "${name}" already exists in this scope.`, 'error');
+      return;
+    }
+
     const talentId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Math.random().toString(36).substring(2, 5);
     const added: Talent = {
       id: talentId,
@@ -142,21 +161,37 @@ export function DMPanel() {
       max: newTalent.max ? Number(newTalent.max) : undefined,
     };
 
-    const updated = { ...draftConfig };
-    updated.classes[selectedClassKey].talents.push(added);
-    setDraftConfig(updated);
-    setNewTalent({ name: '', cost: 1, desc: '', max: 1 });
-    showToast(`Talent "${name}" added to ${getClassName(selectedClassKey)}.`, 'success');
+    if (selectedClassKey === '__shared__') {
+      updated.sharedTalents.push(added);
+      setDraftConfig(updated);
+      setNewTalent({ name: '', cost: 1, desc: '', max: 1 });
+      showToast(`Talent "${name}" added to Shared Talents.`, 'success');
+    } else {
+      if (updated.classes[selectedClassKey]) {
+        updated.classes[selectedClassKey].talents.push(added);
+        setDraftConfig(updated);
+        setNewTalent({ name: '', cost: 1, desc: '', max: 1 });
+        showToast(`Talent "${name}" added to ${getClassName(selectedClassKey)}.`, 'success');
+      }
+    }
   };
 
   const handleDeleteTalent = (classKey: string, talentId: string) => {
     const updated = { ...draftConfig };
-    updated.classes[classKey].talents = updated.classes[classKey].talents.filter((t) => t.id !== talentId);
+    if (classKey === '__shared__') {
+      updated.sharedTalents = (updated.sharedTalents || []).filter((t) => t.id !== talentId);
+      showToast('Shared talent deleted from draft.', 'success');
+    } else {
+      if (updated.classes[classKey]) {
+        updated.classes[classKey].talents = updated.classes[classKey].talents.filter((t) => t.id !== talentId);
+        showToast('Talent deleted from class.', 'success');
+      }
+    }
     setDraftConfig(updated);
-    showToast('Talent deleted from class.', 'success');
   };
 
   const getClassName = (key: string) => {
+    if (key === '__shared__') return 'Shared Talents';
     return draftConfig.classes[key]?.name || key;
   };
 
@@ -292,6 +327,7 @@ export function DMPanel() {
                       onChange={(e) => setSelectedClassKey(e.target.value)}
                       className="dm-select"
                     >
+                      <option value="__shared__">⭐ Shared Talents (All Classes)</option>
                       {Object.keys(draftConfig.classes).map((key) => (
                         <option key={key} value={key}>
                           {getClassName(key)} ({key})
@@ -299,7 +335,7 @@ export function DMPanel() {
                       ))}
                     </select>
 
-                    {selectedClassKey && (
+                    {selectedClassKey && selectedClassKey !== '__shared__' && (
                       <button
                         type="button"
                         className="action-btn reset"
@@ -348,53 +384,84 @@ export function DMPanel() {
 
                 {/* Right Side: Talents list of the Selected Class */}
                 <div className="parchment-box flex-2" style={{ padding: '15px', zIndex: 2 }}>
-                  {selectedClassKey ? (
-                    <div>
-                      <h3>Talents for {getClassName(selectedClassKey)}</h3>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <h3 style={{ margin: 0 }}>Talents for {getClassName(selectedClassKey)}</h3>
+                        <input
+                          type="text"
+                          placeholder="🔍 Search talents..."
+                          value={talentSearchQuery}
+                          onChange={(e) => setTalentSearchQuery(e.target.value)}
+                          className="dm-input"
+                          style={{ width: '180px', height: '28px', fontSize: '11px', padding: '2px 8px' }}
+                        />
+                      </div>
                       
                       <div style={{ marginTop: '10px' }}>
-                        {draftConfig.classes[selectedClassKey]?.talents.length === 0 ? (
-                          <div style={{ fontSize: '12px', fontStyle: 'italic', padding: '10px 0' }}>
-                            No talents added yet for this class. Add one below!
-                          </div>
-                        ) : (
-                          <table className="ref-table" style={{ width: '100%' }}>
-                            <thead>
-                              <tr>
-                                <th style={{ width: '30%' }}>Talent Name</th>
-                                <th style={{ width: '15%', textAlign: 'center' }}>Cost (AP)</th>
-                                <th style={{ width: '45%' }}>Description</th>
-                                <th style={{ width: '10%' }}>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {draftConfig.classes[selectedClassKey]?.talents.map((talent) => (
-                                <tr key={talent.id}>
-                                  <td><strong>{talent.name}</strong></td>
-                                  <td style={{ textAlign: 'center' }}>{talent.cost}</td>
-                                  <td style={{ fontSize: '11px' }}>
-                                    {talent.desc} {talent.max ? `(Max ${talent.max} buys)` : ''}
-                                  </td>
-                                  <td>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDeleteTalent(selectedClassKey, talent.id)}
-                                      style={{
-                                        border: 'none',
-                                        background: 'none',
-                                        color: '#b02a2a',
-                                        cursor: 'pointer',
-                                        fontSize: '12px',
-                                      }}
-                                    >
-                                      🗑️
-                                    </button>
-                                  </td>
+                        {(() => {
+                          const talentsList = selectedClassKey === '__shared__'
+                            ? (draftConfig.sharedTalents || [])
+                            : (draftConfig.classes[selectedClassKey]?.talents || []);
+                          
+                          const filtered = talentsList.filter(t =>
+                            t.name.toLowerCase().includes(talentSearchQuery.toLowerCase()) ||
+                            t.desc.toLowerCase().includes(talentSearchQuery.toLowerCase())
+                          );
+
+                          if (talentsList.length === 0) {
+                            return (
+                              <div style={{ fontSize: '12px', fontStyle: 'italic', padding: '10px 0' }}>
+                                No talents added yet for this scope. Add one below!
+                              </div>
+                            );
+                          }
+
+                          if (filtered.length === 0) {
+                            return (
+                              <div style={{ fontSize: '12px', fontStyle: 'italic', padding: '10px 0', color: '#b02a2a' }}>
+                                No talents match your search query.
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <table className="ref-table" style={{ width: '100%' }}>
+                              <thead>
+                                <tr>
+                                  <th style={{ width: '30%' }}>Talent Name</th>
+                                  <th style={{ width: '15%', textAlign: 'center' }}>Cost (AP)</th>
+                                  <th style={{ width: '45%' }}>Description</th>
+                                  <th style={{ width: '10%' }}>Action</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        )}
+                              </thead>
+                              <tbody>
+                                {filtered.map((talent) => (
+                                  <tr key={talent.id}>
+                                    <td><strong>{talent.name}</strong></td>
+                                    <td style={{ textAlign: 'center' }}>{talent.cost}</td>
+                                    <td style={{ fontSize: '11px' }}>
+                                      {talent.desc} {talent.max ? `(Max ${talent.max} buys)` : ''}
+                                    </td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteTalent(selectedClassKey, talent.id)}
+                                        style={{
+                                          border: 'none',
+                                          background: 'none',
+                                          color: '#b02a2a',
+                                          cursor: 'pointer',
+                                          fontSize: '12px',
+                                        }}
+                                      >
+                                        🗑️
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          );
+                        })()}
                       </div>
 
                       <div className="divider" style={{ margin: '15px 0' }} />
@@ -454,13 +521,6 @@ export function DMPanel() {
                           </button>
                         </div>
                       </div>
-
-                    </div>
-                  ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', fontStyle: 'italic' }}>
-                      Add a class first on the left to add talents.
-                    </div>
-                  )}
                 </div>
 
               </div>

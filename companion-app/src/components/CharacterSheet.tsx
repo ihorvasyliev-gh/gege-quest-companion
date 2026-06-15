@@ -734,9 +734,58 @@ export function CharacterSheet() {
               <div className="subtitle" style={{ fontSize: '9px', letterSpacing: '2px' }}>Advancements & Codex</div>
             </div>
 
-            {/* Permanent Stat Advancements / Shared Talents */}
-            <div className="parchment-box" style={{ padding: '5px 8px' }}>
-              <h3>Permanent Stat Advancements (AP Purchases)</h3>
+             {/* Permanent Stat Advancements / Shared Talents */}
+            <div className="parchment-box" style={{ padding: '8px 10px' }}>
+              <h3 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span>Permanent Stat Advancements (AP Purchases)</span>
+                <span style={{ fontSize: '11px', fontFamily: 'Cinzel, serif', color: '#4a2e13', fontWeight: 'bold' }}>
+                  AP Available: <span style={{ color: '#b02a2a', fontSize: '13px' }}>{charState.apAvailable}</span> / {charState.apEarned}
+                </span>
+              </h3>
+
+              {/* AP Progress Gauge */}
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  fontSize: '9px', 
+                  fontFamily: 'Cinzel, serif', 
+                  color: '#5c3e21', 
+                  marginBottom: '2px', 
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  <span>Spent: {charState.apSpent} AP</span>
+                  <span>Available: {charState.apAvailable} AP</span>
+                </div>
+                <div style={{
+                  height: '8px',
+                  background: '#e5d8bf',
+                  border: '1px solid #4a2e13',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  position: 'relative',
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)'
+                }}>
+                  {/* Spent AP portion */}
+                  <div style={{
+                    width: `${charState.apEarned > 0 ? (charState.apSpent / charState.apEarned) * 100 : 0}%`,
+                    background: 'linear-gradient(90deg, #8b5a2b, #4a2e13)',
+                    height: '100%',
+                    transition: 'width 0.3s ease-in-out'
+                  }} />
+                  {/* Available AP portion */}
+                  <div style={{
+                    width: `${charState.apEarned > 0 ? (charState.apAvailable / charState.apEarned) * 100 : 0}%`,
+                    background: 'linear-gradient(90deg, #ebd5b3, #c5a880)',
+                    height: '100%',
+                    transition: 'width 0.3s ease-in-out',
+                    borderLeft: charState.apSpent > 0 && charState.apAvailable > 0 ? '1px solid #4a2e13' : 'none'
+                  }} />
+                </div>
+              </div>
+
               <div className="stat-upgrades-grid">
                 {/* Toughness */}
                 <div className="stat-upgrade-card">
@@ -1004,28 +1053,94 @@ export function CharacterSheet() {
                     {charState.class ? `${getClassNameReadable(charState.class)} Talents Reference` : 'Class Talents Reference'}
                   </h3>
                   <div id="ref-class-talents-content" style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-                    {Array.from({ length: 13 }).map((_, i) => {
-                      const classTalents = charState.class ? (gameConfig.classes[charState.class]?.talents || TALENTS.classes[charState.class] || []) : [];
-                      const talent = classTalents[i];
-                      if (talent) {
-                        return (
-                          <div key={`class-tal-${talent.id}`} className="ref-talent-item">
-                            <span className="ref-talent-name">{talent.name}</span>
-                            <span className="ref-talent-cost">{talent.cost} AP</span>
-                            {talent.desc}
-                          </div>
-                        );
-                      } else {
-                        const lineIndex = i + 1;
-                        return (
-                          <div key={`class-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
-                            <div>
-                              <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
+                    {(() => {
+                      const btnStyle: React.CSSProperties = {
+                        border: '1px solid #4a2e13',
+                        background: '#ebd5b3',
+                        color: '#4a2e13',
+                        borderRadius: '3px',
+                        width: '16px',
+                        height: '16px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        marginLeft: '3px',
+                        userSelect: 'none',
+                        lineHeight: 1,
+                        padding: 0
+                      };
+                      return Array.from({ length: 13 }).map((_, i) => {
+                        const classTalents = charState.class ? (gameConfig.classes[charState.class]?.talents || TALENTS.classes[charState.class] || []) : [];
+                        const talent = classTalents[i];
+                        if (talent) {
+                          const count = charState.purchasedTalents[talent.id] || 0;
+                          const maxPurchases = talent.max || 1;
+                          const isOwned = count > 0;
+                          const canBuy = count < maxPurchases && charState.apAvailable >= talent.cost;
+
+                          return (
+                            <div 
+                              key={`class-tal-${talent.id}`} 
+                              className={`ref-talent-item interactive-talent ${isOwned ? 'owned' : ''}`}
+                              onClick={(e) => {
+                                if ((e.target as HTMLElement).closest('.talent-control-btn')) return;
+                                if (canBuy) {
+                                  buyTalent(talent.id);
+                                }
+                              }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span className="ref-talent-name" style={{ display: 'inline-flex', alignItems: 'center', fontWeight: isOwned ? 'bold' : 'normal' }}>
+                                  {isOwned && <span style={{ color: '#2b6a3b', marginRight: '3px', fontWeight: 'bold' }}>✓</span>}
+                                  {talent.name}
+                                  {maxPurchases > 1 && isOwned && ` (${count}/${maxPurchases})`}
+                                </span>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <span className="ref-talent-cost">{talent.cost} AP</span>
+                                  {isOwned && (
+                                    <button
+                                      type="button"
+                                      className="talent-control-btn"
+                                      style={btnStyle}
+                                      onClick={() => refundTalent(talent.id)}
+                                      title="Refund 1 rank"
+                                    >
+                                      -
+                                    </button>
+                                  )}
+                                  {canBuy && (
+                                    <button
+                                      type="button"
+                                      className="talent-control-btn"
+                                      style={btnStyle}
+                                      onClick={() => buyTalent(talent.id)}
+                                      title="Buy 1 rank"
+                                    >
+                                      +
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ fontSize: '9.5px', color: '#5c3e21', marginTop: '1px', opacity: 0.85 }}>
+                                {talent.desc}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      }
-                    })}
+                          );
+                        } else {
+                          const lineIndex = i + 1;
+                          return (
+                            <div key={`class-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
+                              <div>
+                                <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
+                              </div>
+                            </div>
+                          );
+                        }
+                      });
+                    })()}
                   </div>
                 </div>
 
@@ -1033,27 +1148,94 @@ export function CharacterSheet() {
                 <div className="parchment-box reference-box h-68mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <h3>Shared Talents Reference</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-                    {Array.from({ length: 13 }).map((_, i) => {
-                      const talent = TALENTS.shared[i];
-                      if (talent) {
-                        return (
-                          <div key={`shared-tal-${talent.id}`} className="ref-talent-item">
-                            <span className="ref-talent-name">{talent.name}</span>
-                            <span className="ref-talent-cost">{talent.cost} AP</span>
-                            {talent.desc}
-                          </div>
-                        );
-                      } else {
-                        const lineIndex = i + 1;
-                        return (
-                          <div key={`shared-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
-                            <div>
-                              <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                    {(() => {
+                      const btnStyle: React.CSSProperties = {
+                        border: '1px solid #4a2e13',
+                        background: '#ebd5b3',
+                        color: '#4a2e13',
+                        borderRadius: '3px',
+                        width: '16px',
+                        height: '16px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        marginLeft: '3px',
+                        userSelect: 'none',
+                        lineHeight: 1,
+                        padding: 0
+                      };
+                      return Array.from({ length: 13 }).map((_, i) => {
+                        const sharedTalents = gameConfig.sharedTalents || TALENTS.shared || [];
+                        const talent = sharedTalents[i];
+                        if (talent) {
+                          const count = charState.purchasedTalents[talent.id] || 0;
+                          const maxPurchases = talent.max || 1;
+                          const isOwned = count > 0;
+                          const canBuy = count < maxPurchases && charState.apAvailable >= talent.cost;
+
+                          return (
+                            <div 
+                              key={`shared-tal-${talent.id}`} 
+                              className={`ref-talent-item interactive-talent ${isOwned ? 'owned' : ''}`}
+                              onClick={(e) => {
+                                if ((e.target as HTMLElement).closest('.talent-control-btn')) return;
+                                if (canBuy) {
+                                  buyTalent(talent.id);
+                                }
+                              }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span className="ref-talent-name" style={{ display: 'inline-flex', alignItems: 'center', fontWeight: isOwned ? 'bold' : 'normal' }}>
+                                  {isOwned && <span style={{ color: '#2b6a3b', marginRight: '3px', fontWeight: 'bold' }}>✓</span>}
+                                  {talent.name}
+                                  {maxPurchases > 1 && isOwned && ` (${count}/${maxPurchases})`}
+                                </span>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <span className="ref-talent-cost">{talent.cost} AP</span>
+                                  {isOwned && (
+                                    <button
+                                      type="button"
+                                      className="talent-control-btn"
+                                      style={btnStyle}
+                                      onClick={() => refundTalent(talent.id)}
+                                      title="Refund 1 rank"
+                                    >
+                                      -
+                                    </button>
+                                  )}
+                                  {canBuy && (
+                                    <button
+                                      type="button"
+                                      className="talent-control-btn"
+                                      style={btnStyle}
+                                      onClick={() => buyTalent(talent.id)}
+                                      title="Buy 1 rank"
+                                    >
+                                      +
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                              <div style={{ fontSize: '9.5px', color: '#5c3e21', marginTop: '1px', opacity: 0.85 }}>
+                                {talent.desc}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      }
-                    })}
+                          );
+                        } else {
+                          const lineIndex = i + 1;
+                          return (
+                            <div key={`shared-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
+                              <div>
+                                <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                              </div>
+                            </div>
+                          );
+                        }
+                      });
+                    })()}
                   </div>
                 </div>
 

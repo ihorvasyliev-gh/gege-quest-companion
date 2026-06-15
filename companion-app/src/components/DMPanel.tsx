@@ -278,7 +278,7 @@ export function DMPanel() {
   ];
 
   return (
-    <div id="dm-tab" className="tab-content active" style={{ paddingBottom: '80px' }}>
+    <div id="dm-tab" className="tab-content active" style={{ paddingBottom: '110px' }}>
       <div className="page-wrapper">
         <div className="page" id="dm-panel-page" style={{ height: 'auto', minHeight: '600px' }}>
           
@@ -690,46 +690,50 @@ export function DMPanel() {
         </div>
       </div>
 
-      {/* Sticky Save Bar */}
-      <div
-        className="no-print"
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: '#ebd5b3',
-          borderTop: '3px double #4a2e13',
-          padding: '12px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          boxShadow: '0 -4px 10px rgba(0,0,0,0.15)',
-          zIndex: 100,
-        }}
-      >
-        <span style={{ fontSize: '11px', color: '#4a2e13', fontStyle: 'italic', fontWeight: 'bold' }}>
-          * Changes are draft. Click "Save Changes" to apply them to all players immediately.
-        </span>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button
-            type="button"
-            className="action-btn reset"
-            onClick={handleResetToDefaults}
-            style={{ padding: '8px 16px' }}
-          >
-            🧹 Reset to Defaults
-          </button>
-          <button
-            type="button"
-            className="action-btn"
-            onClick={handleSave}
-            style={{ padding: '8px 20px', fontWeight: 'bold' }}
-          >
-            💾 Save Changes to Cloud
-          </button>
-        </div>
-      </div>
+      {/* Elegant Floating Save Bar */}
+      {(() => {
+        const hasChanges = gameConfig && draftConfig && JSON.stringify(draftConfig) !== JSON.stringify(gameConfig);
+        return (
+          <div className="dm-save-bar no-print">
+            <div className="dm-save-bar-info">
+              <span className={`dm-save-bar-status-dot ${hasChanges ? 'unsaved' : 'saved'}`} />
+              <span className="dm-save-bar-text">
+                {hasChanges ? (
+                  <>
+                    ⚠️ <strong>Unsaved Draft:</strong> Save changes to publish them to all players.
+                  </>
+                ) : (
+                  <>
+                    🛡️ <strong>Synced to Cloud:</strong> All rules and layouts are updated for everyone.
+                  </>
+                )}
+              </span>
+            </div>
+            <div className="dm-save-bar-actions">
+              <button
+                type="button"
+                className="action-btn reset"
+                onClick={handleResetToDefaults}
+              >
+                🧹 Reset to Defaults
+              </button>
+              <button
+                type="button"
+                className="action-btn"
+                onClick={handleSave}
+                disabled={!hasChanges}
+                style={{
+                  opacity: hasChanges ? 1 : 0.6,
+                  cursor: hasChanges ? 'pointer' : 'not-allowed',
+                  boxShadow: hasChanges ? '0 0 10px rgba(212, 175, 55, 0.4)' : 'none',
+                }}
+              >
+                💾 Save Changes
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

@@ -2349,6 +2349,138 @@ h1.main-title {
     }
 }
 
+/* --- DM Panel Floating Save Bar --- */
+.dm-save-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 800px;
+    background: linear-gradient(135deg, #2a1805, #150c02);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.85), inset 0 0 12px rgba(212,175,55,0.2);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-sizing: border-box;
+}
+
+.dm-save-bar-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dm-save-bar-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #d4af37;
+    box-shadow: 0 0 8px #d4af37;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.dm-save-bar-status-dot.unsaved {
+    background-color: #f39c12;
+    box-shadow: 0 0 10px #f39c12;
+    animation: pulse-amber 2s infinite alternate;
+}
+
+.dm-save-bar-status-dot.saved {
+    background-color: #2ecc71;
+    box-shadow: 0 0 10px #2ecc71;
+}
+
+.dm-save-bar-text {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: #ebd5b3;
+    letter-spacing: 0.5px;
+    text-align: left;
+}
+
+.dm-save-bar-text strong {
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.dm-save-bar-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.dm-save-bar .action-btn {
+    font-size: 10px;
+    padding: 8px 18px;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+}
+
+.dm-save-bar .action-btn.reset {
+    background-color: #591616;
+    border-color: #b03838;
+}
+
+.dm-save-bar .action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+}
+
+.dm-save-bar .action-btn.reset:hover {
+    box-shadow: 0 4px 10px rgba(176, 56, 56, 0.4);
+}
+
+@keyframes pulse-amber {
+    0% {
+        box-shadow: 0 0 4px #f39c12;
+        opacity: 0.7;
+    }
+    100% {
+        box-shadow: 0 0 12px #f39c12;
+        opacity: 1;
+    }
+}
+
+/* Responsive floating save bar */
+@media screen and (max-width: 768px) {
+    .dm-save-bar {
+        bottom: 15px;
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        text-align: center;
+    }
+    .dm-save-bar-info {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .dm-save-bar-text {
+        font-size: 10.5px;
+        text-align: center;
+    }
+    .dm-save-bar-actions {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+    }
+    .dm-save-bar .action-btn {
+        flex: 1;
+        max-width: 160px;
+        text-align: center;
+        padding: 8px 10px;
+        font-size: 9.5px;
+    }
+}
+
+
 
 
 

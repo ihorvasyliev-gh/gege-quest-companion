@@ -122,9 +122,6 @@ export function TomeOfRules() {
   return (
     <div id="rulebook-tab" className="tab-content active">
       <div className="tome-container">
-        <div className="tome-divider spine-1"></div>
-        <div className="tome-divider spine-2"></div>
-
         {/* LEFT PAGE: XP CALCULATOR */}
         <div className="tome-page">
           <h2>XP Calculator</h2>
@@ -166,6 +163,8 @@ export function TomeOfRules() {
             <button className="action-btn" style={{ backgroundColor: '#2e5c1e', borderColor: '#1a3c0e', color: '#fff' }} onClick={applyCalculatorXP}>Add to XP</button>
           </div>
         </div>
+
+        <div className="tome-divider"></div>
 
         {/* CENTER PAGE: TALENT CODEX */}
         <div className="tome-page">
@@ -234,6 +233,8 @@ export function TomeOfRules() {
           </div>
         </div>
 
+        <div className="tome-divider"></div>
+
         {/* RIGHT PAGE: ADVENTURE LEDGER */}
         <div className="tome-page">
           <h2>Adventure Ledger</h2>
@@ -247,8 +248,7 @@ export function TomeOfRules() {
               <input
                 type="number"
                 id="tome-gold-input"
-                className="gothic-input"
-                style={{ width: '85px', textAlign: 'center' }}
+                style={{ width: '85px', textAlign: 'center', padding: '4px', border: '1px solid #5c3e21', backgroundColor: 'rgba(255,255,255,0.7)', fontFamily: 'MedievalSharp, cursive', fontSize: '13px', borderRadius: '3px' }}
                 placeholder="Amount"
                 value={tomeGoldInput}
                 onChange={(e) => setTomeGoldInput(e.target.value)}
@@ -264,8 +264,7 @@ export function TomeOfRules() {
               <input
                 type="text"
                 id="tome-monster-input"
-                className="gothic-input"
-                style={{ flex: 1, minWidth: 0 }}
+                style={{ flex: 1, minWidth: 0, padding: '5px 8px', border: '1px solid #5c3e21', backgroundColor: 'rgba(255,255,255,0.7)', fontFamily: 'MedievalSharp, cursive', fontSize: '12px', borderRadius: '3px' }}
                 placeholder="Monster Name (e.g., Goblin)"
                 value={tomeMonsterInput}
                 onChange={(e) => setTomeMonsterInput(e.target.value)}
@@ -273,7 +272,16 @@ export function TomeOfRules() {
               />
               <select
                 id="tome-monster-tier-select"
-                className="gothic-select-small"
+                style={{
+                  padding: '5px 8px',
+                  border: '1px solid #5c3e21',
+                  backgroundColor: 'rgba(255,255,255,0.7)',
+                  fontFamily: 'MedievalSharp, cursive',
+                  fontSize: '12px',
+                  borderRadius: '3px',
+                  color: '#4a2e13',
+                  cursor: 'pointer'
+                }}
                 value={tomeMonsterTierInput}
                 onChange={(e) => setTomeMonsterTierInput(e.target.value)}
               >

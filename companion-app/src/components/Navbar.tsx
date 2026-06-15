@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useCharacterStore } from '../store/useCharacterStore';
 import { AccountDrawer } from './AccountDrawer';
+import { supabase } from '../lib/supabaseClient';
 
 export function Navbar() {
   const activeTab = useCharacterStore((state) => state.activeTab);
@@ -29,6 +30,34 @@ export function Navbar() {
       if (user && currentCharId === null) {
         const hasData = charState.xp > 0 || charState.class || (inputs['hero-name'] && inputs['hero-name'].trim() !== '');
         if (hasData) {
+          // Fetch latest cloud characters to check if the current offline character has already been imported
+          const { data, error } = await supabase
+            .from('characters')
+            .select('id, name, class, level, char_state')
+            .eq('user_id', user.id);
+
+          if (!error && data) {
+            const localName = (inputs['hero-name'] || '').trim().toLowerCase();
+            const localClass = charState.class || '';
+            const localXp = charState.xp || 0;
+
+            const isAlreadyInCloud = data.some((dbChar) => {
+              const dbName = (dbChar.name || '').trim().toLowerCase();
+              const dbClass = dbChar.class || '';
+              // Handle potential jsonb string or object parsing
+              const dbState = typeof dbChar.char_state === 'string'
+                ? JSON.parse(dbChar.char_state)
+                : dbChar.char_state;
+              const dbXp = dbState?.xp || 0;
+
+              return dbName === localName && dbClass === localClass && dbXp >= localXp;
+            });
+
+            if (isAlreadyInCloud) {
+              return; // Skip prompting if matching or newer character is already in cloud
+            }
+          }
+
           const confirmMigration = window.confirm(
             "An offline local character sheet was detected. Would you like to import it to your tavern account as a cloud character?"
           );

@@ -879,6 +879,10 @@ export function DMPanel() {
                 type="button"
                 className="action-btn reset"
                 onClick={handleDeleteTalentFromEdit}
+                style={{
+                  fontSize: '11px',
+                  padding: '8px 12px',
+                }}
               >
                 🗑️ Delete Talent
               </button>
@@ -886,11 +890,8 @@ export function DMPanel() {
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   type="button"
-                  className="conflict-btn"
+                  className="conflict-btn conflict-btn-cancel"
                   style={{
-                    background: 'transparent',
-                    border: '1px solid #bfae95',
-                    color: '#bfae95',
                     fontSize: '11px',
                     padding: '8px 12px',
                   }}

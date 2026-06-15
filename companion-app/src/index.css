@@ -2503,6 +2503,10 @@ h1.main-title {
     transform: scale(1.05);
 }
 
+.conflict-modal-panel .dm-label {
+    color: #ebd5b3 !important;
+}
+
 
 
 

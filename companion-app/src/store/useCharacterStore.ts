@@ -135,35 +135,6 @@ const defaultCalculator = {
   cboss: 0
 };
 
-export function computeStatBonuses(purchased: Record<string, number>, className: string) {
-  let attackBonus = 0;
-  let defenseBonus = 0;
-  let bodyBonus = 0;
-  let mindBonus = 0;
-
-  // Toughness (shared) -> +1 Body Point per purchase (max 3)
-  const toughnessCount = purchased['toughness'] || 0;
-  bodyBonus += Math.min(3, toughnessCount);
-
-  // Iron Will (shared) -> +1 Mind Point per purchase (max 2)
-  const ironWillCount = purchased['iron_will'] || 0;
-  mindBonus += Math.min(2, ironWillCount);
-
-  // Mana Reservoir (wizard class) -> +1 Mind Point per purchase
-  if (className === 'wizard') {
-    const manaReservoirCount = purchased['mana_reservoir'] || 0;
-    mindBonus += manaReservoirCount;
-  }
-
-  // Living Fortress (war_dwarf class) -> +1 Defense per purchase
-  if (className === 'war_dwarf') {
-    const livingFortressCount = purchased['living_fortress'] || 0;
-    defenseBonus += livingFortressCount;
-  }
-
-  return { attackBonus, defenseBonus, bodyBonus, mindBonus };
-}
-
 // Recomputes Level, Next Level target, Rank, AP, and updates matching text fields in inputs map.
 function recalculate(xpVal: number, purchased: Record<string, number>, className: string, inputsMap: Record<string, string>) {
   let level = 1;
@@ -207,28 +178,6 @@ function recalculate(xpVal: number, purchased: Record<string, number>, className
   }
 
   updatedInputs['hero-class'] = getClassNameReadable(className);
-
-  // Initialize/migrate base values if not present
-  const stats = ['attack', 'defense', 'body', 'mind'];
-  stats.forEach(s => {
-    const baseKey = `stat-${s}-base`;
-    const totalKey = `stat-${s}`;
-    if (!(baseKey in updatedInputs)) {
-      updatedInputs[baseKey] = updatedInputs[totalKey] || '';
-    }
-  });
-
-  const { attackBonus, defenseBonus, bodyBonus, mindBonus } = computeStatBonuses(purchased, className);
-
-  const calcTotal = (baseStr: string, bonus: number) => {
-    const baseVal = parseInt(baseStr) || 0;
-    return String(baseVal + bonus);
-  };
-
-  updatedInputs['stat-attack'] = calcTotal(updatedInputs['stat-attack-base'], attackBonus);
-  updatedInputs['stat-defense'] = calcTotal(updatedInputs['stat-defense-base'], defenseBonus);
-  updatedInputs['stat-body'] = calcTotal(updatedInputs['stat-body-base'], bodyBonus);
-  updatedInputs['stat-mind'] = calcTotal(updatedInputs['stat-mind-base'], mindBonus);
 
   return {
     charState: {
@@ -283,14 +232,6 @@ export const useCharacterStore = create<AppState>()(
         if (id === 'char-xp') {
           const parsedXp = parseInt(value) || 0;
           const recomputed = recalculate(parsedXp, state.charState.purchasedTalents, state.charState.class, nextInputs);
-          return {
-            inputs: recomputed.inputs,
-            charState: recomputed.charState
-          };
-        }
-
-        if (id.startsWith('stat-') && id.endsWith('-base')) {
-          const recomputed = recalculate(state.charState.xp, state.charState.purchasedTalents, state.charState.class, nextInputs);
           return {
             inputs: recomputed.inputs,
             charState: recomputed.charState
@@ -422,26 +363,6 @@ export const useCharacterStore = create<AppState>()(
         } else {
           nextPurchased[id] = currentCount - 1;
         }
-        
-        const recomputed = recalculate(state.charState.xp, nextPurchased, state.charState.class, state.inputs);
-        return {
-          inputs: recomputed.inputs,
-          charState: recomputed.charState
-        };
-      }),
-
-      setTalentCount: (id, targetCount) => set((state) => {
-        const talent = getTalentById(id);
-        if (!talent) return {};
-        const max = talent.max || 1;
-        const clamped = Math.max(0, Math.min(targetCount, max));
-        
-        const currentCount = state.charState.purchasedTalents[id] || 0;
-        const costDiff = (clamped - currentCount) * talent.cost;
-        if (costDiff > 0 && state.charState.apAvailable < costDiff) return {};
-        
-        const nextPurchased = { ...state.charState.purchasedTalents, [id]: clamped };
-        if (clamped === 0) delete nextPurchased[id];
         
         const recomputed = recalculate(state.charState.xp, nextPurchased, state.charState.class, state.inputs);
         return {
@@ -671,7 +592,7 @@ export const useCharacterStore = create<AppState>()(
             return {
               state: {
                 inputs: parsed.inputs || {},
-                charState: parsed.charState || parsed.state || { ...emptyCharState }
+                charState: parsed.state || { ...emptyCharState }
               }
             };
           } catch {
@@ -682,7 +603,7 @@ export const useCharacterStore = create<AppState>()(
         setItem: (name, value: any) => {
           const data = {
             inputs: value.state.inputs || {},
-            charState: value.state.charState || { ...emptyCharState }
+            state: value.state.charState || { ...emptyCharState }
           };
           localStorage.setItem(name, JSON.stringify(data));
         },

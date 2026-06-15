@@ -1,4 +1,4 @@
-import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable, getXpFromMonsterName, computeStatBonuses } from '../store/useCharacterStore';
+import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable, getXpFromMonsterName } from '../store/useCharacterStore';
 
 // Pages corner Celtic knots
 const Corners = () => (
@@ -84,7 +84,6 @@ export function CharacterSheet() {
   const charState = useCharacterStore((state) => state.charState);
   const buyTalent = useCharacterStore((state) => state.buyTalent);
   const refundTalent = useCharacterStore((state) => state.refundTalent);
-  const setTalentCount = useCharacterStore((state) => state.setTalentCount);
 
   // Helper for input binding
   const bindInput = (id: string) => ({
@@ -93,20 +92,6 @@ export function CharacterSheet() {
   });
 
   const isXpZero = (parseInt(inputs['char-xp'] || '0') || 0) === 0;
-
-  const { attackBonus, defenseBonus, bodyBonus, mindBonus } = computeStatBonuses(charState.purchasedTalents, charState.class);
-
-  const baseAttack = parseInt(inputs['stat-attack-base']) || 0;
-  const totalAttack = baseAttack + attackBonus;
-
-  const baseDefense = parseInt(inputs['stat-defense-base']) || 0;
-  const totalDefense = baseDefense + defenseBonus;
-
-  const baseBody = parseInt(inputs['stat-body-base']) || 0;
-  const totalBody = baseBody + bodyBonus;
-
-  const baseMind = parseInt(inputs['stat-mind-base']) || 0;
-  const totalMind = baseMind + mindBonus;
 
   return (
     <div id="sheet-tab" className="tab-content active">
@@ -148,57 +133,29 @@ export function CharacterSheet() {
             </div>
 
             {/* Stone Stats Blocks */}
-            <div className="stone-stats stone-stats-hero">
+            <div className="stone-stats">
               <div className="stone-block">
                 <div className="stone-title">Attack Dice</div>
                 <div className="stone-value-box">
-                  <div className="stat-base-row">
-                    <span className="stat-base-label">Base:</span>
-                    <input type="text" id="stat-attack-base" {...bindInput('stat-attack-base')} />
-                  </div>
-                  <div className="stat-bonus-total-row">
-                    <span className="stat-bonus-label">Bonus: {attackBonus > 0 ? `+${attackBonus}` : '—'}</span>
-                    <span className="stat-total-label">Total: {totalAttack}</span>
-                  </div>
+                  <input type="text" id="stat-attack" {...bindInput('stat-attack')} />
                 </div>
               </div>
               <div className="stone-block">
                 <div className="stone-title">Defend Dice</div>
                 <div className="stone-value-box">
-                  <div className="stat-base-row">
-                    <span className="stat-base-label">Base:</span>
-                    <input type="text" id="stat-defense-base" {...bindInput('stat-defense-base')} />
-                  </div>
-                  <div className="stat-bonus-total-row">
-                    <span className="stat-bonus-label">Bonus: {defenseBonus > 0 ? `+${defenseBonus}` : '—'}</span>
-                    <span className="stat-total-label">Total: {totalDefense}</span>
-                  </div>
+                  <input type="text" id="stat-defense" {...bindInput('stat-defense')} />
                 </div>
               </div>
               <div className="stone-block">
                 <div className="stone-title">Body</div>
                 <div className="stone-value-box">
-                  <div className="stat-base-row">
-                    <span className="stat-base-label">Base:</span>
-                    <input type="text" id="stat-body-base" {...bindInput('stat-body-base')} />
-                  </div>
-                  <div className="stat-bonus-total-row">
-                    <span className="stat-bonus-label">Bonus: {bodyBonus > 0 ? `+${bodyBonus}` : '—'}</span>
-                    <span className="stat-total-label">Total: {totalBody}</span>
-                  </div>
+                  <input type="text" id="stat-body" {...bindInput('stat-body')} />
                 </div>
               </div>
               <div className="stone-block">
                 <div className="stone-title">Mind</div>
                 <div className="stone-value-box">
-                  <div className="stat-base-row">
-                    <span className="stat-base-label">Base:</span>
-                    <input type="text" id="stat-mind-base" {...bindInput('stat-mind-base')} />
-                  </div>
-                  <div className="stat-bonus-total-row">
-                    <span className="stat-bonus-label">Bonus: {mindBonus > 0 ? `+${mindBonus}` : '—'}</span>
-                    <span className="stat-total-label">Total: {totalMind}</span>
-                  </div>
+                  <input type="text" id="stat-mind" {...bindInput('stat-mind')} />
                 </div>
               </div>
             </div>
@@ -209,7 +166,7 @@ export function CharacterSheet() {
                 <span>Current Body Points</span>
               </div>
               <div className="health-grid">
-                {Array.from({ length: 45 }, (_, index) => {
+                {Array.from({ length: 30 }, (_, index) => {
                   const i = index + 1;
                   const id = `health-${i}`;
                   return (
@@ -444,7 +401,7 @@ export function CharacterSheet() {
                 <div className="field flex-2"><label style={{ fontSize: '8px' }}>Companion:</label><input type="text" id="pet-name" {...bindInput('pet-name')} /></div>
                 <div className="field flex-1" style={{ marginLeft: '8px' }}><label style={{ fontSize: '8px' }}>Type:</label><input type="text" id="pet-type" {...bindInput('pet-type')} /></div>
               </div>
-              <div className="stone-stats" style={{ marginBottom: 0, gap: '6px', marginTop: '4px', gridTemplateColumns: 'repeat(5, 1fr)' }}>
+              <div className="stone-stats" style={{ marginBottom: 0, gap: '6px', marginTop: '4px' }}>
                 <div className="stone-block">
                   <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Atk</div>
                   <div className="stone-value-box" style={{ height: '18px' }}>
@@ -467,12 +424,6 @@ export function CharacterSheet() {
                   <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Mind</div>
                   <div className="stone-value-box" style={{ height: '18px' }}>
                     <input type="text" id="pet-mind" {...bindInput('pet-mind')} style={{ fontSize: '11px', height: '100%' }} />
-                  </div>
-                </div>
-                <div className="stone-block">
-                  <div className="stone-title" style={{ fontSize: '7px', marginBottom: '2px' }}>Mov</div>
-                  <div className="stone-value-box" style={{ height: '18px' }}>
-                    <input type="text" id="pet-mov" {...bindInput('pet-mov')} style={{ fontSize: '11px', height: '100%' }} />
                   </div>
                 </div>
               </div>
@@ -774,8 +725,17 @@ export function CharacterSheet() {
                           id={`slot-toughness-${val}`}
                           title={`Toughness (Body) Rank ${val} - Click to toggle`}
                           onClick={() => {
-                            const targetCount = isChecked ? val - 1 : val;
-                            setTalentCount('toughness', targetCount);
+                            if (isChecked) {
+                              const count = charState.purchasedTalents['toughness'] || 0;
+                              for (let j = count; j >= val; j--) {
+                                refundTalent('toughness');
+                              }
+                            } else {
+                              const count = charState.purchasedTalents['toughness'] || 0;
+                              for (let j = count + 1; j <= val; j++) {
+                                buyTalent('toughness');
+                              }
+                            }
                           }}
                         ></div>
                       );
@@ -797,8 +757,17 @@ export function CharacterSheet() {
                           id={`slot-iron-will-${val}`}
                           title={`Iron Will (Mind) Rank ${val} - Click to toggle`}
                           onClick={() => {
-                            const targetCount = isChecked ? val - 1 : val;
-                            setTalentCount('iron_will', targetCount);
+                            if (isChecked) {
+                              const count = charState.purchasedTalents['iron_will'] || 0;
+                              for (let j = count; j >= val; j--) {
+                                refundTalent('iron_will');
+                              }
+                            } else {
+                              const count = charState.purchasedTalents['iron_will'] || 0;
+                              for (let j = count + 1; j <= val; j++) {
+                                buyTalent('iron_will');
+                              }
+                            }
                           }}
                         ></div>
                       );
@@ -1006,30 +975,28 @@ export function CharacterSheet() {
                     {charState.class ? `${getClassNameReadable(charState.class)} Talents Reference` : 'Class Talents Reference'}
                   </h3>
                   <div id="ref-class-talents-content" style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-                    {(() => {
+                    {Array.from({ length: 13 }).map((_, i) => {
                       const classTalents = charState.class ? (TALENTS.classes[charState.class] || []) : [];
-                      return (
-                        <>
-                          {classTalents.map((talent) => (
-                            <div key={`class-tal-${talent.id}`} className="ref-talent-item">
-                              <span className="ref-talent-name">{talent.name}</span>
-                              <span className="ref-talent-cost">{talent.cost} AP</span>
-                              {talent.desc}
+                      const talent = classTalents[i];
+                      if (talent) {
+                        return (
+                          <div key={`class-tal-${talent.id}`} className="ref-talent-item">
+                            <span className="ref-talent-name">{talent.name}</span>
+                            <span className="ref-talent-cost">{talent.cost} AP</span>
+                            {talent.desc}
+                          </div>
+                        );
+                      } else {
+                        const lineIndex = i + 1;
+                        return (
+                          <div key={`class-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
+                            <div>
+                              <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
                             </div>
-                          ))}
-                          {Array.from({ length: Math.max(0, 13 - classTalents.length) }).map((_, idx) => {
-                            const lineIndex = classTalents.length + idx + 1;
-                            return (
-                              <div key={`class-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
-                                <div>
-                                  <input type="text" id={`ref-class-line-${lineIndex}`} {...bindInput(`ref-class-line-${lineIndex}`)} />
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </>
-                      );
-                    })()}
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
 
@@ -1037,22 +1004,26 @@ export function CharacterSheet() {
                 <div className="parchment-box reference-box h-68mm" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                   <h3>Shared Talents Reference</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
-                    {TALENTS.shared.map((talent) => (
-                      <div key={`shared-tal-${talent.id}`} className="ref-talent-item">
-                        <span className="ref-talent-name">{talent.name}</span>
-                        <span className="ref-talent-cost">{talent.cost} AP</span>
-                        {talent.desc}
-                      </div>
-                    ))}
-                    {Array.from({ length: Math.max(0, 13 - TALENTS.shared.length) }).map((_, idx) => {
-                      const lineIndex = TALENTS.shared.length + idx + 1;
-                      return (
-                        <div key={`shared-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
-                          <div>
-                            <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                    {Array.from({ length: 13 }).map((_, i) => {
+                      const talent = TALENTS.shared[i];
+                      if (talent) {
+                        return (
+                          <div key={`shared-tal-${talent.id}`} className="ref-talent-item">
+                            <span className="ref-talent-name">{talent.name}</span>
+                            <span className="ref-talent-cost">{talent.cost} AP</span>
+                            {talent.desc}
                           </div>
-                        </div>
-                      );
+                        );
+                      } else {
+                        const lineIndex = i + 1;
+                        return (
+                          <div key={`shared-line-${lineIndex}`} className="lines" style={{ minHeight: 'auto', flex: 'none' }}>
+                            <div>
+                              <input type="text" id={`ref-shared-line-${lineIndex}`} {...bindInput(`ref-shared-line-${lineIndex}`)} />
+                            </div>
+                          </div>
+                        );
+                      }
                     })}
                   </div>
                 </div>
@@ -1130,7 +1101,7 @@ export function CharacterSheet() {
                       <tr>
                         <td style={{ textAlign: 'center' }}><strong>III</strong></td>
                         <td style={{ textAlign: 'center' }}>4</td>
-                        <td style={{ textAlign: 'left' }}>Chaos Warrior, Wight, Abomination</td>
+                        <td style={{ textAlign: 'left' }}>Chaos Warrior, Abomination</td>
                       </tr>
                       <tr>
                         <td style={{ textAlign: 'center' }}><strong>IV</strong></td>
@@ -1140,58 +1111,29 @@ export function CharacterSheet() {
                       <tr>
                         <td style={{ textAlign: 'center' }}><strong>V</strong></td>
                         <td style={{ textAlign: 'center' }}>12</td>
-                        <td style={{ textAlign: 'left' }}>Giant, Dragonling, Demon Champ.</td>
+                        <td style={{ textAlign: 'left' }}>Giant, Dragonling, Demon</td>
                       </tr>
                       <tr>
                         <td style={{ textAlign: 'center' }}><strong>VI</strong></td>
                         <td style={{ textAlign: 'center' }}>20</td>
-                        <td style={{ textAlign: 'left' }}>Greater Demon, Ancient Dragon</td>
+                        <td style={{ textAlign: 'left' }}>Greater Demon, Dragon</td>
                       </tr>
                     </tbody>
                   </table>
 
                   <h3 style={{ marginBottom: '6px' }}>Bonus XP Milestones</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px', padding: '2px 4px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px', alignItems: 'center' }}>
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <svg viewBox="0 0 24 24" className="medieval-inline-icon">
-                          <circle cx="12" cy="12" r="10" />
-                          <circle cx="12" cy="12" r="6" />
-                          <circle cx="12" cy="12" r="2" fill="currentColor" />
-                          <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
-                        </svg>
-                        Bounty Target
-                      </span>
-                      <strong style={{ color: '#8c1e13' }}>+5 XP</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>🎯 Bounty Target</span><strong style={{ color: '#8c1e13' }}>+5 XP</strong>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px', alignItems: 'center' }}>
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <svg viewBox="0 0 24 24" className="medieval-inline-icon">
-                          <path d="M18 21a6 6 0 0 0-12 0" />
-                          <circle cx="12" cy="10" r="4" />
-                          <path d="M12 2v2M12 16v2" />
-                        </svg>
-                        Named Enemy
-                      </span>
-                      <strong style={{ color: '#8c1e13' }}>+10 XP</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>👤 Named Enemy</span><strong style={{ color: '#8c1e13' }}>+10 XP</strong>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px', alignItems: 'center' }}>
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <svg viewBox="0 0 24 24" className="medieval-inline-icon">
-                          <path d="M3 21h18M5 21V10l3-3h8l3 3v11M9 21v-4a3 3 0 0 1 6 0v4M7 10h10M4 10V6l2-2 2 2v4M16 10V6l2-2 2 2v4" />
-                        </svg>
-                        Dungeon Boss
-                      </span>
-                      <strong style={{ color: '#8c1e13' }}>+25 XP</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>🏰 Dungeon Boss</span><strong style={{ color: '#8c1e13' }}>+25 XP</strong>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px', alignItems: 'center' }}>
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <svg viewBox="0 0 24 24" className="medieval-inline-icon">
-                          <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z M5 16h14 M2 20h20" />
-                        </svg>
-                        Campaign Boss
-                      </span>
-                      <strong style={{ color: '#8c1e13' }}>+100 XP</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
+                      <span>👑 Campaign Boss</span><strong style={{ color: '#8c1e13' }}>+100 XP</strong>
                     </div>
                   </div>
                 </div>
@@ -1200,24 +1142,9 @@ export function CharacterSheet() {
             </div>
 
             <div className="parchment-box" style={{ padding: '4px 6px', marginTop: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', fontFamily: 'Cinzel', fontWeight: 'bold', color: '#4a2e13', alignItems: 'center' }}>
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  <svg viewBox="0 0 24 24" className="medieval-inline-icon" style={{ verticalAlign: 'middle', marginRight: '4px' }}>
-                    <circle cx="12" cy="12" r="10" />
-                    <circle cx="12" cy="12" r="6" />
-                    <circle cx="12" cy="12" r="2" fill="currentColor" />
-                    <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
-                  </svg>
-                  Target Traps & Secret Doors first!
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center' }}>
-                  <svg viewBox="0 0 24 24" className="medieval-inline-icon" style={{ verticalAlign: 'middle', marginRight: '4px' }}>
-                    <path d="M9 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z M15 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" fill="currentColor"/>
-                    <path d="M12 2a7 7 0 0 0-7 7c0 3 1.5 5.5 3.5 6.5L9 20h6l.5-4.5c2-1 3.5-3.5 3.5-6.5a7 7 0 0 0-7-7z" />
-                    <path d="M10 20v-3h4v3 M8 15h8" />
-                  </svg>
-                  Body Point 0 = Death!
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10.5px', fontFamily: 'Cinzel', fontWeight: 'bold', color: '#4a2e13' }}>
+                <span>🎯 Target Traps & Secret Doors first!</span>
+                <span>💀 Body Point 0 = Death!</span>
               </div>
             </div>
           </div>

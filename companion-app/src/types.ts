@@ -62,7 +62,6 @@ export interface AppState {
   changeClass: (className: string) => void;
   buyTalent: (id: string) => void;
   refundTalent: (id: string) => void;
-  setTalentCount: (id: string, count: number) => void;
   
   // Gold management actions
   setTomeGoldInput: (val: string) => void;

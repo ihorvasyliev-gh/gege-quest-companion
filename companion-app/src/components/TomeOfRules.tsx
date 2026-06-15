@@ -227,7 +227,7 @@ export function TomeOfRules() {
             </tbody>
           </table>
 
-          <h3 style={{ marginTop: '5px' }}>2. Bonus XP & Achievements</h3>
+          <h3 style={{ marginTop: '5px' }}>3. Bonus XP & Achievements</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px', fontFamily: 'Cormorant Garamond, serif', fontSize: '13.5px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>🎯 <strong>Bounty Target</strong></span>

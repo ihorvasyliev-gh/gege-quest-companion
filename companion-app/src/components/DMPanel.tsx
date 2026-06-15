@@ -1,6 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useCharacterStore, getDefaultGameConfig } from '../store/useCharacterStore';
 import type { GameConfig, Talent, XPSetting } from '../types';
+import { XPIcon } from './XPIcon';
+
+const AVAILABLE_ICONS = [
+  { key: 'goblin', label: '👺 Goblin' },
+  { key: 'orc', label: '👹 Orc' },
+  { key: 'skeleton', label: '💀 Skeleton' },
+  { key: 'gargoyle', label: '🦇 Gargoyle' },
+  { key: 'demon', label: '😈 Demon' },
+  { key: 'dragon', label: '🐉 Dragon' },
+  { key: 'scroll', label: '📜 Scroll' },
+  { key: 'shield', label: '🛡️ Shield' },
+  { key: 'skull', label: '☠️ Skull' },
+  { key: 'crown', label: '👑 Crown' },
+  { key: 'sword', label: '⚔️ Sword' },
+  { key: 'chest', label: '📦 Chest' },
+  { key: 'potion', label: '🧪 Potion' },
+  { key: 'book', label: '📖 Book' },
+];
 
 export function DMPanel() {
   const gameConfig = useCharacterStore((state) => state.gameConfig);
@@ -151,6 +169,7 @@ export function DMPanel() {
       key,
       label: 'New Category',
       xp: 5,
+      icon: 'skull'
     });
     setDraftConfig(updated);
   };
@@ -165,6 +184,8 @@ export function DMPanel() {
         setting.label = String(value);
       } else if (field === 'key') {
         setting.key = String(value).trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
+      } else if (field === 'icon') {
+        setting.icon = String(value);
       }
       setDraftConfig(updated);
     }
@@ -175,6 +196,24 @@ export function DMPanel() {
     updated.xpSettings.splice(index, 1);
     setDraftConfig(updated);
     showToast('XP category removed.', 'success');
+  };
+
+  const handleMoveXPCategoryUp = (index: number) => {
+    if (index === 0) return;
+    const updated = { ...draftConfig };
+    const temp = updated.xpSettings[index];
+    updated.xpSettings[index] = updated.xpSettings[index - 1];
+    updated.xpSettings[index - 1] = temp;
+    setDraftConfig(updated);
+  };
+
+  const handleMoveXPCategoryDown = (index: number) => {
+    if (index === draftConfig.xpSettings.length - 1) return;
+    const updated = { ...draftConfig };
+    const temp = updated.xpSettings[index];
+    updated.xpSettings[index] = updated.xpSettings[index + 1];
+    updated.xpSettings[index + 1] = temp;
+    setDraftConfig(updated);
   };
 
   // --- Layout Actions ---
@@ -218,25 +257,22 @@ export function DMPanel() {
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '2px solid #4a2e13', paddingBottom: '10px' }}>
             <button
               type="button"
-              className={`nav-btn ${activeSubTab === 'classes' ? 'active' : ''}`}
+              className={`dm-tab-btn ${activeSubTab === 'classes' ? 'active' : ''}`}
               onClick={() => setActiveSubTab('classes')}
-              style={{ padding: '6px 12px', fontSize: '12px' }}
             >
               Classes & Talents
             </button>
             <button
               type="button"
-              className={`nav-btn ${activeSubTab === 'xp' ? 'active' : ''}`}
+              className={`dm-tab-btn ${activeSubTab === 'xp' ? 'active' : ''}`}
               onClick={() => setActiveSubTab('xp')}
-              style={{ padding: '6px 12px', fontSize: '12px' }}
             >
               XP Calculator
             </button>
             <button
               type="button"
-              className={`nav-btn ${activeSubTab === 'layout' ? 'active' : ''}`}
+              className={`dm-tab-btn ${activeSubTab === 'layout' ? 'active' : ''}`}
               onClick={() => setActiveSubTab('layout')}
-              style={{ padding: '6px 12px', fontSize: '12px' }}
             >
               Hero Sheet Layout
             </button>
@@ -251,19 +287,11 @@ export function DMPanel() {
                 <div className="parchment-box flex-1" style={{ padding: '15px', zIndex: 2 }}>
                   <h3>Game Classes</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-                    <label style={{ fontSize: '11px', fontWeight: 'bold' }}>Select Class to Edit:</label>
+                    <label className="dm-label">Select Class to Edit:</label>
                     <select
                       value={selectedClassKey}
                       onChange={(e) => setSelectedClassKey(e.target.value)}
-                      style={{
-                        padding: '6px',
-                        background: '#fdf8eb',
-                        border: '1px solid #4a2e13',
-                        color: '#4a2e13',
-                        fontFamily: 'inherit',
-                        borderRadius: '4px',
-                        width: '100%',
-                      }}
+                      className="dm-select"
                     >
                       {Object.keys(draftConfig.classes).map((key) => (
                         <option key={key} value={key}>
@@ -289,23 +317,23 @@ export function DMPanel() {
                   <h3>Add Custom Class</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
                     <div>
-                      <label style={{ fontSize: '10px', display: 'block' }}>Class Unique ID (e.g. warlock):</label>
+                      <label className="dm-label">Class Unique ID (e.g. warlock):</label>
                       <input
                         type="text"
                         value={newClassKey}
                         onChange={(e) => setNewClassKey(e.target.value)}
                         placeholder="warlock"
-                        style={{ width: '100%', padding: '6px', border: '1px solid #8f6e4a', background: '#fff9f0' }}
+                        className="dm-input"
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: '10px', display: 'block' }}>Display Name (e.g. Warlock):</label>
+                      <label className="dm-label">Display Name (e.g. Warlock):</label>
                       <input
                         type="text"
                         value={newClassName}
                         onChange={(e) => setNewClassName(e.target.value)}
                         placeholder="Warlock"
-                        style={{ width: '100%', padding: '6px', border: '1px solid #8f6e4a', background: '#fff9f0' }}
+                        className="dm-input"
                       />
                     </div>
                     <button
@@ -375,45 +403,45 @@ export function DMPanel() {
                       <h3>Add Talent to {getClassName(selectedClassKey)}</h3>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '10px' }}>
                         <div>
-                          <label style={{ fontSize: '10px', display: 'block' }}>Talent Name:</label>
+                          <label className="dm-label">Talent Name:</label>
                           <input
                             type="text"
                             value={newTalent.name}
                             onChange={(e) => setNewTalent({ ...newTalent, name: e.target.value })}
                             placeholder="Eldritch Blast"
-                            style={{ width: '100%', padding: '6px', border: '1px solid #8f6e4a', background: '#fff9f0' }}
+                            className="dm-input"
                           />
                         </div>
                         <div>
-                          <label style={{ fontSize: '10px', display: 'block' }}>AP Cost:</label>
+                          <label className="dm-label">AP Cost:</label>
                           <input
                             type="number"
                             min="1"
                             max="5"
                             value={newTalent.cost}
                             onChange={(e) => setNewTalent({ ...newTalent, cost: Number(e.target.value) || 1 })}
-                            style={{ width: '100%', padding: '6px', border: '1px solid #8f6e4a', background: '#fff9f0' }}
+                            className="dm-input"
                           />
                         </div>
                         <div style={{ gridColumn: 'span 2' }}>
-                          <label style={{ fontSize: '10px', display: 'block' }}>Description / Effect:</label>
+                          <label className="dm-label">Description / Effect:</label>
                           <input
                             type="text"
                             value={newTalent.desc}
                             onChange={(e) => setNewTalent({ ...newTalent, desc: e.target.value })}
                             placeholder="Deal +1 damage at range once per quest."
-                            style={{ width: '100%', padding: '6px', border: '1px solid #8f6e4a', background: '#fff9f0' }}
+                            className="dm-input"
                           />
                         </div>
                         <div>
-                          <label style={{ fontSize: '10px', display: 'block' }}>Max Purchases (blank for 1):</label>
+                          <label className="dm-label">Max Purchases (blank for 1):</label>
                           <input
                             type="number"
                             min="1"
                             value={newTalent.max || ''}
                             onChange={(e) => setNewTalent({ ...newTalent, max: e.target.value ? Number(e.target.value) : undefined })}
                             placeholder="1"
-                            style={{ width: '100%', padding: '6px', border: '1px solid #8f6e4a', background: '#fff9f0' }}
+                            className="dm-input"
                           />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
@@ -449,24 +477,51 @@ export function DMPanel() {
               </p>
 
               <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-                <table className="ref-table" style={{ width: '100%' }}>
+                <table className="dm-table" style={{ width: '100%' }}>
                   <thead>
                     <tr>
-                      <th style={{ width: '25%' }}>Category Key (ID)</th>
-                      <th style={{ width: '45%' }}>Display Name</th>
-                      <th style={{ width: '20%', textAlign: 'center' }}>XP Reward</th>
+                      <th style={{ width: '10%', textAlign: 'center' }}>Move</th>
+                      <th style={{ width: '20%' }}>Category Key (ID)</th>
+                      <th style={{ width: '30%' }}>Display Name</th>
+                      <th style={{ width: '20%' }}>Icon</th>
+                      <th style={{ width: '10%', textAlign: 'center' }}>XP Reward</th>
                       <th style={{ width: '10%', textAlign: 'center' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {draftConfig.xpSettings.map((setting, index) => (
                       <tr key={index}>
+                        <td style={{ textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveXPCategoryUp(index)}
+                              disabled={index === 0}
+                              className="action-btn"
+                              style={{ padding: '2px 6px', fontSize: '9px', minWidth: '22px', height: '22px' }}
+                              title="Move Up"
+                            >
+                              ▲
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveXPCategoryDown(index)}
+                              disabled={index === draftConfig.xpSettings.length - 1}
+                              className="action-btn"
+                              style={{ padding: '2px 6px', fontSize: '9px', minWidth: '22px', height: '22px' }}
+                              title="Move Down"
+                            >
+                              ▼
+                            </button>
+                          </div>
+                        </td>
                         <td>
                           <input
                             type="text"
                             value={setting.key}
                             onChange={(e) => handleUpdateXPSetting(index, 'key', e.target.value)}
-                            style={{ width: '90%', padding: '4px', border: '1px solid #c8ab80', background: '#fffdf9' }}
+                            className="dm-input"
+                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px' }}
                           />
                         </td>
                         <td>
@@ -474,8 +529,26 @@ export function DMPanel() {
                             type="text"
                             value={setting.label}
                             onChange={(e) => handleUpdateXPSetting(index, 'label', e.target.value)}
-                            style={{ width: '95%', padding: '4px', border: '1px solid #c8ab80', background: '#fffdf9' }}
+                            className="dm-input"
+                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px' }}
                           />
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <XPIcon name={setting.icon || 'skull'} size={18} style={{ color: '#4a2e13', flexShrink: 0 }} />
+                            <select
+                              value={setting.icon || 'skull'}
+                              onChange={(e) => handleUpdateXPSetting(index, 'icon', e.target.value)}
+                              className="dm-select"
+                              style={{ padding: '2px 4px', fontSize: '11px', height: '28px', minWidth: '85px' }}
+                            >
+                              {AVAILABLE_ICONS.map((iconOpt) => (
+                                <option key={iconOpt.key} value={iconOpt.key}>
+                                  {iconOpt.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           <input
@@ -483,14 +556,15 @@ export function DMPanel() {
                             min="0"
                             value={setting.xp}
                             onChange={(e) => handleUpdateXPSetting(index, 'xp', e.target.value)}
-                            style={{ width: '60px', padding: '4px', textAlign: 'center', border: '1px solid #c8ab80', background: '#fffdf9' }}
+                            className="dm-input"
+                            style={{ width: '55px', padding: '4px', textAlign: 'center', fontSize: '11px', height: '28px', margin: '0 auto' }}
                           />
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           <button
                             type="button"
                             onClick={() => handleDeleteXPCategory(index)}
-                            style={{ border: 'none', background: 'none', color: '#b02a2a', cursor: 'pointer' }}
+                            style={{ border: 'none', background: 'none', color: '#b02a2a', cursor: 'pointer', fontSize: '14px' }}
                           >
                             🗑️
                           </button>
@@ -521,7 +595,7 @@ export function DMPanel() {
                 Rename labels or toggle visibility of standard fields on the player sheet. Unchecked fields will be completely hidden from their layout.
               </p>
 
-              <table className="ref-table" style={{ width: '100%' }}>
+              <table className="dm-table" style={{ width: '100%' }}>
                 <thead>
                   <tr>
                     <th style={{ width: '15%', textAlign: 'center' }}>Visible</th>
@@ -551,7 +625,8 @@ export function DMPanel() {
                             type="text"
                             value={currentSetting.label}
                             onChange={(e) => handleUpdateLayoutSetting(item.key, currentSetting.visible, e.target.value)}
-                            style={{ width: '95%', padding: '6px', border: '1px solid #c8ab80', background: '#fffdf9' }}
+                            className="dm-input"
+                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px' }}
                           />
                         </td>
                       </tr>

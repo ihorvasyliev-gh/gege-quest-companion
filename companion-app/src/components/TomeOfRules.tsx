@@ -1,5 +1,6 @@
 import { useCharacterStore, TALENTS, getClassNameReadable } from '../store/useCharacterStore';
 import type { Talent } from '../types';
+import { XPIcon } from './XPIcon';
 
 export function TomeOfRules() {
   // Global Store State & Actions
@@ -140,7 +141,10 @@ export function TomeOfRules() {
                 {gameConfig.xpSettings.map((setting) => (
                   <tr key={setting.key}>
                     <td>
-                      <strong>{setting.label}</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <XPIcon name={setting.icon} size={18} style={{ color: '#4a2e13', opacity: 0.85 }} />
+                        <strong>{setting.label}</strong>
+                      </div>
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <span style={{ color: '#855d14', fontWeight: 'bold' }}>+{setting.xp}</span>

@@ -12,6 +12,7 @@ export interface XPSetting {
   key: string;
   label: string;
   xp: number;
+  icon?: string;
 }
 
 export interface SheetFieldConfig {

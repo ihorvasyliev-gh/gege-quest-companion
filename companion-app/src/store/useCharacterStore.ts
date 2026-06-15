@@ -89,16 +89,16 @@ export const TALENTS = {
 };
 
 export const DEFAULT_XP_SETTINGS: XPSetting[] = [
-  { key: 'tier1', label: 'Tier I', xp: 1 },
-  { key: 'tier2', label: 'Tier II', xp: 2 },
-  { key: 'tier3', label: 'Tier III', xp: 4 },
-  { key: 'tier4', label: 'Tier IV', xp: 8 },
-  { key: 'tier5', label: 'Tier V', xp: 12 },
-  { key: 'tier6', label: 'Tier VI', xp: 20 },
-  { key: 'bounty', label: 'Bounty', xp: 5 },
-  { key: 'named', label: 'Named', xp: 10 },
-  { key: 'dboss', label: 'Dungeon Boss', xp: 25 },
-  { key: 'cboss', label: 'Campaign Boss', xp: 100 }
+  { key: 'tier1', label: 'Tier I', xp: 1, icon: 'goblin' },
+  { key: 'tier2', label: 'Tier II', xp: 2, icon: 'orc' },
+  { key: 'tier3', label: 'Tier III', xp: 4, icon: 'skeleton' },
+  { key: 'tier4', label: 'Tier IV', xp: 8, icon: 'gargoyle' },
+  { key: 'tier5', label: 'Tier V', xp: 12, icon: 'demon' },
+  { key: 'tier6', label: 'Tier VI', xp: 20, icon: 'dragon' },
+  { key: 'bounty', label: 'Bounty', xp: 5, icon: 'scroll' },
+  { key: 'named', label: 'Named', xp: 10, icon: 'shield' },
+  { key: 'dboss', label: 'Dungeon Boss', xp: 25, icon: 'skull' },
+  { key: 'cboss', label: 'Campaign Boss', xp: 100, icon: 'crown' }
 ];
 
 export const DEFAULT_SHEET_LAYOUT: Record<string, SheetFieldConfig> = {

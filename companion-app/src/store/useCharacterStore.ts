@@ -337,9 +337,11 @@ export function getXpFromMonsterName(name: string): number {
           const rawVal = value.trim().toLowerCase().replace(/[^a-z0-9]/g, '_');
           let matchedKey = '';
           const storeConfig = state.gameConfig;
+          const classes = storeConfig?.classes || TALENTS.classes || {};
+          const sharedTalents = storeConfig?.sharedTalents || TALENTS.shared || [];
           const allClassKeys = new Set([
             ...Object.keys(TALENTS.classes),
-            ...Object.keys(storeConfig?.classes || {})
+            ...Object.keys(classes)
           ]);
           
           for (const k of allClassKeys) {
@@ -359,7 +361,7 @@ export function getXpFromMonsterName(name: string): number {
               || [];
               
             for (const tid in nextPurchased) {
-              if (!TALENTS.shared.some(x => x.id === tid)) {
+              if (!sharedTalents.some(x => x.id === tid)) {
                 const belongsToNew = classTalents.some(x => x.id === tid);
                 if (!belongsToNew) {
                   delete nextPurchased[tid];
@@ -369,7 +371,7 @@ export function getXpFromMonsterName(name: string): number {
           } else if (value.trim() === '') {
             nextClass = '';
             for (const tid in nextPurchased) {
-              if (!TALENTS.shared.some(x => x.id === tid)) {
+              if (!sharedTalents.some(x => x.id === tid)) {
                 delete nextPurchased[tid];
               }
             }
@@ -416,9 +418,10 @@ export function getXpFromMonsterName(name: string): number {
         const classTalents = state.gameConfig?.classes?.[className]?.talents 
           || TALENTS.classes[className] 
           || [];
+        const sharedTalents = state.gameConfig?.sharedTalents || TALENTS.shared || [];
           
         for (const tid in nextPurchased) {
-          const isShared = TALENTS.shared.some(x => x.id === tid);
+          const isShared = sharedTalents.some(x => x.id === tid);
           if (!isShared) {
             const belongsToNew = className
               ? classTalents.some(x => x.id === tid)
@@ -977,29 +980,84 @@ export function getXpFromMonsterName(name: string): number {
             .select('*')
             .eq('id', 'default')
             .single();
+
+          if (error && error.code === 'PGRST116') {
+            // Row does not exist at all, let's insert the default one!
+            const defaultConfig = getDefaultGameConfig();
+            const { error: insertError } = await supabase
+              .from('game_config')
+              .insert({
+                id: 'default',
+                classes: defaultConfig.classes,
+                xp_settings: defaultConfig.xpSettings,
+                sheet_layout: defaultConfig.sheetLayout,
+                shared_talents: defaultConfig.sharedTalents,
+                updated_at: new Date().toISOString()
+              });
+            if (insertError) {
+              console.error("Failed to seed game config table:", insertError);
+            } else {
+              console.log("Successfully seeded game config table with default values.");
+            }
+            localStorage.setItem('gege_quest_game_config', JSON.stringify(defaultConfig));
+            set({ gameConfig: defaultConfig, configLoading: false });
+            return;
+          }
             
           if (!error && data) {
-            const loadedConfig = {
-              classes: data.classes || {},
-              xpSettings: data.xp_settings || [],
-              sheetLayout: data.sheet_layout || {},
-              sharedTalents: data.shared_talents || TALENTS.shared
-            };
+            let needsUpdate = false;
             
-            // Merge missing fields with defaults to prevent crash if some fields are missing in DB
-            const mergedLayout = { ...DEFAULT_SHEET_LAYOUT, ...loadedConfig.sheetLayout };
-            
-            // Pull in default classes if the DB is empty
-            const mergedClasses = (!loadedConfig.classes || Object.keys(loadedConfig.classes).length === 0)
+            // Merge missing fields with defaults
+            const mergedLayout = { ...DEFAULT_SHEET_LAYOUT, ...data.sheet_layout };
+            if (!data.sheet_layout || Object.keys(data.sheet_layout).length === 0) {
+              needsUpdate = true;
+            }
+
+            const mergedClasses = (!data.classes || Object.keys(data.classes).length === 0)
               ? getDefaultGameConfig().classes
-              : loadedConfig.classes;
+              : data.classes;
+            if (!data.classes || Object.keys(data.classes).length === 0) {
+              needsUpdate = true;
+            }
+
+            const mergedXpSettings = (!data.xp_settings || data.xp_settings.length === 0)
+              ? DEFAULT_XP_SETTINGS
+              : data.xp_settings;
+            if (!data.xp_settings || data.xp_settings.length === 0) {
+              needsUpdate = true;
+            }
+
+            const mergedSharedTalents = (!data.shared_talents || data.shared_talents.length === 0)
+              ? TALENTS.shared
+              : data.shared_talents;
+            if (!data.shared_talents || data.shared_talents.length === 0) {
+              needsUpdate = true;
+            }
 
             const finalConfig = {
               classes: mergedClasses,
-              xpSettings: loadedConfig.xpSettings.length > 0 ? loadedConfig.xpSettings : DEFAULT_XP_SETTINGS,
+              xpSettings: mergedXpSettings,
               sheetLayout: mergedLayout,
-              sharedTalents: loadedConfig.sharedTalents
+              sharedTalents: mergedSharedTalents
             };
+
+            if (needsUpdate) {
+              const { error: updateError } = await supabase
+                .from('game_config')
+                .update({
+                  classes: finalConfig.classes,
+                  xp_settings: finalConfig.xpSettings,
+                  sheet_layout: finalConfig.sheetLayout,
+                  shared_talents: finalConfig.sharedTalents,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', 'default');
+              if (updateError) {
+                console.error("Failed to update missing fields in game config:", updateError);
+              } else {
+                console.log("Updated missing fields in game_config database entry.");
+              }
+            }
             
             localStorage.setItem('gege_quest_game_config', JSON.stringify(finalConfig));
             set({ gameConfig: finalConfig, configLoading: false });

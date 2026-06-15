@@ -23,8 +23,7 @@ export function AccountDrawer({ isOpen, onClose }: AccountDrawerProps) {
   const gameConfig = useCharacterStore((state) => state.gameConfig);
 
   const allClassKeys = Array.from(new Set([
-    ...Object.keys(TALENTS.classes),
-    ...Object.keys(gameConfig?.classes || {})
+    ...Object.keys(gameConfig?.classes || TALENTS.classes || {})
   ]));
 
   // Forms local state

@@ -11,8 +11,7 @@ export function TomeOfRules() {
 
   const gameConfig = useCharacterStore((state) => state.gameConfig);
   const allClassKeys = Array.from(new Set([
-    ...Object.keys(TALENTS.classes),
-    ...Object.keys(gameConfig?.classes || {})
+    ...Object.keys(gameConfig?.classes || TALENTS.classes || {})
   ]));
 
   // Calculator State & Actions
@@ -216,7 +215,7 @@ export function TomeOfRules() {
           <div id="codex-talent-list" style={{ overflowY: 'auto', maxHeight: '430px' }}>
             <div className="talent-group-title">Shared Talents</div>
             <div className="talent-grid" style={{ marginBottom: '14px' }}>
-              {TALENTS.shared.map((t) => renderTalentCard(t))}
+              {(gameConfig.sharedTalents || TALENTS.shared || []).map((t) => renderTalentCard(t))}
             </div>
 
             {charState.class && (gameConfig.classes[charState.class] || TALENTS.classes[charState.class]) ? (

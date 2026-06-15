@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useCharacterStore } from '../store/useCharacterStore';
+import { AccountDrawer } from './AccountDrawer';
 
 export function Navbar() {
   const activeTab = useCharacterStore((state) => state.activeTab);
@@ -10,8 +11,46 @@ export function Navbar() {
   const importCharacter = useCharacterStore((state) => state.importCharacter);
   const showToast = useCharacterStore((state) => state.showToast);
 
+  // Supabase & Theme state
+  const user = useCharacterStore((state) => state.user);
+  const currentCharId = useCharacterStore((state) => state.currentCharId);
+  const savingState = useCharacterStore((state) => state.savingState);
+  const theme = useCharacterStore((state) => state.theme);
+  const toggleTheme = useCharacterStore((state) => state.toggleTheme);
+  const createCharacter = useCharacterStore((state) => state.createCharacter);
+  const saveCharacterToCloud = useCharacterStore((state) => state.saveCharacterToCloud);
+  const selectCharacter = useCharacterStore((state) => state.selectCharacter);
+
   const [mobileDrawerActive, setMobileDrawerActive] = useState(false);
+  const [accountDrawerOpen, setAccountDrawerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check for local migration prompt after login
+  useEffect(() => {
+    const checkMigration = async () => {
+      if (user && currentCharId === null) {
+        const hasData = charState.xp > 0 || charState.class || (inputs['hero-name'] && inputs['hero-name'].trim() !== '');
+        if (hasData) {
+          const confirmMigration = window.confirm(
+            "An offline local character sheet was detected. Would you like to import it to your tavern account as a cloud character?"
+          );
+          if (confirmMigration) {
+            const heroName = (inputs['hero-name'] || '').trim() || 'Imported Hero';
+            const res = await createCharacter(heroName, charState.class);
+            if (res && !res.error) {
+              await saveCharacterToCloud(res.id, inputs, charState);
+              await selectCharacter(res.id);
+              showToast("Offline character successfully imported to the cloud!", "success");
+            } else if (res?.error) {
+              showToast(res.error.message, "error");
+            }
+          }
+        }
+      }
+    };
+    checkMigration();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const handleExport = () => {
     const data = {
@@ -79,6 +118,19 @@ export function Navbar() {
     setMobileDrawerActive(!mobileDrawerActive);
   };
 
+  const renderSyncBadge = () => {
+    if (currentCharId === null) {
+      return <span className="sync-badge offline" title="Offline mode: Storing data locally">● Local</span>;
+    }
+    if (savingState === 'saving') {
+      return <span className="sync-badge saving" title="Syncing changes to tavern cloud...">● Saving...</span>;
+    }
+    if (savingState === 'error') {
+      return <span className="sync-badge error" title="Failed to sync to tavern cloud">● Sync Error</span>;
+    }
+    return <span className="sync-badge saved" title="All changes synced to tavern cloud">● Saved</span>;
+  };
+
   return (
     <>
       {/* Hidden File Input for JSON Import */}
@@ -93,13 +145,17 @@ export function Navbar() {
 
       {/* Top Sticky Navbar */}
       <div className="navbar no-print">
-        <div className="navbar-brand">
-          <span className="desktop-only">GeGe QUEST RPG Companion</span>
-          <span className="mobile-only">GeGe QUEST</span>
+        <div className="navbar-left">
+          <div className="navbar-brand">
+            <span className="desktop-only">GeGe QUEST RPG Companion</span>
+            <span className="mobile-only">GeGe QUEST</span>
+          </div>
+          {renderSyncBadge()}
         </div>
         
         <div className="navbar-tabs">
           <button
+            type="button"
             className={`nav-btn ${activeTab === 'sheet-tab' ? 'active' : ''}`}
             onClick={() => setActiveTab('sheet-tab')}
           >
@@ -107,6 +163,7 @@ export function Navbar() {
             <span className="mobile-only">🎴 Sheet</span>
           </button>
           <button
+            type="button"
             className={`nav-btn ${activeTab === 'rulebook-tab' ? 'active' : ''}`}
             onClick={() => setActiveTab('rulebook-tab')}
           >
@@ -116,14 +173,23 @@ export function Navbar() {
         </div>
 
         <div className="navbar-actions desktop-only">
-          <button className="action-btn" onClick={handleExport}>💾 Export JSON</button>
-          <button className="action-btn" onClick={handleImportTrigger}>📂 Import JSON</button>
-          <button className="action-btn reset" onClick={handleReset}>🧹 Reset Sheet</button>
-          <button className="action-btn print" onClick={handlePrint}>🖨️ Print (A5)</button>
+          <button type="button" className="action-btn theme-toggle-btn" onClick={toggleTheme} title="Toggle Dark/Light Mode">
+            {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+          </button>
+          <button type="button" className="action-btn account-btn" onClick={() => setAccountDrawerOpen(true)}>
+            🛡️ {user ? 'Tavern' : 'Sign In'}
+          </button>
+          <button type="button" className="action-btn" onClick={handleExport}>💾 Export JSON</button>
+          <button type="button" className="action-btn" onClick={handleImportTrigger}>📂 Import JSON</button>
+          <button type="button" className="action-btn reset" onClick={handleReset}>🧹 Reset Sheet</button>
+          <button type="button" className="action-btn print" onClick={handlePrint}>🖨️ Print (A5)</button>
         </div>
 
         <div className="navbar-actions mobile-only">
-          <button className="action-btn" onClick={toggleMobileDrawer}>☰ Menu</button>
+          <button type="button" className="action-btn theme-toggle-btn" onClick={toggleTheme} style={{ marginRight: '5px' }}>
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+          <button type="button" className="action-btn" onClick={toggleMobileDrawer}>☰ Menu</button>
         </div>
       </div>
 
@@ -139,13 +205,19 @@ export function Navbar() {
             <button className="close-drawer-btn" onClick={toggleMobileDrawer}>×</button>
           </div>
           <div className="mobile-drawer-buttons">
-            <button className="drawer-btn" onClick={() => { handleExport(); toggleMobileDrawer(); }}>💾 Export JSON</button>
-            <button className="drawer-btn" onClick={() => { handleImportTrigger(); toggleMobileDrawer(); }}>📂 Import JSON</button>
-            <button className="drawer-btn reset" onClick={() => { handleReset(); toggleMobileDrawer(); }}>🧹 Reset Sheet</button>
-            <button className="drawer-btn" onClick={() => { handlePrint(); toggleMobileDrawer(); }}>🖨️ Print (A5)</button>
+            <button type="button" className="drawer-btn" onClick={() => { setAccountDrawerOpen(true); toggleMobileDrawer(); }}>
+              🛡️ {user ? 'Tavern Hall' : 'Sign In'}
+            </button>
+            <button type="button" className="drawer-btn" onClick={() => { handleExport(); toggleMobileDrawer(); }}>💾 Export JSON</button>
+            <button type="button" className="drawer-btn" onClick={() => { handleImportTrigger(); toggleMobileDrawer(); }}>📂 Import JSON</button>
+            <button type="button" className="drawer-btn reset" onClick={() => { handleReset(); toggleMobileDrawer(); }}>🧹 Reset Sheet</button>
+            <button type="button" className="drawer-btn" onClick={() => { handlePrint(); toggleMobileDrawer(); }}>🖨️ Print (A5)</button>
           </div>
         </div>
       </div>
+
+      {/* Tavern/Account Panel Drawer */}
+      <AccountDrawer isOpen={accountDrawerOpen} onClose={() => setAccountDrawerOpen(false)} />
     </>
   );
 }

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { AppState, Talent, CharacterState } from '../types';
+import { supabase } from '../lib/supabaseClient';
+
 
 export const XP_LEVELS = [
   { level: 1, xp: 0 },
@@ -210,11 +212,9 @@ export function getXpFromMonsterName(name: string): number {
     return getXpForTier(match[1]);
   }
   return 0;
-}
-
-export const useCharacterStore = create<AppState>()(
+}export const useCharacterStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       charState: { ...emptyCharState },
       inputs: {},
       activeTab: 'sheet-tab',
@@ -223,6 +223,20 @@ export const useCharacterStore = create<AppState>()(
       tomeMonsterInput: '',
       tomeMonsterTierInput: 'Tier I',
       toasts: [],
+
+      // Supabase Auth state
+      user: null,
+      session: null,
+      authLoading: false,
+      rememberMe: localStorage.getItem('gege_remember_me') !== 'false',
+
+      // Cloud Characters state
+      cloudCharacters: [],
+      currentCharId: null,
+      savingState: 'idle',
+
+      // Theme state
+      theme: (localStorage.getItem('gege_theme') || 'dark') as 'light' | 'dark',
 
       setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -476,7 +490,7 @@ export const useCharacterStore = create<AppState>()(
           nextInputs['foe-kills-' + rowIndex] = String(nextKills);
         }
         
-        const currentXP = parseInt(nextInputs['char-xp']) || 0;
+        const currentXP = parseInt(state.inputs['char-xp']) || 0;
         const newXP = Math.max(0, currentXP + xpDiff);
         nextInputs['char-xp'] = String(newXP);
         const recomputed = recalculate(newXP, state.charState.purchasedTalents, state.charState.class, nextInputs);
@@ -569,7 +583,6 @@ export const useCharacterStore = create<AppState>()(
           }
           
           const recomputed = recalculate(loadedCharState.xp, loadedCharState.purchasedTalents, loadedCharState.class, loadedInputs);
-          
           set({
             inputs: recomputed.inputs,
             charState: recomputed.charState
@@ -579,6 +592,225 @@ export const useCharacterStore = create<AppState>()(
           console.error("Failed to parse imported JSON:", e);
           return false;
         }
+      },
+
+      // Supabase Auth actions
+      setRememberMe: (remember) => {
+        localStorage.setItem('gege_remember_me', String(remember));
+        set({ rememberMe: remember });
+      },
+
+      signUp: async (email, password) => {
+        set({ authLoading: true });
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        set({ authLoading: false });
+        if (!error && data?.user) {
+          set({ user: data.user, session: data.session });
+        }
+        return { error };
+      },
+
+      signIn: async (email, password) => {
+        set({ authLoading: true });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        set({ authLoading: false });
+        if (!error && data?.user) {
+          set({ user: data.user, session: data.session });
+          await get().fetchCharacters();
+        }
+        return { error };
+      },
+
+      signOut: async () => {
+        set({ authLoading: true });
+        await supabase.auth.signOut();
+        set({
+          user: null,
+          session: null,
+          authLoading: false,
+          cloudCharacters: [],
+          currentCharId: null,
+          savingState: 'idle'
+        });
+        const recomputed = recalculate(0, {}, '', {});
+        set({
+          inputs: recomputed.inputs,
+          charState: recomputed.charState
+        });
+      },
+
+      recoverSession: async () => {
+        set({ authLoading: true });
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (!error && session) {
+          set({
+            session,
+            user: session.user,
+            authLoading: false
+          });
+          await get().fetchCharacters();
+        } else {
+          set({ authLoading: false });
+        }
+      },
+
+      // Cloud Character actions
+      fetchCharacters: async () => {
+        const user = get().user;
+        if (!user) return;
+        const { data, error } = await supabase
+          .from('characters')
+          .select('id, name, class, level, updated_at')
+          .eq('user_id', user.id)
+          .order('updated_at', { ascending: false });
+        if (!error && data) {
+          set({ cloudCharacters: data });
+        }
+      },
+
+      createCharacter: async (name, className) => {
+        const user = get().user;
+        if (!user) return null;
+        
+        const initialInputs: Record<string, string> = {
+          'hero-name': name,
+          'hero-class': getClassNameReadable(className),
+          'char-xp': '0',
+          'char-next-level': '20 XP',
+          'char-rank': 'Novice'
+        };
+        const initialCharState: CharacterState = {
+          xp: 0,
+          level: 1,
+          apEarned: 0,
+          apSpent: 0,
+          apAvailable: 0,
+          purchasedTalents: {},
+          class: className
+        };
+
+        const { data, error } = await supabase
+          .from('characters')
+          .insert({
+            user_id: user.id,
+            name,
+            class: className,
+            level: 1,
+            char_state: initialCharState,
+            inputs: initialInputs
+          })
+          .select('id')
+          .single();
+
+        if (!error && data) {
+          await get().fetchCharacters();
+          return { id: data.id, error: null };
+        }
+        return { id: '', error };
+      },
+
+      selectCharacter: async (id) => {
+        if (!id) {
+          const localData = localStorage.getItem('gege_quest_char_data');
+          if (localData) {
+            try {
+              const parsed = JSON.parse(localData);
+              const loadedInputs = parsed.inputs || {};
+              const loadedCharState = parsed.charState || { ...emptyCharState };
+              set({
+                currentCharId: null,
+                inputs: loadedInputs,
+                charState: loadedCharState,
+                savingState: 'idle'
+              });
+              return;
+            } catch (e) {
+              console.error(e);
+            }
+          }
+          const recomputed = recalculate(0, {}, '', {});
+          set({
+            currentCharId: null,
+            inputs: recomputed.inputs,
+            charState: recomputed.charState,
+            savingState: 'idle'
+          });
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from('characters')
+          .select('char_state, inputs')
+          .eq('id', id)
+          .single();
+
+        if (!error && data) {
+          set({
+            currentCharId: id,
+            inputs: data.inputs || {},
+            charState: data.char_state || { ...emptyCharState },
+            savingState: 'saved'
+          });
+        } else {
+          get().showToast("Failed to load character from cloud", "error");
+        }
+      },
+
+      deleteCharacter: async (id) => {
+        const { error } = await supabase
+          .from('characters')
+          .delete()
+          .eq('id', id);
+
+        if (!error) {
+          get().showToast("Character deleted successfully", "success");
+          await get().fetchCharacters();
+          if (get().currentCharId === id) {
+            await get().selectCharacter(null);
+          }
+        } else {
+          get().showToast("Failed to delete character", "error");
+        }
+      },
+
+      saveCharacterToCloud: async (id, inputs, charState) => {
+        const heroName = (inputs['hero-name'] || '').trim() || 'Unnamed Hero';
+        const heroClass = charState.class || '';
+        const heroLevel = charState.level || 1;
+
+        const { error } = await supabase
+          .from('characters')
+          .update({
+            name: heroName,
+            class: heroClass,
+            level: heroLevel,
+            inputs,
+            char_state: charState
+          })
+          .eq('id', id);
+
+        if (!error) {
+          set((state) => ({
+            cloudCharacters: state.cloudCharacters.map((c) =>
+              c.id === id ? { ...c, name: heroName, class: heroClass, level: heroLevel, updated_at: new Date().toISOString() } : c
+            )
+          }));
+        }
+        return { error };
+      },
+
+      setSavingState: (savingState) => set({ savingState }),
+
+      // Theme actions
+      toggleTheme: () => {
+        const nextTheme = get().theme === 'light' ? 'dark' : 'light';
+        get().setTheme(nextTheme);
+      },
+
+      setTheme: (theme) => {
+        localStorage.setItem('gege_theme', theme);
+        document.documentElement.setAttribute('data-theme', theme);
+        set({ theme });
       }
     }),
     {
@@ -592,7 +824,9 @@ export const useCharacterStore = create<AppState>()(
             return {
               state: {
                 inputs: parsed.inputs || {},
-                charState: parsed.state || { ...emptyCharState }
+                charState: parsed.charState || { ...emptyCharState },
+                theme: parsed.theme || 'dark',
+                rememberMe: parsed.rememberMe !== false
               }
             };
           } catch {
@@ -603,7 +837,9 @@ export const useCharacterStore = create<AppState>()(
         setItem: (name, value: any) => {
           const data = {
             inputs: value.state.inputs || {},
-            state: value.state.charState || { ...emptyCharState }
+            charState: value.state.charState || { ...emptyCharState },
+            theme: value.state.theme || 'dark',
+            rememberMe: value.state.rememberMe !== false
           };
           localStorage.setItem(name, JSON.stringify(data));
         },
@@ -613,7 +849,9 @@ export const useCharacterStore = create<AppState>()(
       },
       partialize: (state) => ({
         inputs: state.inputs,
-        charState: state.charState
+        charState: state.charState,
+        theme: state.theme,
+        rememberMe: state.rememberMe
       })
     }
   )

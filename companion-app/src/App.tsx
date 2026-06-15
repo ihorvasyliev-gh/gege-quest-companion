@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useCharacterStore } from './store/useCharacterStore';
 import { Navbar } from './components/Navbar';
 import { CharacterSheet } from './components/CharacterSheet';
@@ -6,6 +7,42 @@ import { ToastContainer } from './components/Toast';
 
 export default function App() {
   const activeTab = useCharacterStore((state) => state.activeTab);
+  const user = useCharacterStore((state) => state.user);
+  const currentCharId = useCharacterStore((state) => state.currentCharId);
+  const inputs = useCharacterStore((state) => state.inputs);
+  const charState = useCharacterStore((state) => state.charState);
+  
+  const recoverSession = useCharacterStore((state) => state.recoverSession);
+  const saveCharacterToCloud = useCharacterStore((state) => state.saveCharacterToCloud);
+  const setSavingState = useCharacterStore((state) => state.setSavingState);
+  const theme = useCharacterStore((state) => state.theme);
+
+  // Initialize session and theme
+  useEffect(() => {
+    recoverSession();
+    // Set initial theme attribute
+    document.documentElement.setAttribute('data-theme', theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Debounced auto-save effect
+  useEffect(() => {
+    if (!user || !currentCharId) return;
+
+    // Set status to saving on any modification
+    setSavingState('saving');
+
+    const timer = setTimeout(async () => {
+      const { error } = await saveCharacterToCloud(currentCharId, inputs, charState);
+      if (error) {
+        setSavingState('error');
+      } else {
+        setSavingState('saved');
+      }
+    }, 1500); // 1.5 seconds debounce
+
+    return () => clearTimeout(timer);
+  }, [inputs, charState, user, currentCharId, saveCharacterToCloud, setSavingState]);
 
   return (
     <>

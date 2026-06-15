@@ -606,7 +606,7 @@ h1.main-title {
 }
 .health-grid {
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(15, 1fr);
     gap: 4px;
 }
 .health-cell {
@@ -1570,5 +1570,82 @@ h1.main-title {
         max-width: none;
         width: 100%;
     }
+}
+
+/* Custom Stone block layout for character stats */
+.stone-stats-hero .stone-value-box {
+    height: 44px !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 3px 4px !important;
+    box-sizing: border-box !important;
+}
+.stat-base-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+.stat-base-label {
+    font-size: 8.5px;
+    font-family: 'Cinzel', serif;
+    color: #5c3e21;
+    font-weight: bold;
+    letter-spacing: 0.2px;
+}
+.stat-base-row input {
+    width: 26px !important;
+    height: 16px !important;
+    border: 1px solid rgba(92, 62, 33, 0.25) !important;
+    background: #fffbef !important;
+    text-align: center !important;
+    font-family: 'MedievalSharp', cursive !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
+    color: #110902 !important;
+    border-radius: 2px !important;
+    padding: 0 !important;
+}
+.stat-base-row input:focus {
+    outline: none !important;
+    background: #ffffff !important;
+    border-color: #4a2e13 !important;
+}
+.stat-bonus-total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 7px;
+    font-family: 'Cinzel', serif;
+    color: #5c3e21;
+    font-weight: bold;
+    margin-top: 1px;
+}
+.stat-bonus-label {
+    text-align: left;
+    white-space: nowrap;
+}
+.stat-total-label {
+    text-align: right;
+    white-space: nowrap;
+    color: #110902;
+    font-family: 'MedievalSharp', cursive;
+    font-size: 8px;
+    font-weight: bold;
+}
+
+/* Medieval inline SVG icons */
+.medieval-inline-icon {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+    margin-right: 5px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 

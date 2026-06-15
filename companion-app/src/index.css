@@ -2480,6 +2480,29 @@ h1.main-title {
     }
 }
 
+/* --- DM Panel Talent Edit & Actions --- */
+.talent-action-btn {
+    background-color: #4a2e13;
+    border: 1px solid #d4af37;
+    color: #f3e5c8;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    font-size: 11px;
+    line-height: 1;
+}
+.talent-action-btn:hover {
+    background-color: #d4af37;
+    color: #2a1805;
+    box-shadow: 0 0 8px #d4af37;
+    transform: scale(1.05);
+}
+
 
 
 

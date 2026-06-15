@@ -44,6 +44,80 @@ export function DMPanel() {
     max: 1,
   });
 
+  // Editing state for an existing talent
+  const [editingTalent, setEditingTalent] = useState<Talent | null>(null);
+  const [editingTalentScope, setEditingTalentScope] = useState<string>(''); // classKey where the talent resides
+  const [editTalentName, setEditTalentName] = useState('');
+  const [editTalentCost, setEditTalentCost] = useState(1);
+  const [editTalentDesc, setEditTalentDesc] = useState('');
+  const [editTalentMax, setEditTalentMax] = useState<number | undefined>(undefined);
+
+  const handleStartEditTalent = (talent: Talent, scope: string) => {
+    setEditingTalent(talent);
+    setEditingTalentScope(scope);
+    setEditTalentName(talent.name);
+    setEditTalentCost(talent.cost);
+    setEditTalentDesc(talent.desc);
+    setEditTalentMax(talent.max);
+  };
+
+  const handleSaveEditedTalent = () => {
+    if (!editingTalent) return;
+    const name = editTalentName.trim();
+    const desc = editTalentDesc.trim();
+    if (!name || !desc) {
+      showToast('Talent must have a Name and Description.', 'error');
+      return;
+    }
+
+    const updated = { ...draftConfig };
+    const list = editingTalentScope === '__shared__'
+      ? updated.sharedTalents
+      : (updated.classes[editingTalentScope]?.talents || []);
+
+    if (!list) return;
+
+    // Check duplicate name excluding the currently edited talent
+    const isDuplicate = list.some(
+      (t) => t.id !== editingTalent.id && t.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      showToast(`A talent with the name "${name}" already exists in this scope.`, 'error');
+      return;
+    }
+
+    // Find and update the talent
+    const index = list.findIndex((t) => t.id === editingTalent.id);
+    if (index !== -1) {
+      list[index] = {
+        ...editingTalent,
+        name,
+        cost: Number(editTalentCost),
+        desc,
+        max: editTalentMax ? Number(editTalentMax) : undefined,
+      };
+
+      if (editingTalentScope === '__shared__') {
+        updated.sharedTalents = list;
+      } else if (updated.classes[editingTalentScope]) {
+        updated.classes[editingTalentScope].talents = list;
+      }
+
+      setDraftConfig(updated);
+      setEditingTalent(null);
+      showToast(`Talent "${name}" updated.`, 'success');
+    }
+  };
+
+  const handleDeleteTalentFromEdit = () => {
+    if (!editingTalent) return;
+    if (window.confirm(`Are you sure you want to delete the talent "${editingTalent.name}"?`)) {
+      handleDeleteTalent(editingTalentScope, editingTalent.id);
+      setEditingTalent(null);
+    }
+  };
+
   // Sync draft state with store config when it loads
   useEffect(() => {
     setDraftConfig(JSON.parse(JSON.stringify(gameConfig)));
@@ -441,19 +515,14 @@ export function DMPanel() {
                                     <td style={{ fontSize: '11px' }}>
                                       {talent.desc} {talent.max ? `(Max ${talent.max} buys)` : ''}
                                     </td>
-                                    <td>
+                                    <td style={{ textAlign: 'center' }}>
                                       <button
                                         type="button"
-                                        onClick={() => handleDeleteTalent(selectedClassKey, talent.id)}
-                                        style={{
-                                          border: 'none',
-                                          background: 'none',
-                                          color: '#b02a2a',
-                                          cursor: 'pointer',
-                                          fontSize: '12px',
-                                        }}
+                                        onClick={() => handleStartEditTalent(talent, selectedClassKey)}
+                                        className="talent-action-btn"
+                                        title="Edit Talent"
                                       >
-                                        🗑️
+                                        ✏️
                                       </button>
                                     </td>
                                   </tr>
@@ -734,6 +803,117 @@ export function DMPanel() {
           </div>
         );
       })()}
+
+      {/* Edit Talent Modal */}
+      {editingTalent && (
+        <div className="conflict-modal-overlay" onClick={() => setEditingTalent(null)}>
+          <div className="conflict-modal-panel" onClick={(e) => e.stopPropagation()} style={{ width: '450px' }}>
+            <div className="conflict-modal-header">
+              <h2>✍️ Edit Talent</h2>
+              <button
+                type="button"
+                className="close-btn"
+                style={{ background: 'transparent', border: 'none', color: '#bfae95', fontSize: '28px', cursor: 'pointer' }}
+                onClick={() => setEditingTalent(null)}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="conflict-modal-content" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label className="dm-label">Talent Name:</label>
+                <input
+                  type="text"
+                  value={editTalentName}
+                  onChange={(e) => setEditTalentName(e.target.value)}
+                  className="dm-input"
+                />
+              </div>
+
+              <div>
+                <label className="dm-label">AP Cost:</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
+                  value={editTalentCost}
+                  onChange={(e) => setEditTalentCost(Number(e.target.value) || 1)}
+                  className="dm-input"
+                />
+              </div>
+
+              <div>
+                <label className="dm-label">Description / Effect:</label>
+                <textarea
+                  value={editTalentDesc}
+                  onChange={(e) => setEditTalentDesc(e.target.value)}
+                  className="dm-input"
+                  rows={3}
+                  style={{
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    fontSize: '12px',
+                    padding: '8px',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="dm-label">Max Purchases (blank for 1):</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={editTalentMax || ''}
+                  onChange={(e) => setEditTalentMax(e.target.value ? Number(e.target.value) : undefined)}
+                  placeholder="1"
+                  className="dm-input"
+                />
+              </div>
+            </div>
+
+            <div className="conflict-modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button
+                type="button"
+                className="action-btn reset"
+                onClick={handleDeleteTalentFromEdit}
+              >
+                🗑️ Delete Talent
+              </button>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="conflict-btn"
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid #bfae95',
+                    color: '#bfae95',
+                    fontSize: '11px',
+                    padding: '8px 12px',
+                  }}
+                  onClick={() => setEditingTalent(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="conflict-btn conflict-btn-local"
+                  style={{
+                    fontSize: '11px',
+                    padding: '8px 12px',
+                  }}
+                  onClick={handleSaveEditedTalent}
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

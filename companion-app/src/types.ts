@@ -89,6 +89,9 @@ export interface AppState {
   currentCharId: string | null; // null means editing local offline character
   savingState: 'idle' | 'saving' | 'saved' | 'error';
 
+  // DM Party Tracker state
+  activePartyIds: string[];
+
   // Theme state
   
   // Navigation actions
@@ -124,7 +127,7 @@ export interface AppState {
   // Sheet global actions
   resetSheet: () => void;
   importCharacter: (jsonData: string) => boolean;
-
+ 
   // Supabase Auth actions
   setRememberMe: (remember: boolean) => void;
   signUp: (email: string, password: string) => Promise<{ error: { message: string } | null }>;
@@ -143,5 +146,7 @@ export interface AppState {
   // DM / Game Config actions
   fetchGameConfig: () => Promise<void>;
   saveGameConfig: (config: GameConfig) => Promise<{ error: { message: string } | null }>;
+  togglePartyMember: (id: string) => void;
+  fetchAllPlayersCharacters: () => Promise<any[]>;
 }
 

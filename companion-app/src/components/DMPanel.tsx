@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useCharacterStore, getDefaultGameConfig } from '../store/useCharacterStore';
+import { useCharacterStore, getDefaultGameConfig, getTalentById } from '../store/useCharacterStore';
 import type { GameConfig, Talent, XPSetting } from '../types';
 
 const AVAILABLE_ICONS = [
@@ -24,10 +24,53 @@ export function DMPanel() {
   const saveGameConfig = useCharacterStore((state) => state.saveGameConfig);
   const showToast = useCharacterStore((state) => state.showToast);
 
+  const fetchAllPlayersCharacters = useCharacterStore((state) => state.fetchAllPlayersCharacters);
+  const activePartyIds = useCharacterStore((state) => state.activePartyIds);
+  const togglePartyMember = useCharacterStore((state) => state.togglePartyMember);
+
   // Local draft state for editing before saving
   const [draftConfig, setDraftConfig] = useState<GameConfig>(() => JSON.parse(JSON.stringify(gameConfig)));
-  const [activeSubTab, setActiveSubTab] = useState<'classes' | 'xp' | 'layout'>('classes');
+  const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'classes' | 'xp' | 'layout'>('dashboard');
   
+  // Party Tracker state
+  const [allPlayersCharacters, setAllPlayersCharacters] = useState<any[]>([]);
+  const [loadingParty, setLoadingParty] = useState(false);
+  const [showManageParty, setShowManageParty] = useState(false);
+  const [partySearchQuery, setPartySearchQuery] = useState('');
+  const [expandedCardIds, setExpandedCardIds] = useState<string[]>([]);
+
+  const toggleCardExpanded = (id: string) => {
+    setExpandedCardIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const refreshParty = async () => {
+    setLoadingParty(true);
+    try {
+      const chars = await fetchAllPlayersCharacters();
+      setAllPlayersCharacters(chars);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingParty(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshParty();
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchAllPlayersCharacters().then((chars) => {
+          setAllPlayersCharacters(chars);
+        });
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Selected class for Class & Talents editor
   const [selectedClassKey, setSelectedClassKey] = useState<string>('__shared__');
   const [talentSearchQuery, setTalentSearchQuery] = useState('');
@@ -362,7 +405,14 @@ export function DMPanel() {
           </div>
 
           {/* Sub Navigation */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '2px solid #4a2e13', paddingBottom: '10px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '2px solid #4a2e13', paddingBottom: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className={`dm-tab-btn ${activeSubTab === 'dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveSubTab('dashboard')}
+            >
+              👥 Party Tracker
+            </button>
             <button
               type="button"
               className={`dm-tab-btn ${activeSubTab === 'classes' ? 'active' : ''}`}
@@ -385,6 +435,384 @@ export function DMPanel() {
               Hero Sheet Layout
             </button>
           </div>
+
+          {/* TAB 0: PARTY TRACKER DASHBOARD */}
+          {activeSubTab === 'dashboard' && (
+            <div style={{ marginBottom: '40px' }}>
+              {/* Top Row: Info & Controls */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '10px', flexWrap: 'wrap' }}>
+                <div style={{ fontSize: '12.5px', color: '#5c3e21', fontFamily: 'Cinzel, serif', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="dm-save-bar-status-dot saved" style={{ backgroundColor: loadingParty ? '#d4af37' : '#2e5c1e', width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block' }} />
+                  {loadingParty ? 'Syncing characters...' : 'Auto-syncing every 5 seconds...'}
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    className="action-btn"
+                    onClick={refreshParty}
+                    disabled={loadingParty}
+                  >
+                    🔄 Refresh Now
+                  </button>
+                  <button
+                    type="button"
+                    className="action-btn"
+                    style={{ backgroundColor: '#724216', borderColor: '#5c3e21' }}
+                    onClick={() => setShowManageParty(!showManageParty)}
+                  >
+                    ⚙️ {showManageParty ? 'Hide Party Config' : 'Manage Party Members'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Manage Party Members Section */}
+              {showManageParty && (
+                <div className="parchment-box" style={{ padding: '15px', marginBottom: '20px', zIndex: 2 }}>
+                  <h3>Manage Party Members</h3>
+                  <p style={{ fontSize: '11px', opacity: 0.8, margin: '5px 0 12px 0' }}>
+                    Select which characters from the database should be shown on your DM dashboard.
+                  </p>
+
+                  {allPlayersCharacters.length === 0 ? (
+                    <div style={{ fontStyle: 'italic', fontSize: '12.5px', color: '#724216', textAlign: 'center', padding: '15px 0' }}>
+                      No characters found in the database. Ensure players have created and saved characters online.
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Search filter for character management */}
+                      <input
+                        type="text"
+                        placeholder="🔍 Filter characters by name or class..."
+                        value={partySearchQuery}
+                        onChange={(e) => setPartySearchQuery(e.target.value)}
+                        className="dm-input"
+                        style={{ marginBottom: '12px', width: '100%', maxWidth: '400px' }}
+                      />
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px', maxHeight: '200px', overflowY: 'auto', padding: '5px' }}>
+                        {allPlayersCharacters
+                          .filter(char => {
+                            const name = (char.name || '').toLowerCase();
+                            const cls = (char.class || '').toLowerCase();
+                            const q = partySearchQuery.toLowerCase();
+                            return name.includes(q) || cls.includes(q);
+                          })
+                          .map(char => {
+                            const isChecked = activePartyIds.includes(char.id);
+                            return (
+                              <label
+                                key={char.id}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  padding: '6px 10px',
+                                  backgroundColor: isChecked ? 'rgba(212, 175, 55, 0.12)' : 'rgba(0,0,0,0.05)',
+                                  border: isChecked ? '1px solid #d4af37' : '1px solid #5c3e21',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer',
+                                  fontSize: '12.5px'
+                                }}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => togglePartyMember(char.id)}
+                                  style={{ cursor: 'pointer' }}
+                                />
+                                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  <strong style={{ display: 'block', fontSize: '12px' }}>{char.name || 'Unnamed'}</strong>
+                                  <span style={{ fontSize: '10px', display: 'block', opacity: 0.75 }}>
+                                    Level {char.level} {getClassName(char.class)}
+                                  </span>
+                                </div>
+                              </label>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Tracked Party Cards */}
+              {activePartyIds.length === 0 ? (
+                <div className="parchment-box" style={{ padding: '30px', textAlign: 'center', zIndex: 2 }}>
+                  <div style={{ fontSize: '32px', marginBottom: '10px' }}>👥</div>
+                  <h3>No Tracked Heroes</h3>
+                  <p style={{ fontSize: '13px', opacity: 0.85, maxWidth: '450px', margin: '5px auto 15px auto' }}>
+                    Click "Manage Party Members" above to select characters from the tavern database to track their health and stats in real-time.
+                  </p>
+                  <button
+                    type="button"
+                    className="action-btn"
+                    onClick={() => setShowManageParty(true)}
+                  >
+                    Add Party Members
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+                  {allPlayersCharacters
+                    .filter(char => activePartyIds.includes(char.id))
+                    .map(char => {
+                      const charState = typeof char.char_state === 'string' ? JSON.parse(char.char_state) : (char.char_state || {});
+                      const charInputs = typeof char.inputs === 'string' ? JSON.parse(char.inputs) : (char.inputs || {});
+                      const isExpanded = expandedCardIds.includes(char.id);
+
+                      // Extract weapons
+                      const weapons: string[] = [];
+                      for (let i = 1; i <= 7; i++) {
+                        const w = (charInputs[`weapon-line-${i}`] || '').trim();
+                        if (w) weapons.push(w);
+                      }
+
+                      // Extract armor
+                      const armors: string[] = [];
+                      for (let i = 1; i <= 7; i++) {
+                        const a = (charInputs[`armor-line-${i}`] || '').trim();
+                        if (a) armors.push(a);
+                      }
+
+                      // Extract spells
+                      const spells: string[] = [];
+                      for (let i = 1; i <= 10; i++) {
+                        const s = (charInputs[`spell-line-${i}`] || '').trim();
+                        if (s) spells.push(s);
+                      }
+
+                      // Extract notes
+                      const notes: string[] = [];
+                      for (let i = 1; i <= 8; i++) {
+                        const n = (charInputs[`ref-notes-line-${i}`] || '').trim();
+                        if (n) notes.push(n);
+                      }
+
+                      // Extract foes
+                      const foes: string[] = [];
+                      for (let i = 1; i <= 22; i++) {
+                        const name = (charInputs[`foe-name-${i}`] || '').trim();
+                        const kills = parseInt(charInputs[`foe-kills-${i}`]) || 0;
+                        if (name && kills > 0) {
+                          foes.push(`${name} (x${kills})`);
+                        }
+                      }
+
+                      // Extract talents
+                      const purchasedTalentsList = Object.entries(charState.purchasedTalents || {})
+                        .map(([tId, count]) => {
+                          const tObj = getTalentById(tId);
+                          return {
+                            name: tObj ? tObj.name : tId,
+                            cost: tObj ? tObj.cost : 1,
+                            count: count as number
+                          };
+                        })
+                        .filter(t => t.count > 0);
+                      
+                      return (
+                        <div key={char.id} className="parchment-box" style={{ padding: '15px', position: 'relative', display: 'flex', flexDirection: 'column', zIndex: 2, justifyContent: 'flex-start' }}>
+                          
+                          {/* Header */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1.5px dashed #4a2e13', paddingBottom: '8px', marginBottom: '10px' }}>
+                            <div>
+                              <h2 style={{ margin: 0, fontSize: '18px', fontFamily: 'Cinzel, serif', color: '#4a2e13' }}>
+                                {charInputs['hero-name'] || char.name || 'Unnamed Hero'}
+                              </h2>
+                              <span className="character-class-badge" style={{
+                                display: 'inline-block',
+                                backgroundColor: '#4a2e13',
+                                color: '#f3e5c8',
+                                fontSize: '9px',
+                                padding: '2px 6px',
+                                borderRadius: '3px',
+                                marginTop: '3px',
+                                textTransform: 'uppercase',
+                                fontWeight: 'bold',
+                                fontFamily: 'Cinzel, serif',
+                                letterSpacing: '0.5px'
+                              }}>
+                                {getClassName(char.class)}
+                              </span>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontFamily: 'Cinzel, serif', fontSize: '13px', fontWeight: 'bold', color: '#724216' }}>
+                                Level {charState.level || char.level}
+                              </div>
+                              <div style={{ fontSize: '10.5px', color: '#855d14', fontWeight: 'bold' }}>
+                                {charState.xp || 0} XP
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Main Stats Summary */}
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', textAlign: 'center', marginBottom: '12px' }}>
+                            <div style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: '4px 2px', borderRadius: '4px', border: '1px solid rgba(74, 46, 19, 0.15)' }}>
+                              <div style={{ fontSize: '7px', textTransform: 'uppercase', opacity: 0.85, fontFamily: 'Cinzel, serif' }}>Attack</div>
+                              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#8b1e13' }}>⚔️ {charInputs['stat-attack'] || '-'}</div>
+                            </div>
+                            <div style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: '4px 2px', borderRadius: '4px', border: '1px solid rgba(74, 46, 19, 0.15)' }}>
+                              <div style={{ fontSize: '7px', textTransform: 'uppercase', opacity: 0.85, fontFamily: 'Cinzel, serif' }}>Defend</div>
+                              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#2b528b' }}>🛡️ {charInputs['stat-defense'] || '-'}</div>
+                            </div>
+                            <div style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: '4px 2px', borderRadius: '4px', border: '1px solid rgba(74, 46, 19, 0.15)' }}>
+                              <div style={{ fontSize: '7px', textTransform: 'uppercase', opacity: 0.85, fontFamily: 'Cinzel, serif' }}>Body</div>
+                              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#8c1e13' }}>❤️ {charInputs['stat-body'] || '-'}</div>
+                            </div>
+                            <div style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: '4px 2px', borderRadius: '4px', border: '1px solid rgba(74, 46, 19, 0.15)' }}>
+                              <div style={{ fontSize: '7px', textTransform: 'uppercase', opacity: 0.85, fontFamily: 'Cinzel, serif' }}>Mind</div>
+                              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#4a2e13' }}>🧠 {charInputs['stat-mind'] || '-'}</div>
+                            </div>
+                            <div style={{ backgroundColor: 'rgba(0,0,0,0.03)', padding: '4px 2px', borderRadius: '4px', border: '1px solid rgba(74, 46, 19, 0.15)' }}>
+                              <div style={{ fontSize: '7px', textTransform: 'uppercase', opacity: 0.85, fontFamily: 'Cinzel, serif' }}>Gold</div>
+                              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#b08d24' }}>🪙 {charInputs['char-gold'] || '0'}</div>
+                            </div>
+                          </div>
+
+                          {/* Health Tracker Mini Grid */}
+                          <div style={{ marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                              <span style={{ fontSize: '10.5px', fontWeight: 'bold', textTransform: 'uppercase', color: '#724216', fontFamily: 'Cinzel, serif' }}>
+                                Body Points Tracker
+                              </span>
+                            </div>
+                            <div style={{
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(10, 1fr)',
+                              gap: '2px',
+                              padding: '4px',
+                              backgroundColor: 'rgba(74, 46, 19, 0.08)',
+                              border: '1px solid #5c3e21',
+                              borderRadius: '4px'
+                            }}>
+                              {Array.from({ length: 30 }, (_, index) => {
+                                const cellNum = index + 1;
+                                const val = (charInputs[`health-${cellNum}`] || '').trim();
+                                const hasVal = val !== '';
+                                return (
+                                  <div
+                                    key={cellNum}
+                                    style={{
+                                      aspectRatio: '1',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '9px',
+                                      fontWeight: 'bold',
+                                      backgroundColor: hasVal ? 'rgba(176, 42, 42, 0.15)' : 'rgba(255, 255, 255, 0.4)',
+                                      border: hasVal ? '1px solid #b02a2a' : '1px solid rgba(74, 46, 19, 0.3)',
+                                      color: '#b02a2a',
+                                      borderRadius: '2px',
+                                      minHeight: '18px'
+                                    }}
+                                    title={`Cell ${cellNum}: ${val || 'Empty'}`}
+                                  >
+                                    {val}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Collapsible Action */}
+                          <button
+                            type="button"
+                            className="action-btn"
+                            onClick={() => toggleCardExpanded(char.id)}
+                            style={{
+                              width: '100%',
+                              height: '28px',
+                              padding: '0',
+                              fontSize: '9px',
+                              backgroundColor: isExpanded ? '#5c3e21' : '#4a2e13',
+                              borderColor: '#d4af37'
+                            }}
+                          >
+                            {isExpanded ? '▲ Hide Details' : '▼ Show Full Codex & Equipment'}
+                          </button>
+
+                          {/* Expanded Details */}
+                          {isExpanded && (
+                            <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px dashed #4a2e13', fontSize: '11px', display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                              {/* Weapons & Gear */}
+                              {weapons.length > 0 && (
+                                <div>
+                                  <strong style={{ color: '#724216', fontFamily: 'Cinzel, serif' }}>⚔️ Weapons & Gear:</strong>
+                                  <ul style={{ margin: '2px 0 0 0', paddingLeft: '15px' }}>
+                                    {weapons.map((w, idx) => <li key={idx}>{w}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Armor & Protection */}
+                              {armors.length > 0 && (
+                                <div>
+                                  <strong style={{ color: '#724216', fontFamily: 'Cinzel, serif' }}>🛡️ Armor & Protection:</strong>
+                                  <ul style={{ margin: '2px 0 0 0', paddingLeft: '15px' }}>
+                                    {armors.map((a, idx) => <li key={idx}>{a}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Spells & Scrolls */}
+                              {spells.length > 0 && (
+                                <div>
+                                  <strong style={{ color: '#724216', fontFamily: 'Cinzel, serif' }}>📜 Spellbook & Scrolls:</strong>
+                                  <ul style={{ margin: '2px 0 0 0', paddingLeft: '15px' }}>
+                                    {spells.map((s, idx) => <li key={idx}>{s}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Defeated Foes */}
+                              {foes.length > 0 && (
+                                <div>
+                                  <strong style={{ color: '#724216', fontFamily: 'Cinzel, serif' }}>💀 Defeated Foes:</strong>
+                                  <div style={{ margin: '2px 0 0 0', fontStyle: 'italic', paddingLeft: '5px' }}>
+                                    {foes.join(', ')}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Talents */}
+                              <div>
+                                <strong style={{ color: '#724216', fontFamily: 'Cinzel, serif' }}>⭐ Learned Talents:</strong>
+                                {purchasedTalentsList.length === 0 ? (
+                                  <div style={{ fontStyle: 'italic', paddingLeft: '5px', opacity: 0.8 }}>None learned yet.</div>
+                                ) : (
+                                  <ul style={{ margin: '2px 0 0 0', paddingLeft: '15px' }}>
+                                    {purchasedTalentsList.map((t, idx) => (
+                                      <li key={idx}>
+                                        <strong>{t.name}</strong> {t.count > 1 ? `(Rank ${t.count})` : ''}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+
+                              {/* Notes */}
+                              {notes.length > 0 && (
+                                <div>
+                                  <strong style={{ color: '#724216', fontFamily: 'Cinzel, serif' }}>✍️ Special Rules & Notes:</strong>
+                                  <ul style={{ margin: '2px 0 0 0', paddingLeft: '15px' }}>
+                                    {notes.map((n, idx) => <li key={idx}>{n}</li>)}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Last Updated */}
+                              <div style={{ fontSize: '9px', opacity: 0.6, textAlign: 'right', marginTop: '5px' }}>
+                                Last Synced: {new Date(char.updated_at).toLocaleTimeString()}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* TAB 1: CLASSES & TALENTS */}
           {activeSubTab === 'classes' && (

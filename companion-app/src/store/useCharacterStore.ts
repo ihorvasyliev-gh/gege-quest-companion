@@ -317,6 +317,7 @@ export function getXpFromMonsterName(name: string): number {
       cloudCharacters: [],
       currentCharId: null,
       savingState: 'idle',
+      activePartyIds: [],
 
 
       setActiveTab: (tab) => set({ activeTab: tab }),
@@ -1114,6 +1115,31 @@ export function getXpFromMonsterName(name: string): number {
         return { error };
       },
 
+      togglePartyMember: (id) => set((state) => {
+        const active = state.activePartyIds.includes(id)
+          ? state.activePartyIds.filter(x => x !== id)
+          : [...state.activePartyIds, id];
+        return { activePartyIds: active };
+      }),
+
+      fetchAllPlayersCharacters: async () => {
+        try {
+          const { data, error } = await supabase
+            .from('characters')
+            .select('id, name, class, level, char_state, inputs, updated_at, user_id')
+            .order('updated_at', { ascending: false });
+          if (!error && data) {
+            return data;
+          }
+          if (error) {
+            console.error("Failed to fetch all players' characters:", error);
+          }
+        } catch (e) {
+          console.warn("Exception during fetchAllPlayersCharacters:", e);
+        }
+        return [];
+      },
+
     }),
     {
       name: 'gege_quest_char_data',
@@ -1128,7 +1154,8 @@ export function getXpFromMonsterName(name: string): number {
                 inputs: parsed.inputs || {},
                 charState: parsed.charState || { ...emptyCharState },
                 rememberMe: parsed.rememberMe !== false,
-                currentCharId: parsed.currentCharId || null
+                currentCharId: parsed.currentCharId || null,
+                activePartyIds: parsed.activePartyIds || []
               }
             };
           } catch {
@@ -1141,7 +1168,8 @@ export function getXpFromMonsterName(name: string): number {
             inputs: value.state.inputs || {},
             charState: value.state.charState || { ...emptyCharState },
             rememberMe: value.state.rememberMe !== false,
-            currentCharId: value.state.currentCharId || null
+            currentCharId: value.state.currentCharId || null,
+            activePartyIds: value.state.activePartyIds || []
           };
           localStorage.setItem(name, JSON.stringify(data));
         },
@@ -1153,7 +1181,8 @@ export function getXpFromMonsterName(name: string): number {
         inputs: state.inputs,
         charState: state.charState,
         rememberMe: state.rememberMe,
-        currentCharId: state.currentCharId
+        currentCharId: state.currentCharId,
+        activePartyIds: state.activePartyIds
       })
     }
   )

@@ -1102,7 +1102,7 @@ export function getXpFromMonsterName(name: string): number {
       },
 
       saveGameConfig: async (config) => {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('game_config')
           .update({
             classes: config.classes,
@@ -1111,16 +1111,44 @@ export function getXpFromMonsterName(name: string): number {
             shared_talents: config.sharedTalents,
             updated_at: new Date().toISOString()
           })
-          .eq('id', 'default');
+          .eq('id', 'default')
+          .select();
           
-        if (!error) {
-          localStorage.setItem('gege_quest_game_config', JSON.stringify(config));
-          set({ gameConfig: config });
-          get().showToast("Game configuration saved successfully to the cloud!", "success");
-        } else {
+        if (error) {
           get().showToast("Failed to save configuration: " + error.message, "error");
+          return { error };
         }
-        return { error };
+
+        // If no rows were updated, it means the 'default' row doesn't exist yet.
+        // Let's try to insert it.
+        if (!data || data.length === 0) {
+          const { data: insertData, error: insertError } = await supabase
+            .from('game_config')
+            .insert({
+              id: 'default',
+              classes: config.classes,
+              xp_settings: config.xpSettings,
+              sheet_layout: config.sheetLayout,
+              shared_talents: config.sharedTalents,
+              updated_at: new Date().toISOString()
+            })
+            .select();
+
+          if (insertError) {
+            get().showToast("Failed to create configuration entry: " + insertError.message, "error");
+            return { error: insertError };
+          }
+          if (!insertData || insertData.length === 0) {
+            const permissionError = new Error("No rows affected. You might not have permission to write to game_config (RLS policy).");
+            get().showToast(permissionError.message, "error");
+            return { error: permissionError };
+          }
+        }
+
+        localStorage.setItem('gege_quest_game_config', JSON.stringify(config));
+        set({ gameConfig: config });
+        get().showToast("Game configuration saved successfully to the cloud!", "success");
+        return { error: null };
       },
 
       togglePartyMember: (id) => set((state) => {

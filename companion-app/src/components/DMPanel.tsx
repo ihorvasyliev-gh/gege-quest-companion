@@ -380,11 +380,12 @@ export function DMPanel() {
           </div>
 
           {/* Sub Navigation */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '2px solid #4a2e13', paddingBottom: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '2px solid #4a2e13', paddingBottom: '10px', flexWrap: 'nowrap', width: '100%' }}>
             <button
               type="button"
               className={`dm-tab-btn ${activeSubTab === 'dashboard' ? 'active' : ''}`}
               onClick={() => setActiveSubTab('dashboard')}
+              style={{ flex: 1, padding: '8px 4px', fontSize: '10px', textAlign: 'center', whiteSpace: 'nowrap' }}
             >
               👥 Party Tracker
             </button>
@@ -392,6 +393,7 @@ export function DMPanel() {
               type="button"
               className={`dm-tab-btn ${activeSubTab === 'classes' ? 'active' : ''}`}
               onClick={() => setActiveSubTab('classes')}
+              style={{ flex: 1, padding: '8px 4px', fontSize: '10px', textAlign: 'center', whiteSpace: 'nowrap' }}
             >
               Classes & Talents
             </button>
@@ -399,37 +401,38 @@ export function DMPanel() {
               type="button"
               className={`dm-tab-btn ${activeSubTab === 'xp' ? 'active' : ''}`}
               onClick={() => setActiveSubTab('xp')}
+              style={{ flex: 1, padding: '8px 4px', fontSize: '10px', textAlign: 'center', whiteSpace: 'nowrap' }}
             >
               XP Calculator
             </button>
-
           </div>
 
           {/* TAB 0: PARTY TRACKER DASHBOARD */}
           {activeSubTab === 'dashboard' && (
             <div style={{ marginBottom: '40px' }}>
               {/* Top Row: Info & Controls */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '10px', flexWrap: 'wrap' }}>
-                <div style={{ fontSize: '12.5px', color: '#5c3e21', fontFamily: 'Cinzel, serif', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px', borderBottom: '1px dashed rgba(74, 46, 19, 0.25)', paddingBottom: '12px' }}>
+                <div style={{ fontSize: '11px', color: '#5c3e21', fontFamily: 'Cinzel, serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                   <span className="dm-save-bar-status-dot saved" style={{ backgroundColor: loadingParty ? '#d4af37' : '#2e5c1e', width: '8px', height: '8px', borderRadius: '50%', display: 'inline-block' }} />
                   {loadingParty ? 'Syncing characters...' : 'Auto-syncing every 5 seconds...'}
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
                   <button
                     type="button"
                     className="action-btn"
                     onClick={refreshParty}
                     disabled={loadingParty}
+                    style={{ flex: 1, height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', padding: '0 6px' }}
                   >
                     🔄 Refresh Now
                   </button>
                   <button
                     type="button"
                     className="action-btn"
-                    style={{ backgroundColor: '#724216', borderColor: '#5c3e21' }}
+                    style={{ backgroundColor: '#724216', borderColor: '#5c3e21', flex: 1, height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', padding: '0 6px' }}
                     onClick={() => setShowManageParty(!showManageParty)}
                   >
-                    ⚙️ {showManageParty ? 'Hide Party Config' : 'Manage Party Members'}
+                    ⚙️ {showManageParty ? 'Hide Config' : 'Manage Party'}
                   </button>
                 </div>
               </div>

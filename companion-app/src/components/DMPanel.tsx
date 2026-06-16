@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCharacterStore, getDefaultGameConfig, getTalentById } from '../store/useCharacterStore';
 import type { GameConfig, Talent, XPSetting } from '../types';
+import { XPIcon } from './XPIcon';
 
 const AVAILABLE_ICONS = [
   { key: 'goblin', label: '👺 Goblin' },
@@ -1056,18 +1057,34 @@ export function DMPanel() {
                           />
                         </td>
                         <td>
-                          <select
-                            value={setting.icon || 'skull'}
-                            onChange={(e) => handleUpdateXPSetting(index, 'icon', e.target.value)}
-                            className="dm-select"
-                            style={{ padding: '2px 4px', fontSize: '11px', height: '28px', width: '100%', minWidth: '75px', boxSizing: 'border-box' }}
-                          >
-                            {AVAILABLE_ICONS.map((iconOpt) => (
-                              <option key={iconOpt.key} value={iconOpt.key}>
-                                {iconOpt.label}
-                              </option>
-                            ))}
-                          </select>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '4px',
+                              border: '1.5px solid #4a2e13',
+                              backgroundColor: '#fffdf9',
+                              flexShrink: 0,
+                              boxSizing: 'border-box'
+                            }}>
+                              <XPIcon name={setting.icon} size={18} style={{ color: '#4a2e13', opacity: 0.85 }} />
+                            </div>
+                            <select
+                              value={setting.icon || 'skull'}
+                              onChange={(e) => handleUpdateXPSetting(index, 'icon', e.target.value)}
+                              className="dm-select"
+                              style={{ padding: '2px 4px', fontSize: '11px', height: '28px', flexGrow: 1, minWidth: '75px', boxSizing: 'border-box' }}
+                            >
+                              {AVAILABLE_ICONS.map((iconOpt) => (
+                                <option key={iconOpt.key} value={iconOpt.key}>
+                                  {iconOpt.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           <input

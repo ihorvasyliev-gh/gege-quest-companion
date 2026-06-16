@@ -1062,7 +1062,13 @@ export function DMPanel() {
                           </div>
                         </td>
                         <td className="desktop-table-cell" style={{ textAlign: 'center' }}>
-                          <code style={{ fontSize: '11px', color: '#5c3e21', wordBreak: 'break-all' }}>{setting.key}</code>
+                          <input
+                            type="text"
+                            value={setting.key}
+                            onChange={(e) => handleUpdateXPSetting(index, 'key', e.target.value)}
+                            className="dm-input"
+                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px', width: '100%', boxSizing: 'border-box', fontFamily: 'monospace' }}
+                          />
                         </td>
                         <td>
                           <input

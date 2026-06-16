@@ -53,8 +53,16 @@ export function TomeOfRules() {
   // Local state for tracking selected modifiers
   const [selectedModifiers, setSelectedModifiers] = useState<string[]>([]);
 
-  const tiers = (gameConfig?.xpSettings || []).filter((s) => s.key.toLowerCase().startsWith('tier'));
-  const modifiersList = (gameConfig?.xpSettings || []).filter((s) => !s.key.toLowerCase().startsWith('tier'));
+  const tiers = (gameConfig?.xpSettings || []).filter((s) => {
+    const keyLower = s.key.toLowerCase();
+    const labelLower = s.label.toLowerCase().trim();
+    return keyLower.startsWith('tier') || keyLower.startsWith('тир') || labelLower.startsWith('tier') || labelLower.startsWith('тир');
+  });
+  const modifiersList = (gameConfig?.xpSettings || []).filter((s) => {
+    const keyLower = s.key.toLowerCase();
+    const labelLower = s.label.toLowerCase().trim();
+    return !(keyLower.startsWith('tier') || keyLower.startsWith('тир') || labelLower.startsWith('tier') || labelLower.startsWith('тир'));
+  });
 
   const toggleModifier = (label: string) => {
     if (selectedModifiers.includes(label)) {

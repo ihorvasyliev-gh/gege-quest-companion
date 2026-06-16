@@ -290,7 +290,14 @@ export function getXpForTier(tierStr: string): number {
 export function getXpFromMonsterName(name: string): number {
   const match = name.match(/\(([^)]+)\)$/);
   if (match) {
-    return getXpForTier(match[1]);
+    const parts = match[1].split(',').map(p => p.trim());
+    let totalXp = 0;
+    for (const part of parts) {
+      if (part) {
+        totalXp += getXpForTier(part);
+      }
+    }
+    return totalXp;
   }
   return 0;
 }export const useCharacterStore = create<AppState>()(
@@ -514,7 +521,7 @@ export function getXpFromMonsterName(name: string): number {
 
       setTomeMonsterTierInput: (val) => set({ tomeMonsterTierInput: val }),
 
-      logMonsterKill: () => set((state) => {
+      logMonsterKill: (modifiers?: string[]) => set((state) => {
         const name = state.tomeMonsterInput.trim();
         const tier = state.tomeMonsterTierInput;
         if (!name) {
@@ -522,7 +529,8 @@ export function getXpFromMonsterName(name: string): number {
           return {};
         }
         
-        const fullName = `${name} (${tier})`;
+        const parts = [tier, ...(modifiers || [])].filter(Boolean);
+        const fullName = `${name} (${parts.join(', ')})`;
         const nextInputs = { ...state.inputs };
         let foundIndex = -1;
         for (let i = 1; i <= 22; i++) {
@@ -533,7 +541,7 @@ export function getXpFromMonsterName(name: string): number {
           }
         }
         
-        const xpPerKill = getXpForTier(tier);
+        const xpPerKill = getXpFromMonsterName(fullName);
         
         if (foundIndex !== -1) {
           const currentKills = parseInt(nextInputs['foe-kills-' + foundIndex]) || 0;

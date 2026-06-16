@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useCharacterStore, TALENTS, getClassNameReadable } from '../store/useCharacterStore';
 import type { Talent } from '../types';
 import { XPIcon } from './XPIcon';
@@ -48,6 +49,25 @@ export function TomeOfRules() {
   };
 
   const activeMonsters = getActiveMonsters();
+
+  // Local state for tracking selected modifiers
+  const [selectedModifiers, setSelectedModifiers] = useState<string[]>([]);
+
+  const tiers = (gameConfig?.xpSettings || []).filter((s) => s.key.toLowerCase().startsWith('tier'));
+  const modifiersList = (gameConfig?.xpSettings || []).filter((s) => !s.key.toLowerCase().startsWith('tier'));
+
+  const toggleModifier = (label: string) => {
+    if (selectedModifiers.includes(label)) {
+      setSelectedModifiers(selectedModifiers.filter((m) => m !== label));
+    } else {
+      setSelectedModifiers([...selectedModifiers, label]);
+    }
+  };
+
+  const handleLogKill = () => {
+    logMonsterKill(selectedModifiers);
+    setSelectedModifiers([]);
+  };
 
   // Helper to render individual talent card
   const renderTalentCard = (talent: Talent) => {
@@ -127,7 +147,7 @@ export function TomeOfRules() {
           <h2>XP Calculator</h2>
           
           <h3>Select Slayings & Achievements</h3>
-          <div style={{ maxHeight: '350px', overflowY: 'auto', marginBottom: '10px' }}>
+          <div style={{ maxHeight: '520px', overflowY: 'auto', marginBottom: '10px' }}>
             <table className="rulebook-table" style={{ width: '100%' }}>
               <thead>
                 <tr>
@@ -271,7 +291,7 @@ export function TomeOfRules() {
                 placeholder="Monster Name (e.g., Goblin)"
                 value={tomeMonsterInput}
                 onChange={(e) => setTomeMonsterInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') logMonsterKill(); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleLogKill(); }}
               />
               <select
                 id="tome-monster-tier-select"
@@ -288,14 +308,45 @@ export function TomeOfRules() {
                 value={tomeMonsterTierInput}
                 onChange={(e) => setTomeMonsterTierInput(e.target.value)}
               >
-                {gameConfig.xpSettings.map((setting) => (
+                {tiers.map((setting) => (
                   <option key={setting.key} value={setting.label}>
                     {setting.label}
                   </option>
                 ))}
               </select>
-              <button className="action-btn" style={{ backgroundColor: '#4a2e13', borderColor: '#d4af37', padding: '5px 12px', fontSize: '9px', flexShrink: 0 }} onClick={logMonsterKill}>Log Kill</button>
+              <button className="action-btn" style={{ backgroundColor: '#4a2e13', borderColor: '#d4af37', padding: '5px 12px', fontSize: '9px', flexShrink: 0 }} onClick={handleLogKill}>Log Kill</button>
             </div>
+
+            {/* Toggleable Modifier Badges */}
+            {modifiersList.length > 0 && (
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px', justifyContent: 'center', borderTop: '1px dashed rgba(92, 62, 33, 0.2)', paddingTop: '8px' }}>
+                {modifiersList.map((mod) => {
+                  const active = selectedModifiers.includes(mod.label);
+                  return (
+                    <button
+                      key={mod.key}
+                      onClick={() => toggleModifier(mod.label)}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '10px',
+                        fontFamily: 'MedievalSharp, cursive',
+                        borderRadius: '10px',
+                        border: '1px solid #5c3e21',
+                        backgroundColor: active ? '#5c3e21' : 'rgba(255, 255, 255, 0.5)',
+                        color: active ? '#fdfbfa' : '#5c3e21',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        outline: 'none',
+                        boxShadow: active ? '0 1px 3px rgba(0,0,0,0.2)' : 'none'
+                      }}
+                      title={`Add ${mod.label} reward (+${mod.xp} XP)`}
+                    >
+                      {mod.label} (+{mod.xp})
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <h3>3. Active Monster Ledger</h3>

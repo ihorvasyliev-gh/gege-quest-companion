@@ -112,7 +112,7 @@ export interface AppState {
   // Monster logger actions
   setTomeMonsterInput: (val: string) => void;
   setTomeMonsterTierInput: (val: string) => void;
-  logMonsterKill: () => void;
+  logMonsterKill: (modifiers?: string[]) => void;
   adjustTomeMonster: (rowIndex: number, delta: number) => void;
   
   // Calculator actions

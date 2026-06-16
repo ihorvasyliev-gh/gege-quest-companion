@@ -15,7 +15,7 @@ export function Navbar() {
 
   // Supabase state
   const user = useCharacterStore((state) => state.user);
-  const isAdmin = user?.user_metadata?.role === 'admin' || user?.user_metadata?.role === 'dm';
+  const isAdmin = user?.app_metadata?.role === 'admin' || user?.app_metadata?.role === 'dm';
   const currentCharId = useCharacterStore((state) => state.currentCharId);
   const savingState = useCharacterStore((state) => state.savingState);
   const createCharacter = useCharacterStore((state) => state.createCharacter);

@@ -30,7 +30,7 @@ export function DMPanel() {
 
   // Local draft state for editing before saving
   const [draftConfig, setDraftConfig] = useState<GameConfig>(() => JSON.parse(JSON.stringify(gameConfig)));
-  const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'classes' | 'xp' | 'layout'>('dashboard');
+  const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'classes' | 'xp'>('dashboard');
   
   // Party Tracker state
   const [allPlayersCharacters, setAllPlayersCharacters] = useState<any[]>([]);
@@ -367,32 +367,7 @@ export function DMPanel() {
     setDraftConfig(updated);
   };
 
-  // --- Layout Actions ---
-  const handleUpdateLayoutSetting = (fieldId: string, visible: boolean, label: string) => {
-    const updated = { ...draftConfig };
-    if (!updated.sheetLayout[fieldId]) {
-      updated.sheetLayout[fieldId] = { visible: true, label: fieldId };
-    }
-    updated.sheetLayout[fieldId].visible = visible;
-    updated.sheetLayout[fieldId].label = label;
-    setDraftConfig(updated);
-  };
 
-  const layoutKeys = [
-    { key: 'hero-name', label: 'Identity: Hero Name' },
-    { key: 'hero-class', label: 'Identity: Class Selection' },
-    { key: 'stat-attack', label: 'Stat: Attack Dice' },
-    { key: 'stat-defense', label: 'Stat: Defend Dice' },
-    { key: 'stat-body', label: 'Stat: Body Points Max' },
-    { key: 'stat-mind', label: 'Stat: Mind Points Max' },
-    { key: 'health-tracker', label: 'Tracker: Body Points Health Grid' },
-    { key: 'char-gold', label: 'Loot: Gold Coins Counter' },
-    { key: 'weapons-gear', label: 'Section: Weapons & Gear (Page 2)' },
-    { key: 'armor-protection', label: 'Section: Armor & Protection (Page 2)' },
-    { key: 'defeated-foes', label: 'Section: Defeated Foes Ledger (Page 2)' },
-    { key: 'spells-scrolls', label: 'Section: Spellbook & Magic Scrolls (Page 3)' },
-    { key: 'notes-rules', label: 'Section: Notes & Special Rules (Page 4)' },
-  ];
 
   return (
     <div id="dm-tab" className="tab-content active" style={{ paddingBottom: '110px' }}>
@@ -427,13 +402,7 @@ export function DMPanel() {
             >
               XP Calculator
             </button>
-            <button
-              type="button"
-              className={`dm-tab-btn ${activeSubTab === 'layout' ? 'active' : ''}`}
-              onClick={() => setActiveSubTab('layout')}
-            >
-              Hero Sheet Layout
-            </button>
+
           </div>
 
           {/* TAB 0: PARTY TRACKER DASHBOARD */}
@@ -1134,55 +1103,7 @@ export function DMPanel() {
             </div>
           )}
 
-          {/* TAB 3: HERO SHEET LAYOUT */}
-          {activeSubTab === 'layout' && (
-            <div className="parchment-box" style={{ padding: '15px', zIndex: 2 }}>
-              <h3>Hero Sheet Fields Overrides</h3>
-              <p style={{ fontSize: '11px', margin: '5px 0 15px 0', opacity: 0.8 }}>
-                Rename labels or toggle visibility of standard fields on the player sheet. Unchecked fields will be completely hidden from their layout.
-              </p>
 
-              <table className="dm-table" style={{ width: '100%' }}>
-                <thead>
-                  <tr>
-                    <th style={{ width: '15%', textAlign: 'center' }}>Visible</th>
-                    <th style={{ width: '40%' }}>Default Field Position</th>
-                    <th style={{ width: '45%' }}>Display Label Override</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {layoutKeys.map((item) => {
-                    const currentSetting = draftConfig.sheetLayout[item.key] || { visible: true, label: item.key };
-                    return (
-                      <tr key={item.key}>
-                        <td style={{ textAlign: 'center' }}>
-                          <input
-                            type="checkbox"
-                            checked={currentSetting.visible}
-                            onChange={(e) => handleUpdateLayoutSetting(item.key, e.target.checked, currentSetting.label)}
-                            style={{ transform: 'scale(1.2)', cursor: 'pointer' }}
-                          />
-                        </td>
-                        <td>
-                          <span style={{ fontSize: '12px' }}>{item.label}</span>
-                          <code style={{ fontSize: '10px', display: 'block', color: '#8b5a2b' }}>({item.key})</code>
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={currentSetting.label}
-                            onChange={(e) => handleUpdateLayoutSetting(item.key, currentSetting.visible, e.target.value)}
-                            className="dm-input"
-                            style={{ padding: '4px 6px', fontSize: '11px', height: '28px' }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
 
         </div>
       </div>

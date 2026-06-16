@@ -735,7 +735,7 @@ export function CharacterSheet() {
             </div>
 
              {/* Permanent Stat Advancements / Shared Talents */}
-            <div className="parchment-box" style={{ padding: '8px 10px' }}>
+            <div className="parchment-box h-38mm" style={{ padding: '8px 10px' }}>
               <h3 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span>Permanent Stat Advancements (AP Purchases)</span>
                 <span style={{ fontSize: '11px', fontFamily: 'Cinzel, serif', color: '#4a2e13', fontWeight: 'bold' }}>
@@ -939,7 +939,7 @@ export function CharacterSheet() {
             </div>
 
             {/* Unlocked Talents Box */}
-            <div className="parchment-box h-75mm" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="parchment-box h-68mm" style={{ display: 'flex', flexDirection: 'column' }}>
               <h3>
                 <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round', marginRight: '4px' }}>
                   <circle cx="7.5" cy="16.5" r="3.5" />
@@ -955,7 +955,7 @@ export function CharacterSheet() {
                   const classTalents = Object.keys(charState.purchasedTalents)
                     .filter(tid => charState.purchasedTalents[tid] > 0)
                     .filter(tid => !sharedTalents.some(st => st.id === tid));
-                  const remainingCount = Math.max(0, 15 - classTalents.length);
+                  const remainingCount = Math.max(0, 13 - classTalents.length);
                   return (
                     <>
                       {classTalents.map((tid) => {
@@ -1001,7 +1001,7 @@ export function CharacterSheet() {
 
             {/* Spellbook / Notes Lined Section */}
             {getFieldSetting('spells-scrolls').visible && (
-              <div className="parchment-box h-65mm">
+              <div className="parchment-box h-52mm">
                 <h3>
                   <svg className="deco-icon" viewBox="0 0 24 24" width="12" height="12" style={{ fill: 'none', stroke: '#5c3e21', strokeWidth: 1.3, strokeLinecap: 'round', strokeLinejoin: 'round', marginRight: '4px' }}>
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" fill="#5c3e21" fillOpacity="0.1" />
@@ -1011,7 +1011,7 @@ export function CharacterSheet() {
                   {getFieldSetting('spells-scrolls').label || 'Spellbook & Magic Scrolls'}
                 </h3>
                 <div className="lines" style={{ marginTop: '2px' }}>
-                  {Array.from({ length: 13 }, (_, i) => (
+                  {Array.from({ length: 10 }, (_, i) => (
                     <div key={i}><input type="text" id={`spell-line-${i+1}`} {...bindInput(`spell-line-${i+1}`)} /></div>
                   ))}
                 </div>

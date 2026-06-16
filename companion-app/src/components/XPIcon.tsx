@@ -13,7 +13,24 @@ import {
   GiCrossedSwords,
   GiChest,
   GiHealthPotion,
-  GiRuleBook
+  GiRuleBook,
+  GiTroll,
+  GiOgre,
+  GiShamblingZombie,
+  GiGhost,
+  GiSpiderFace,
+  GiSlime,
+  GiWerewolf,
+  GiWizardFace,
+  GiCultist,
+  GiRockGolem,
+  GiWolfHead,
+  GiCoins,
+  GiKey,
+  GiTreasureMap,
+  GiBattleAxe,
+  GiWarhammer,
+  GiBowArrow
 } from 'react-icons/gi';
 
 export interface XPIconProps {
@@ -79,6 +96,57 @@ export function XPIcon({ name = 'skeleton', size = 20, className = '', style = {
 
     case 'book':
       return <GiRuleBook {...iconProps} />;
+
+    case 'troll':
+      return <GiTroll {...iconProps} />;
+
+    case 'ogre':
+      return <GiOgre {...iconProps} />;
+
+    case 'zombie':
+      return <GiShamblingZombie {...iconProps} />;
+
+    case 'ghost':
+      return <GiGhost {...iconProps} />;
+
+    case 'spider':
+      return <GiSpiderFace {...iconProps} />;
+
+    case 'slime':
+      return <GiSlime {...iconProps} />;
+
+    case 'werewolf':
+      return <GiWerewolf {...iconProps} />;
+
+    case 'wizard':
+      return <GiWizardFace {...iconProps} />;
+
+    case 'cultist':
+      return <GiCultist {...iconProps} />;
+
+    case 'golem':
+      return <GiRockGolem {...iconProps} />;
+
+    case 'wolf':
+      return <GiWolfHead {...iconProps} />;
+
+    case 'coins':
+      return <GiCoins {...iconProps} />;
+
+    case 'key':
+      return <GiKey {...iconProps} />;
+
+    case 'map':
+      return <GiTreasureMap {...iconProps} />;
+
+    case 'axe':
+      return <GiBattleAxe {...iconProps} />;
+
+    case 'hammer':
+      return <GiWarhammer {...iconProps} />;
+
+    case 'bow':
+      return <GiBowArrow {...iconProps} />;
 
     default:
       // Fallback

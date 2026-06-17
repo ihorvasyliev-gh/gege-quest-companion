@@ -1,4 +1,5 @@
-import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable, getXpFromMonsterName } from '../store/useCharacterStore';
+import { useCharacterStore, TALENTS, getTalentById, getClassNameReadable, getXpFromMonsterName, XP_LEVELS, DEFAULT_XP_SETTINGS } from '../store/useCharacterStore';
+import { XPIcon } from './XPIcon';
 
 // Pages corner Celtic knots
 const Corners = () => (
@@ -744,7 +745,7 @@ export function CharacterSheet() {
               </h3>
 
               {/* AP Progress Gauge */}
-              <div style={{ marginBottom: '12px' }}>
+              <div className="ap-progress-bar" style={{ marginBottom: '12px' }}>
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
@@ -1066,24 +1067,6 @@ export function CharacterSheet() {
                   </h3>
                   <div id="ref-class-talents-content" style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
                     {(() => {
-                      const btnStyle: React.CSSProperties = {
-                        border: '1px solid #4a2e13',
-                        background: '#ebd5b3',
-                        color: '#4a2e13',
-                        borderRadius: '3px',
-                        width: '16px',
-                        height: '16px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        marginLeft: '3px',
-                        userSelect: 'none',
-                        lineHeight: 1,
-                        padding: 0
-                      };
                       return Array.from({ length: 13 }).map((_, i) => {
                         const classTalents = charState.class ? (gameConfig.classes[charState.class]?.talents || TALENTS.classes[charState.class] || []) : [];
                         const talent = classTalents[i];
@@ -1091,18 +1074,11 @@ export function CharacterSheet() {
                           const count = charState.purchasedTalents[talent.id] || 0;
                           const maxPurchases = talent.max || 1;
                           const isOwned = count > 0;
-                          const canBuy = count < maxPurchases && charState.apAvailable >= talent.cost;
 
                           return (
                             <div 
                               key={`class-tal-${talent.id}`} 
-                              className={`ref-talent-item interactive-talent ${isOwned ? 'owned' : ''}`}
-                              onClick={(e) => {
-                                if ((e.target as HTMLElement).closest('.talent-control-btn')) return;
-                                if (canBuy) {
-                                  buyTalent(talent.id);
-                                }
-                              }}
+                              className={`ref-talent-item ${isOwned ? 'owned' : ''}`}
                             >
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <span className="ref-talent-name" style={{ display: 'inline-flex', alignItems: 'center', fontWeight: isOwned ? 'bold' : 'normal' }}>
@@ -1110,31 +1086,7 @@ export function CharacterSheet() {
                                   {talent.name}
                                   {maxPurchases > 1 && isOwned && ` (${count}/${maxPurchases})`}
                                 </span>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <span className="ref-talent-cost">{talent.cost} AP</span>
-                                  {isOwned && (
-                                    <button
-                                      type="button"
-                                      className="talent-control-btn"
-                                      style={btnStyle}
-                                      onClick={() => refundTalent(talent.id)}
-                                      title="Refund 1 rank"
-                                    >
-                                      -
-                                    </button>
-                                  )}
-                                  {canBuy && (
-                                    <button
-                                      type="button"
-                                      className="talent-control-btn"
-                                      style={btnStyle}
-                                      onClick={() => buyTalent(talent.id)}
-                                      title="Buy 1 rank"
-                                    >
-                                      +
-                                    </button>
-                                  )}
-                                </div>
+                                <span className="ref-talent-cost">{talent.cost} AP</span>
                               </div>
                               <div style={{ fontSize: '9.5px', color: '#5c3e21', marginTop: '1px', opacity: 0.85 }}>
                                 {talent.desc}
@@ -1161,24 +1113,6 @@ export function CharacterSheet() {
                   <h3>Shared Talents Reference</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', height: '100%' }}>
                     {(() => {
-                      const btnStyle: React.CSSProperties = {
-                        border: '1px solid #4a2e13',
-                        background: '#ebd5b3',
-                        color: '#4a2e13',
-                        borderRadius: '3px',
-                        width: '16px',
-                        height: '16px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        marginLeft: '3px',
-                        userSelect: 'none',
-                        lineHeight: 1,
-                        padding: 0
-                      };
                       return Array.from({ length: 13 }).map((_, i) => {
                         const sharedTalents = gameConfig.sharedTalents || TALENTS.shared || [];
                         const talent = sharedTalents[i];
@@ -1186,18 +1120,11 @@ export function CharacterSheet() {
                           const count = charState.purchasedTalents[talent.id] || 0;
                           const maxPurchases = talent.max || 1;
                           const isOwned = count > 0;
-                          const canBuy = count < maxPurchases && charState.apAvailable >= talent.cost;
 
                           return (
                             <div 
                               key={`shared-tal-${talent.id}`} 
-                              className={`ref-talent-item interactive-talent ${isOwned ? 'owned' : ''}`}
-                              onClick={(e) => {
-                                if ((e.target as HTMLElement).closest('.talent-control-btn')) return;
-                                if (canBuy) {
-                                  buyTalent(talent.id);
-                                }
-                              }}
+                              className={`ref-talent-item ${isOwned ? 'owned' : ''}`}
                             >
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <span className="ref-talent-name" style={{ display: 'inline-flex', alignItems: 'center', fontWeight: isOwned ? 'bold' : 'normal' }}>
@@ -1205,31 +1132,7 @@ export function CharacterSheet() {
                                   {talent.name}
                                   {maxPurchases > 1 && isOwned && ` (${count}/${maxPurchases})`}
                                 </span>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <span className="ref-talent-cost">{talent.cost} AP</span>
-                                  {isOwned && (
-                                    <button
-                                      type="button"
-                                      className="talent-control-btn"
-                                      style={btnStyle}
-                                      onClick={() => refundTalent(talent.id)}
-                                      title="Refund 1 rank"
-                                    >
-                                      -
-                                    </button>
-                                  )}
-                                  {canBuy && (
-                                    <button
-                                      type="button"
-                                      className="talent-control-btn"
-                                      style={btnStyle}
-                                      onClick={() => buyTalent(talent.id)}
-                                      title="Buy 1 rank"
-                                    >
-                                      +
-                                    </button>
-                                  )}
-                                </div>
+                                <span className="ref-talent-cost">{talent.cost} AP</span>
                               </div>
                               <div style={{ fontSize: '9.5px', color: '#5c3e21', marginTop: '1px', opacity: 0.85 }}>
                                 {talent.desc}
@@ -1283,16 +1186,12 @@ export function CharacterSheet() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr><td><strong>1</strong></td><td>0</td></tr>
-                      <tr><td><strong>2</strong></td><td>20</td></tr>
-                      <tr><td><strong>3</strong></td><td>50</td></tr>
-                      <tr><td><strong>4</strong></td><td>90</td></tr>
-                      <tr><td><strong>5</strong></td><td>140</td></tr>
-                      <tr><td><strong>6</strong></td><td>200</td></tr>
-                      <tr><td><strong>7</strong></td><td>270</td></tr>
-                      <tr><td><strong>8</strong></td><td>350</td></tr>
-                      <tr><td><strong>9</strong></td><td>450</td></tr>
-                      <tr><td><strong>10</strong></td><td>600</td></tr>
+                      {XP_LEVELS.map((lvl) => (
+                        <tr key={lvl.level}>
+                          <td><strong>{lvl.level}</strong></td>
+                          <td>{lvl.xp}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                   <div style={{ fontSize: '9px', fontStyle: 'italic', color: '#5c3e21', marginTop: '6px', lineHeight: 1.3, textAlign: 'center' }}>
@@ -1300,66 +1199,32 @@ export function CharacterSheet() {
                   </div>
                 </div>
 
-                {/* Monster Tiers & XP Box */}
+                {/* Monster Tiers & XP Box — reads from gameConfig.xpSettings (synced with DM Panel) */}
                 <div className="parchment-box reference-box h-100mm" style={{ overflow: 'hidden' }}>
                   <h3 style={{ marginBottom: '6px' }}>Monster Tiers & XP values</h3>
-                  <table className="ref-table" style={{ fontSize: '11.5px', marginBottom: '12px', width: '100%' }}>
+                  <table className="ref-table" style={{ fontSize: '11.5px', width: '100%' }}>
                     <thead>
                       <tr>
-                        <th style={{ textAlign: 'center', width: '22%' }}>Tier</th>
-                        <th style={{ textAlign: 'center', width: '18%' }}>XP</th>
-                        <th style={{ textAlign: 'left', width: '60%' }}>Monsters Example</th>
+                        <th style={{ textAlign: 'left', width: '65%' }}>Category</th>
+                        <th style={{ textAlign: 'center', width: '35%' }}>XP</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td style={{ textAlign: 'center' }}><strong>I</strong></td>
-                        <td style={{ textAlign: 'center' }}>1</td>
-                        <td style={{ textAlign: 'left' }}>Goblin, Skeleton, Zombie</td>
-                      </tr>
-                      <tr>
-                        <td style={{ textAlign: 'center' }}><strong>II</strong></td>
-                        <td style={{ textAlign: 'center' }}>2</td>
-                        <td style={{ textAlign: 'left' }}>Orc, Fimir, Ghoul, Mummy</td>
-                      </tr>
-                      <tr>
-                        <td style={{ textAlign: 'center' }}><strong>III</strong></td>
-                        <td style={{ textAlign: 'center' }}>4</td>
-                        <td style={{ textAlign: 'left' }}>Chaos Warrior, Abomination</td>
-                      </tr>
-                      <tr>
-                        <td style={{ textAlign: 'center' }}><strong>IV</strong></td>
-                        <td style={{ textAlign: 'center' }}>8</td>
-                        <td style={{ textAlign: 'left' }}>Ogre, Gargoyle, Minotaur</td>
-                      </tr>
-                      <tr>
-                        <td style={{ textAlign: 'center' }}><strong>V</strong></td>
-                        <td style={{ textAlign: 'center' }}>12</td>
-                        <td style={{ textAlign: 'left' }}>Giant, Dragonling, Demon</td>
-                      </tr>
-                      <tr>
-                        <td style={{ textAlign: 'center' }}><strong>VI</strong></td>
-                        <td style={{ textAlign: 'center' }}>20</td>
-                        <td style={{ textAlign: 'left' }}>Greater Demon, Dragon</td>
-                      </tr>
+                      {(gameConfig.xpSettings || DEFAULT_XP_SETTINGS).map((setting) => (
+                        <tr key={setting.key}>
+                          <td style={{ textAlign: 'left' }}>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <XPIcon name={setting.icon} size={13} style={{ color: '#4a2e13', flexShrink: 0 }} />
+                              <span>{setting.label}</span>
+                            </span>
+                          </td>
+                          <td style={{ textAlign: 'center', fontWeight: 'bold', color: '#8c1e13' }}>
+                            {setting.xp} XP
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
-
-                  <h3 style={{ marginBottom: '6px' }}>Bonus XP Milestones</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px', padding: '2px 4px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
-                      <span>🎯 Bounty Target</span><strong style={{ color: '#8c1e13' }}>+5 XP</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
-                      <span>👤 Named Enemy</span><strong style={{ color: '#8c1e13' }}>+10 XP</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
-                      <span>🏰 Dungeon Boss</span><strong style={{ color: '#8c1e13' }}>+25 XP</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dotted rgba(92,62,33,0.15)', paddingBottom: '2px' }}>
-                      <span>👑 Campaign Boss</span><strong style={{ color: '#8c1e13' }}>+100 XP</strong>
-                    </div>
-                  </div>
                 </div>
               </div>
 

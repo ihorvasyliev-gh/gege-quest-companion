@@ -1516,6 +1516,16 @@ h1.main-title {
         color: transparent !important;
         -webkit-text-fill-color: transparent !important;
     }
+
+    /* Hide AP progress bar on page 3 — not useful in print */
+    .ap-progress-bar {
+        display: none !important;
+    }
+
+    /* Hide talent buy/refund buttons on page 4 — read-only in print */
+    .talent-control-btn {
+        display: none !important;
+    }
 }
 
 
